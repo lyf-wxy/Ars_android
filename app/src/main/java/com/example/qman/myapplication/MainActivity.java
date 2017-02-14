@@ -30,6 +30,8 @@ import org.json.JSONObject;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.qman.myapplication.indextab.IndexTabMainActivity;
+
 public class MainActivity extends AppCompatActivity {
     private OkHttpClient okHttpClient = new OkHttpClient();
     JSONObject jsonObject = null;//利用json字符串生成json对象
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tv;
     private String usernameInput = null;
     private String passwordInput = null;
+    private String locno = null;
     int counter = 3;
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
@@ -70,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                             .post(body)
                             .build();
                     okHttpClient.newCall(request).enqueue(callback);//callback是请求后的回调接口
-
                 }
 
             }
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent();
-                intent2.setClass(MainActivity.this, RegisterActivity.class);
+                intent2.setClass(MainActivity.this, RegisterFragmentActivity.class);
                 startActivity(intent2);//红色部分为要打开的心窗口的类名
             }
         });
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
      * 初始化组件
      */
     private void initView() {
-        tv = (TextView) findViewById(R.id.textView1);
+       // tv = (TextView) findViewById(R.id.textView1);
         username = (EditText) findViewById(R.id.usernameEt);
         password = (EditText) findViewById(R.id.pwdEt);
         login = (Button) findViewById(R.id.loginBtn);
@@ -115,21 +117,25 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onFailure(Call call, IOException e) {
-
             setResult(e.getMessage());
         }
 
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String str = response.body().string();
+            Log.v("jsonStr",str);
             try {
                 jsonObject = new JSONObject(str);
                 String result =  jsonObject.getString("result");//解析json查询结果
                 if(result.equals("success")){
+                    locno = jsonObject.getString("locno");//解析json查询结果
+                    System.out.println(locno);
                     //登陆成功，跳转到首页
                     Intent intent = new Intent();
-                    intent.setClass(MainActivity.this, IndexActivity.class);
+                    intent.setClass(MainActivity.this, IndexTabMainActivity.class);
                     intent.putExtra("usernameLogin",usernameInput);
+                    intent.putExtra("locno",locno);
+                    intent.putExtra("id",jsonObject.getString("id"));
                     startActivity(intent);//红色部分为要打开的心窗口的类名
                 } else {
                     setResult("用户名或密码错误，还剩" + counter + "次机会");

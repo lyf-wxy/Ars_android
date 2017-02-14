@@ -1,4 +1,4 @@
-package com.example.qman.myapplication;
+package com.example.qman.myapplication.indextab;
 
 import android.content.Context;
 import android.content.res.AssetManager;

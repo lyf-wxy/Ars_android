@@ -1,4 +1,4 @@
-package com.example.qman.myapplication;
+package com.example.qman.myapplication.indextab;
 
 /**
  * Created by Qman on 2017/1/25.

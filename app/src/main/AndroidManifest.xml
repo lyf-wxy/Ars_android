@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.qman.myapplication">
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,7 +24,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".IndexActivity" />
-        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".RegisterFragmentActivity" />
+
+        <activity android:name=".indextab.IndexTabMainActivity" />
+        <!--<activity android:name=".RightFragment" />
+        <activity android:name=".LeftFragment">-->
+
     </application>
 
 </manifest>
