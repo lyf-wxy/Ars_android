@@ -1,4 +1,4 @@
-package com.example.qman.myapplication;
+package com.example.qman.myapplication.loginregister;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -15,8 +14,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.bigkoo.pickerview.OptionsPickerView;
+import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.utils.Variables;
 import com.example.qman.myapplication.indextab.AddressBean;
 import com.example.qman.myapplication.indextab.JsonUtils;
+import com.example.qman.myapplication.utils.ActivityUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,19 +68,23 @@ public class FragmentTwo extends Fragment implements OnClickListener
 
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
     private SimpleAdapter adapter = null;
+
+    /**
+     * listView初始化为空
+     * @return
+     */
     private ArrayList<HashMap<String, Object>> initSplitData(){
         data.clear();
-//        String codeIdJson = "{'codeid':'" + codeidStr + "'}";
-//        //把请求的内容字符串转换为json
-//        RequestBody body = RequestBody.create(JSON, codeIdJson);
-//        Request request = new Request.Builder()
-//                .url("http://10.2.3.182:8080/AndroidService/cityInfoService")
-//                .post(body)
-//                .build();
-//        okHttpClient.newCall(request).enqueue(callbackCityInfo);//callback是请求后的回调接口
         return data;
     }
 
+    /**
+     * 将控件选择的区域加入listView
+     * @param province
+     * @param city
+     * @param area
+     * @return
+     */
     private ArrayList<HashMap<String, Object>> addData(String province,String city,String area){
         HashMap<String,Object>map = new HashMap<String,Object>();
         map.put("province", province);
@@ -91,17 +97,14 @@ public class FragmentTwo extends Fragment implements OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.friend_layout, container, false);
+        View view = inflater.inflate(R.layout.area_layout, container, false);
+        //取出FragmentOne跳转时传过来的数据
         if (getArguments() != null) {
             json = getArguments().getString("param");
 
         }
-
         Intent intent= getActivity().getIntent();
-//        id = intent.getStringExtra("id");
-//        codeidStr = intent.getStringExtra("locno");
         listView = (ListView)view.findViewById(R.id.areaLists);
-        //listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_expandable_list_item_1,splitData()));
 
         /* 参数一多，有些人就头晕了。这里解说下，各个参数的意思。
          * 第一个参数 this 代表的是当前上下文，可以理解为你当前所处的activity
@@ -126,19 +129,21 @@ public class FragmentTwo extends Fragment implements OnClickListener
         RequestBody body = RequestBody.create(JSON, json);
         Log.v("json",json);
         Request request = new Request.Builder()
-                .url("http://10.2.3.182:8080/AndroidService/registerService")
+                .url(Variables.serviceIP+"AndroidService/registerService")
                 .post(body)
                 .build();
         okHttpClient.newCall(request).enqueue(callback);//callback是请求后的回调接口
 
-        Intent intent = new Intent();
+        ActivityUtil.switchTo(getActivity(), MainActivity.class);
+        /*Intent intent = new Intent();
         intent.setClass(getActivity(), MainActivity.class);
-        startActivity(intent);//红色部分为要打开的心窗口的类名
+        startActivity(intent);//红色部分为要打开的心窗口的类名*/
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        //设置行政区域选择
         tv_address = (TextView) getActivity().findViewById(R.id.tv_address);
         //获取json字符串,用来解析以获取集合
         String jsonString = JsonUtils.getJsonString(getActivity(),
@@ -161,14 +166,6 @@ public class FragmentTwo extends Fragment implements OnClickListener
                 //返回的分别是三个级别的选中位置
                 String city = provinceList.get(options1).getPickerViewText();
                 String address;
-                //  如果是直辖市或者特别行政区只设置市和区/县
-//                if ("北京市".equals(city) || "上海市".equals(city) || "天津市".equals(city) || "重庆市".equals(city) || "澳门".equals(city) || "香港".equals(city)) {
-//                    address = provinceList.get(options1).getPickerViewText()
-//                            + " " + areasListsList.get(options1).get(option2).get(options3);
-//                    provinceSelected = provinceList.get(options1).getPickerViewText();
-//                    citiesSelected = null;
-//                    areaSelecteds = areasListsList.get(options1).get(option2).get(options3);;
-//                } else {
                 address = provinceList.get(options1).getPickerViewText()
                         + " " + citiesList.get(options1).get(option2)
                         + " " + areasListsList.get(options1).get(option2).get(options3);
@@ -184,7 +181,7 @@ public class FragmentTwo extends Fragment implements OnClickListener
                 //把请求的内容字符串转换为json
                 RequestBody body = RequestBody.create(JSON, json);
                 Request request = new Request.Builder()
-                        .url("http://10.2.3.182:8080/AndroidService/cityService")
+                        .url(Variables.serviceIP+"AndroidService/cityService")
                         .post(body)
                         .build();
                 okHttpClient.newCall(request).enqueue(callbackCity);//callback是请求后的回调接口
@@ -238,7 +235,6 @@ public class FragmentTwo extends Fragment implements OnClickListener
     private Callback callback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
-            // setResult(e.getMessage());
         }
         @Override
         public void onResponse(Call call, Response response) throws IOException {
@@ -279,44 +275,12 @@ public class FragmentTwo extends Fragment implements OnClickListener
             }
         }
     };
-    //请求后的回调接口
-    private Callback callbackCityInfo = new Callback() {
-        @Override
-        public void onFailure(Call call, IOException e) {
-            // setResult(e.getMessage());
-        }
-        @Override
-        public void onResponse(Call call, Response response) throws IOException {
-            String str = response.body().string();
-            try {
-                jsonObject = new JSONObject(str);
-                String result =  jsonObject.getString("result");//解析json查询结果
-                if(result.equals("success")){
-                    String dataStr = jsonObject.getString("data");
-                    JSONArray areaLists = new JSONArray(dataStr);
-                    if (areaLists.length()>0) {
-                        for (int i=0;i<areaLists.length();i++) {
-                            JSONArray aArea = new JSONArray(areaLists.get(i).toString());
-                            HashMap<String, Object> listm = new HashMap<String, Object>();
-                            listm.put("province", aArea.get(0).toString());
-                            listm.put("city", aArea.get(1).toString());
-                            listm.put("area", aArea.get(2).toString());
-                            data.add(listm);
-                        }
-                    }
-                } else {
-                    //setResult("注册失败");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-    public static com.example.qman.myapplication.FragmentTwo newInstance(String text) {
-        com.example.qman.myapplication.FragmentTwo fragment = new com.example.qman.myapplication.FragmentTwo();
+
+  /*  public static FragmentTwo newInstance(String text) {
+        FragmentTwo fragment = new FragmentTwo();
         Bundle args = new Bundle();
         args.putString("param", text);
         fragment.setArguments(args);
         return fragment;
-    }
+    }*/
 }

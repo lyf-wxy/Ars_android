@@ -1,4 +1,4 @@
-package com.example.qman.myapplication;
+package com.example.qman.myapplication.loginregister;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISImageServiceLayer;
 import com.esri.core.map.MosaicRule;
 import com.esri.core.map.RasterFunction;
+import com.example.qman.myapplication.R;
 
 public class IndexActivity extends AppCompatActivity {
 
@@ -21,9 +22,6 @@ public class IndexActivity extends AppCompatActivity {
 
         Intent intent= getIntent();
         String usernameLogin = intent.getStringExtra("usernameLogin");
-//        TextView tv = new TextView(this);
-//        tv.setText(usernameLogin);
-//        setContentView(tv);
         setContentView(R.layout.activity_index);
 
         mMapView = (MapView) findViewById(R.id.map);

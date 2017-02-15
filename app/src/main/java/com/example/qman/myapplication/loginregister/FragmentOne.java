@@ -1,10 +1,9 @@
-package com.example.qman.myapplication;
+package com.example.qman.myapplication.loginregister;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,24 +18,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bigkoo.pickerview.OptionsPickerView;
+import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.utils.ActivityUtil;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 public class FragmentOne extends Fragment implements OnClickListener
 {
     private String json = "";
-    JSONObject jsonObject = null;//利用json字符串生成json对象
     private EditText username = null;
     private EditText password = null;
     private EditText repassword = null;
@@ -46,7 +37,6 @@ public class FragmentOne extends Fragment implements OnClickListener
     private CheckBox disease = null;
     private CheckBox read = null;
     private Button nextBtn;
-    private TextView tv;
     private String usernameInput = null;
     private String passwordInput = null;
     private String repasswordInput = null;
@@ -57,11 +47,11 @@ public class FragmentOne extends Fragment implements OnClickListener
     private boolean readChecked = false;
     private String beginDate = null;
     private String endDate = null;
-    int counter = 3;
 
-
+    /**
+     * 日期控件参数定义
+     * */
     //获取日期格式器对象
-    DateFormat fmtDateAndTime = DateFormat.getDateTimeInstance();
     SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
     //定义一个TextView控件对象
     TextView beginDateLabel = null;
@@ -120,11 +110,11 @@ public class FragmentOne extends Fragment implements OnClickListener
         repasswordInput = repassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(usernameInput) || TextUtils.isEmpty(passwordInput) || TextUtils.isEmpty(repasswordInput) || TextUtils.isEmpty(beginDate) || TextUtils.isEmpty(endDate)) {
-            Toast.makeText(getActivity(), "请完善所有信息", Toast.LENGTH_SHORT).show();
+            ActivityUtil.toastShowFragment(FragmentOne.this,"请完善所有信息");
             return;
         } else {
             if (!passwordInput.equals(repasswordInput)) {
-                Toast.makeText(getActivity(), "两次输入的密码必须一致", Toast.LENGTH_SHORT).show();
+                ActivityUtil.toastShowFragment(FragmentOne.this,"两次输入的密码必须一致");
                 return;
             } else {
                 //获取复选框信息
@@ -134,10 +124,10 @@ public class FragmentOne extends Fragment implements OnClickListener
                 diseaseChecked = disease.isChecked();
                 readChecked = read.isChecked();
                 if (!readChecked) {
-                    Toast.makeText(getActivity(), "请阅读并同意协议", Toast.LENGTH_SHORT).show();
+                    ActivityUtil.toastShowFragment(FragmentOne.this,"请阅读并同意协议");
                     return;
                 }
-                //判断是否登陆成功
+                //拼接json串，传给FragmentTwo，注册的第二步
                 json = "{'username':'" + usernameInput + "'," + "'password':'" + passwordInput + "',"
                         + "'soilmos':'" + soilmosChecked + "'," + "'corpclass':'" + corpclassChecked + "',"
                         + "'lai':'" + laiChecked + "'," + "'disease':'" + diseaseChecked + "',"
@@ -145,20 +135,14 @@ public class FragmentOne extends Fragment implements OnClickListener
             }
         }
 
-        FragmentTwo fTwo = FragmentTwo.newInstance(json);
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction tx = fm.beginTransaction();
-        tx.replace(R.id.id_content, fTwo, "TWO");
-        tx.addToBackStack(null);
-        tx.commit();
-
+        ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,json);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //initView(view);
-//        tv = (TextView) getActivity().findViewById(R.id.textView1);
+
+        //初始化组件
         username = (EditText) getActivity().findViewById(R.id.usernameEt);
         password = (EditText) getActivity().findViewById(R.id.pwdEt);
         repassword = (EditText) getActivity().findViewById(R.id.repwdEt);
@@ -196,37 +180,4 @@ public class FragmentOne extends Fragment implements OnClickListener
             }
         });
     }
-
-    //更新页面TextView的方法
-    private void updateLabel(TextView tv) {
-        tv.setText(format
-                .format(dateAndTime.getTime()));
-    }
-/*
-    private void initView(View view) {
-        tv = (TextView) view.findViewById(R.id.textView1);
-        username = (EditText) view.findViewById(R.id.usernameEt);
-        password = (EditText) view.findViewById(R.id.pwdEt);
-        repassword = (EditText) view.findViewById(R.id.repwdEt);
-        register = (Button) view.findViewById(R.id.registerBtn);
-        soilmos = (CheckBox) view.findViewById(R.id.soilmos);
-        corpclass = (CheckBox) view.findViewById(R.id.corpclass);
-        lai = (CheckBox) view.findViewById(R.id.lai);
-        disease = (CheckBox) view.findViewById(R.id.disease);
-        read = (CheckBox) view.findViewById(R.id.read);
-        beginDateLabel=(TextView)view.findViewById(R.id.beginDate);
-        endDateLabel=(TextView)view.findViewById(R.id.endDate);
-    }*/
-    //显示调用结果
-/*    private void setResult(final String msg) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-                //tv.setText(msg);
-            }
-        });
-    }*/
-
-
 }

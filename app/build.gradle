@@ -32,6 +32,7 @@ android {
         main{
             res.srcDirs = [
                     'src/main/res/indextab',
+                    'src/main/res/areatab',
                     'src/main/res/layout',
                     'src/main/res',
             ]

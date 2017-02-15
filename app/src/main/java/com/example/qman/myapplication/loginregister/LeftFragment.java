@@ -1,4 +1,4 @@
-package com.example.qman.myapplication;
+package com.example.qman.myapplication.loginregister;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
@@ -17,6 +17,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.qman.myapplication.R;
 
 import org.json.JSONObject;
 

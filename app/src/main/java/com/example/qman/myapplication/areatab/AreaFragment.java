@@ -1,4 +1,4 @@
-package com.example.qman.myapplication.indextab;
+package com.example.qman.myapplication.areatab;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -8,17 +8,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.utils.Variables;
+import com.example.qman.myapplication.indextab.AddressBean;
+import com.example.qman.myapplication.indextab.JsonUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -38,7 +38,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class FriendFragment extends Fragment implements View.OnClickListener
+public class AreaFragment extends Fragment implements View.OnClickListener
 {
     private String json = "";
     private String updateJson = "";
@@ -69,33 +69,35 @@ public class FriendFragment extends Fragment implements View.OnClickListener
 
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
     private SimpleAdapter adapter = null;
+
+    private Bundle savedState;//临时数据保存
+
+    private AreaItemFragment mAreaItem;
+
+    /**
+     * 初始化listView数据
+     * @return
+     */
     private ArrayList<HashMap<String, Object>> initSplitData(){
         data.clear();
         String codeIdJson = "{'codeid':'" + codeidStr + "'}";
         //把请求的内容字符串转换为json
         RequestBody body = RequestBody.create(JSON, codeIdJson);
         Request request = new Request.Builder()
-                .url("http://10.2.3.182:8080/AndroidService/cityInfoService")
+                .url(Variables.serviceIP+"AndroidService/cityInfoService")
                 .post(body)
                 .build();
         okHttpClient.newCall(request).enqueue(callbackCityInfo);//callback是请求后的回调接口
-        //解析订购区域
-//        String[] strings = codeidStr.split("/");
-//        for(int i = 0; i < strings.length;i++)
-//        {
-//            String codeIdJson = "{'codeid':'" + strings[i] + "'}";
-//            //把请求的内容字符串转换为json
-//            RequestBody body = RequestBody.create(JSON, codeIdJson);
-//            Request request = new Request.Builder()
-//                    .url("http://10.2.3.182:8080/AndroidService/cityInfoService")
-//                    .post(body)
-//                    .build();
-//            okHttpClient.newCall(request).enqueue(callbackCityInfo);//callback是请求后的回调接口
-
-       // }
         return data;
     }
 
+    /**
+     * 将控件选择的行政区域加到listView中
+     * @param province
+     * @param city
+     * @param area
+     * @return
+     */
     private ArrayList<HashMap<String, Object>> addData(String province,String city,String area){
         HashMap<String,Object>map = new HashMap<String,Object>();
         map.put("province", province);
@@ -108,13 +110,14 @@ public class FriendFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.friend_layout, container, false);
+        View view = inflater.inflate(R.layout.area_layout, container, false);
         Intent intent= getActivity().getIntent();
         id = intent.getStringExtra("id");
-        Log.i("id",id);
         codeidStr = intent.getStringExtra("locno");
+        json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
         listView = (ListView)view.findViewById(R.id.areaLists);
-        //listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_expandable_list_item_1,splitData()));
+        listView.setOnItemClickListener(null);
+        listView.setOnDragListener(null);
 
         /* 参数一多，有些人就头晕了。这里解说下，各个参数的意思。
          * 第一个参数 this 代表的是当前上下文，可以理解为你当前所处的activity
@@ -126,6 +129,23 @@ public class FriendFragment extends Fragment implements View.OnClickListener
         adapter = new SimpleAdapter(getActivity(), initSplitData(), R.layout.city,
                 new String[]{"province","city","area"}, new int[]{R.id.province,R.id.city,R.id.area});
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //获得选中项的HashMap对象
+                HashMap<String,String> map=(HashMap<String,String>)listView.getItemAtPosition(position);
+                String title=map.get("province");
+                String content=map.get("area");
+                Log.v("area",content);
+                //跳转到AreaItemFragment
+                //ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content,json);
+               FragmentManager fm = getFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                mAreaItem = AreaItemFragment.newInstance(json);
+                transaction.replace(R.id.id_content, mAreaItem);
+                transaction.commit();
+            }
+        });
 
         registerBtn = (Button) view.findViewById(R.id.registerBtn);
         registerBtn.setOnClickListener(this);
@@ -134,11 +154,12 @@ public class FriendFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v)
     {
+        //确定添加，更新数据库的codeid字段
         updateJson = "{'id':'" + id + "'," + "'codeidStr':'" + codeidStr + "'}";
         //把请求的内容字符串转换为json
         RequestBody body = RequestBody.create(JSON, updateJson);
         Request request = new Request.Builder()
-                .url("http://10.2.3.182:8080/AndroidService/updateUserCodeIdService")
+                .url(Variables.serviceIP+"AndroidService/updateUserCodeIdService")
                 .post(body)
                 .build();
         okHttpClient.newCall(request).enqueue(callback);//callback是请求后的回调接口
@@ -148,6 +169,10 @@ public class FriendFragment extends Fragment implements View.OnClickListener
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(!restoreStateFromArguments()){
+            //第一次进入做一些初始化操作
+        }
+
         tv_address = (TextView) getActivity().findViewById(R.id.tv_address);
         //获取json字符串,用来解析以获取集合
         String jsonString = JsonUtils.getJsonString(getActivity(),
@@ -170,21 +195,12 @@ public class FriendFragment extends Fragment implements View.OnClickListener
                 //返回的分别是三个级别的选中位置
                 String city = provinceList.get(options1).getPickerViewText();
                 String address;
-                //  如果是直辖市或者特别行政区只设置市和区/县
-//                if ("北京市".equals(city) || "上海市".equals(city) || "天津市".equals(city) || "重庆市".equals(city) || "澳门".equals(city) || "香港".equals(city)) {
-//                    address = provinceList.get(options1).getPickerViewText()
-//                            + " " + areasListsList.get(options1).get(option2).get(options3);
-//                    provinceSelected = provinceList.get(options1).getPickerViewText();
-//                    citiesSelected = null;
-//                    areaSelecteds = areasListsList.get(options1).get(option2).get(options3);;
-//                } else {
-                    address = provinceList.get(options1).getPickerViewText()
+                address = provinceList.get(options1).getPickerViewText()
                             + " " + citiesList.get(options1).get(option2)
                             + " " + areasListsList.get(options1).get(option2).get(options3);
-                    provinceSelected = provinceList.get(options1).getPickerViewText();
-                    citiesSelected = citiesList.get(options1).get(option2);
-                    areaSelecteds = areasListsList.get(options1).get(option2).get(options3);
-//                }
+                provinceSelected = provinceList.get(options1).getPickerViewText();
+                citiesSelected = citiesList.get(options1).get(option2);
+                areaSelecteds = areasListsList.get(options1).get(option2).get(options3);
 
                 //查询订购区域代码codeid
                 String json = "{'provinceSelected':'" + provinceSelected + "'," + "'citiesSelected':'" + citiesSelected + "',"
@@ -193,7 +209,7 @@ public class FriendFragment extends Fragment implements View.OnClickListener
                 //把请求的内容字符串转换为json
                 RequestBody body = RequestBody.create(JSON, json);
                 Request request = new Request.Builder()
-                        .url("http://10.2.3.182:8080/AndroidService/cityService")
+                        .url(Variables.serviceIP+"AndroidService/cityService")
                         .post(body)
                         .build();
                 okHttpClient.newCall(request).enqueue(callbackCity);//callback是请求后的回调接口
@@ -211,6 +227,55 @@ public class FriendFragment extends Fragment implements View.OnClickListener
         });
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        //可能再次保存临时数据
+        saveStateToArguments();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        //也有可能再次保存临时数据
+        saveStateToArguments();
+    }
+    //保存临时数据
+    private void saveStateToArguments(){
+        savedState = saveState();
+
+        if(savedState != null){
+            getActivity().getIntent().getExtras();
+            Bundle b = getActivity().getIntent().getExtras();//getArguments();
+            Log.v("saveStateToArguments()b",b.toString());
+            Log.v("saveStateToArguments()s",savedState.toString());
+            b.putBundle("codeidStr",savedState);
+        }
+    }
+    //取出临时数据
+    private boolean restoreStateFromArguments(){
+        Bundle b = getArguments();
+        if(b!=null)
+            savedState = b.getBundle("codeidStr");
+        if(savedState != null){
+            restoreState();
+            return true;
+        }
+        return false;
+    }
+
+    private void restoreState(){
+        if(savedState != null){
+            codeidStr = savedState.getString("codeidStr");
+        }
+    }
+
+    private Bundle saveState(){
+        Bundle state = new Bundle();
+        state.putString("codeidStr",codeidStr);
+        Log.v("saveState()",codeidStr);
+        return state;
+    }
     //解析获得的json字符串,放在各个集合中
     private void parseJson(String json){
         try {
@@ -277,7 +342,7 @@ public class FriendFragment extends Fragment implements View.OnClickListener
                 jsonObject = new JSONObject(str);
                 String result =  jsonObject.getString("result");//解析json查询结果
                 if(result.equals("success")){
-                    codeidStr += jsonObject.getString("codeid");
+                    codeidStr += jsonObject.getString("codeid")+"/";
                 } else {
                     //setResult("注册失败");
                 }
@@ -300,6 +365,7 @@ public class FriendFragment extends Fragment implements View.OnClickListener
                 String result =  jsonObject.getString("result");//解析json查询结果
                 if(result.equals("success")){
                     String dataStr = jsonObject.getString("data");
+                    Log.i("dataStr",dataStr);
                     JSONArray areaLists = new JSONArray(dataStr);
                     if (areaLists.length()>0) {
                         for (int i=0;i<areaLists.length();i++) {
@@ -319,12 +385,4 @@ public class FriendFragment extends Fragment implements View.OnClickListener
             }
         }
     };
-    public static com.example.qman.myapplication.FragmentTwo newInstance(String text) {
-        com.example.qman.myapplication.FragmentTwo fragment = new com.example.qman.myapplication.FragmentTwo();
-        Bundle args = new Bundle();
-        args.putString("param", text);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
 }

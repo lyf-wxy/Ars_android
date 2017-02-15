@@ -7,21 +7,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 
 import com.example.qman.myapplication.R;
-import com.example.qman.myapplication.indextab.ContentFragment;
+import com.example.qman.myapplication.areatab.AreaFragment;
 //import com.example.qman.myapplication.R;
 
 public class IndexTabMainActivity extends Activity implements OnClickListener
 {
-    private LinearLayout mTabWeixin;
-    private LinearLayout mTabFriend;
+    private LinearLayout mTabSetting;
+    private LinearLayout mTabArea;
     private LinearLayout mTabMap;
-    private ContentFragment mWeixin;
-    private FriendFragment mFriend;
+    private SettingFragment mSetting;
+    private AreaFragment mArea;
     private MapFragment mMap;
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,63 +30,66 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
         setContentView(R.layout.fragment_indextab);
 
         // 初始化控件和声明事件
-        mTabWeixin = (LinearLayout) findViewById(R.id.tab01);
-        mTabFriend = (LinearLayout) findViewById(R.id.tab02);
-        mTabMap = (LinearLayout) findViewById(R.id.tab04);
-        mTabWeixin.setOnClickListener(this);
-        mTabFriend.setOnClickListener(this);
+        mTabSetting = (LinearLayout) findViewById(R.id.tab03);
+        mTabArea = (LinearLayout) findViewById(R.id.tab01);
+        mTabMap = (LinearLayout) findViewById(R.id.tab02);
+        mTabSetting.setOnClickListener(this);
+        mTabArea.setOnClickListener(this);
         mTabMap.setOnClickListener(this);
         // 设置默认的Fragment
         setDefaultFragment();
     }
 
+    // 设置默认的Fragment
     private void setDefaultFragment()
     {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        mWeixin = new ContentFragment();
-        transaction.replace(R.id.id_content, mWeixin);
+        mArea = new AreaFragment();
+        transaction.replace(R.id.id_content, mArea);
         transaction.commit();
     }
 
     @Override
     public void onClick(View v)
     {
+        /**
+         * tab页切换
+         */
         FragmentManager fm = getFragmentManager();
         // 开启Fragment事务
         FragmentTransaction transaction = fm.beginTransaction();
-
         switch (v.getId())
         {
             case R.id.tab01:
-                if (mWeixin == null)
+                if (mArea == null)
                 {
-                    mWeixin = new ContentFragment();
+                    mArea = new AreaFragment();
                 }
-                // 使用当前Fragment的布局替代id_content的控件
-                transaction.replace(R.id.id_content, mWeixin);
+                transaction.replace(R.id.id_content, mArea);
                 break;
             case R.id.tab02:
-                if (mFriend == null)
+                if (mMap == null)
                 {
-                    mFriend = new FriendFragment();
+                    mMap = new MapFragment();
                 }
-                transaction.replace(R.id.id_content, mFriend);
+                transaction.replace(R.id.id_content, mMap);
                 break;
             case R.id.tab03:
-                if (mMap == null)
+                if (mSetting == null)
+                {
+                    mSetting = new SettingFragment();
+                }
+                // 使用当前Fragment的布局替代id_content的控件
+                transaction.replace(R.id.id_content, mSetting);
+                break;
+            case R.id.tab04:
+               /* if (mMap == null)
                 {
                     mMap = new MapFragment();
                 }
                 // 使用当前Fragment的布局替代id_content的控件
-                transaction.replace(R.id.id_content, mMap);
-                break;
-            case R.id.tab04:
-                if (mMap == null)
-                {
-                    mMap = new MapFragment();
-                }
-                transaction.replace(R.id.id_content, mMap);
+                transaction.replace(R.id.id_content, mMap);*/
                 break;
         }
         // transaction.addToBackStack();
