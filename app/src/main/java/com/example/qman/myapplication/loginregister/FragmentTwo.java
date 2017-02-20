@@ -15,6 +15,8 @@ import android.widget.Button;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.utils.CheckBoxUtil;
+import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.Variables;
 import com.example.qman.myapplication.indextab.AddressBean;
 import com.example.qman.myapplication.indextab.JsonUtils;
@@ -40,8 +42,6 @@ import okhttp3.Response;
 public class FragmentTwo extends Fragment implements OnClickListener
 {
     private String json = "";
-    private String updateJson = "";
-    private OkHttpClient okHttpClient = new OkHttpClient();
     JSONObject jsonObject = null;//利用json字符串生成json对象
     private Button registerBtn ;
     private TextView tv_address;
@@ -60,9 +60,6 @@ public class FragmentTwo extends Fragment implements OnClickListener
     private String citiesSelected = null;
     private String areaSelecteds = null;
     private String codeidStr = "";
-    private String id = "";
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
 
     private ListView listView;
 
@@ -102,8 +99,8 @@ public class FragmentTwo extends Fragment implements OnClickListener
         if (getArguments() != null) {
             json = getArguments().getString("param");
 
+            Log.i("two",json);
         }
-        Intent intent= getActivity().getIntent();
         listView = (ListView)view.findViewById(R.id.areaLists);
 
         /* 参数一多，有些人就头晕了。这里解说下，各个参数的意思。
@@ -124,20 +121,15 @@ public class FragmentTwo extends Fragment implements OnClickListener
     @Override
     public void onClick(View v)
     {
-        json += "'codeidStr':'" + codeidStr + "'}";
-        //把请求的内容字符串转换为json
-        RequestBody body = RequestBody.create(JSON, json);
-        Log.v("json",json);
-        Request request = new Request.Builder()
-                .url(Variables.serviceIP+"AndroidService/registerService")
-                .post(body)
-                .build();
-        okHttpClient.newCall(request).enqueue(callback);//callback是请求后的回调接口
-
+        JSONObject ajsonObject = null;
+        try {
+            ajsonObject = new JSONObject(json);
+            ajsonObject.put("codeidStr",codeidStr);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestUtil.request(ajsonObject.toString(),"AndroidService/registerService",callback);
         ActivityUtil.switchTo(getActivity(), MainActivity.class);
-        /*Intent intent = new Intent();
-        intent.setClass(getActivity(), MainActivity.class);
-        startActivity(intent);//红色部分为要打开的心窗口的类名*/
     }
 
     @Override
@@ -172,21 +164,19 @@ public class FragmentTwo extends Fragment implements OnClickListener
                 provinceSelected = provinceList.get(options1).getPickerViewText();
                 citiesSelected = citiesList.get(options1).get(option2);
                 areaSelecteds = areasListsList.get(options1).get(option2).get(options3);
-//                }
 
                 //查询订购区域代码codeid
-                String json = "{'provinceSelected':'" + provinceSelected + "'," + "'citiesSelected':'" + citiesSelected + "',"
-                        + "'areaSelecteds':'" + areaSelecteds +
-                        "'}";
-                //把请求的内容字符串转换为json
-                RequestBody body = RequestBody.create(JSON, json);
-                Request request = new Request.Builder()
-                        .url(Variables.serviceIP+"AndroidService/cityService")
-                        .post(body)
-                        .build();
-                okHttpClient.newCall(request).enqueue(callbackCity);//callback是请求后的回调接口
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("provinceSelected",provinceSelected);
+                    jsonObject.put("citiesSelected",citiesSelected);
+                    jsonObject.put("areaSelecteds",areaSelecteds);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                RequestUtil.request(jsonObject.toString(),"AndroidService/cityService",callbackCity);
                 addData(provinceSelected,citiesSelected,areaSelecteds);
-                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();//即时更新listview
                 tv_address.setText(address);
             }
         });
@@ -264,9 +254,8 @@ public class FragmentTwo extends Fragment implements OnClickListener
                 jsonObject = new JSONObject(str);
                 String result =  jsonObject.getString("result");//解析json查询结果
                 if(result.equals("success")){
-                    Log.v("codeid",jsonObject.getString("codeid"));
                     codeidStr += jsonObject.getString("codeid") + "/";
-                    Log.v("codeidStr",codeidStr);
+                    Log.i("codeid",codeidStr);
                 } else {
                     //setResult("注册失败");
                 }
@@ -275,12 +264,4 @@ public class FragmentTwo extends Fragment implements OnClickListener
             }
         }
     };
-
-  /*  public static FragmentTwo newInstance(String text) {
-        FragmentTwo fragment = new FragmentTwo();
-        Bundle args = new Bundle();
-        args.putString("param", text);
-        fragment.setArguments(args);
-        return fragment;
-    }*/
 }

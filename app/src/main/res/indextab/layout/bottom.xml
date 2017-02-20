@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@drawable/bottom_bar"
+    android:background="@color/green"
     android:orientation="horizontal" >
 
     <LinearLayout
@@ -14,9 +14,9 @@
         android:gravity="center">
         <ImageButton
             android:id="@+id/tab01_btn"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="5dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="3dp"
             android:clickable="false"
             android:src="@drawable/tab03"
             android:background="#00000000"/>
@@ -38,9 +38,9 @@
         android:gravity="center">
         <ImageButton
             android:id="@+id/tab02_btn"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="5dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="3dp"
             android:clickable="false"
             android:src="@drawable/tab04"
             android:background="#00000000"/>
@@ -62,9 +62,9 @@
         android:gravity="center">
         <ImageButton
             android:id="@+id/tab03_btn"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="5dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="3dp"
             android:clickable="false"
             android:src="@drawable/tab02"
             android:background="#00000000"/>
@@ -86,9 +86,9 @@
         android:gravity="center">
         <ImageButton
             android:id="@+id/tab04_btn"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="5dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="3dp"
             android:clickable="false"
             android:src="@drawable/tab02"
             android:background="#00000000"/>

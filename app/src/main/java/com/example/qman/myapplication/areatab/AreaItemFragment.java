@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.utils.ActivityUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,16 +35,9 @@ public class AreaItemFragment extends Fragment implements OnClickListener
 {
     private String json = "";
     private Button skipBtn;
-    private OkHttpClient okHttpClient = new OkHttpClient();
     JSONObject jsonObject = null;//利用json字符串生成json对象
-    private Button registerBtn ;
 
     private String codeidStr = "";
-    private String id = "";
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-
-    private ListView listView;
 
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
     private SimpleAdapter adapter = null;
@@ -76,12 +70,12 @@ public class AreaItemFragment extends Fragment implements OnClickListener
     {
 
         //跳转到AreaItemInfoFragment
-        //ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
-        FragmentManager fm = getFragmentManager();
+        ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
+        /*FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         mAreaItemInfo = new AreaItemInfoFragment();
         transaction.replace(R.id.id_content, mAreaItemInfo);
-        transaction.commit();
+        transaction.commit();*/
     }
 
     @Override

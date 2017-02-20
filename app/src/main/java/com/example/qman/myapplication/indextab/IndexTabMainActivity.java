@@ -3,6 +3,7 @@ package com.example.qman.myapplication.indextab;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,6 +50,7 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
         transaction.replace(R.id.id_content, mArea);
         transaction.commit();
     }
+
 
     @Override
     public void onClick(View v)
