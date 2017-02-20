@@ -20,10 +20,7 @@ public class RegisterFragmentActivity extends Activity
 
         //默认进入FragmentOne，注册的第一步
         ActivityUtil.switchToFragment(RegisterFragmentActivity.this,new FragmentOne(),R.id.id_content);
-        /*FragmentManager fm = getFragmentManager();
-        FragmentTransaction tx = fm.beginTransaction();
-        tx.add(R.id.id_content, new FragmentOne(),"ONE");
-        tx.commit();*/
+
     }
 
 }

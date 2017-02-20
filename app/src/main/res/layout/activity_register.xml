@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@mipmap/loginbackground">
+    android:background="@color/green">
 
     <include
         android:id="@+id/id_ly_top"

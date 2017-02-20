@@ -2,6 +2,7 @@ package com.example.qman.myapplication.loginregister;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,11 +19,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.MediaType;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.text.TextUtils;
 
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.Variables;
 import com.example.qman.myapplication.indextab.IndexTabMainActivity;
 import com.example.qman.myapplication.utils.ActivityUtil;
@@ -31,7 +35,6 @@ import com.example.qman.myapplication.utils.ActivityUtil;
 登录页
 */
 public class MainActivity extends AppCompatActivity {
-    private OkHttpClient okHttpClient = new OkHttpClient();
     JSONObject jsonObject = null;//利用json字符串生成json对象
     private EditText username = null;
     private EditText password = null;
@@ -39,10 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView register;
     private String usernameInput = null;
     private String passwordInput = null;
-    private String locno = null;
     int counter = 3;
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +63,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
                     //判断是否登陆成功
-                    String json = "{'username':'" + usernameInput + "'," + "'password':'" + passwordInput + "'}";
-                    //把请求的内容字符串转换为json
-                    RequestBody body = RequestBody.create(JSON, json);
-                    Request request = new Request.Builder()
-                            .url(Variables.serviceIP+"AndroidService/loginService")
-                            .post(body)
-                            .build();
-                    okHttpClient.newCall(request).enqueue(callback);//callback是请求后的回调接口
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("username",usernameInput);
+                        jsonObject.put("password",passwordInput);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    RequestUtil.request(jsonObject.toString(),"AndroidService/loginService",callback);
                 }
 
             }
@@ -110,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
                     //登陆成功，带参数跳转到首页
                     Map<String,Object> params = new HashMap<String,Object>();
                     params.put("id",jsonObject.getString("id"));
+                    params.put("username",jsonObject.getString("username"));
+                    params.put("paswd",jsonObject.getString("paswd"));
+                    params.put("beginDate",jsonObject.getString("beginDate"));
+                    params.put("endDate",jsonObject.getString("endDate"));
+                    params.put("producttype",jsonObject.getString("producttype"));
                     params.put("locno",jsonObject.getString("locno"));
                     ActivityUtil.switchTo(MainActivity.this, IndexTabMainActivity.class,params);
                 } else {

@@ -15,14 +15,20 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.utils.ActivityUtil;
+import com.example.qman.myapplication.utils.CheckBoxUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class FragmentOne extends Fragment implements OnClickListener
@@ -31,19 +37,12 @@ public class FragmentOne extends Fragment implements OnClickListener
     private EditText username = null;
     private EditText password = null;
     private EditText repassword = null;
-    private CheckBox soilmos = null;
-    private CheckBox corpclass = null;
-    private CheckBox lai = null;
-    private CheckBox disease = null;
+
     private CheckBox read = null;
     private Button nextBtn;
     private String usernameInput = null;
     private String passwordInput = null;
     private String repasswordInput = null;
-    private boolean soilmosChecked = false;
-    private boolean corpclassChecked = false;
-    private boolean laiChecked = false;
-    private boolean diseaseChecked = false;
     private boolean readChecked = false;
     private String beginDate = null;
     private String endDate = null;
@@ -87,10 +86,10 @@ public class FragmentOne extends Fragment implements OnClickListener
             //将页面TextView的显示更新为最新时间
             endDate = format
                     .format(dateAndTime.getTime());
-            Log.v("endDate",endDate);
             endDateLabel.setText(endDate);
         }
     };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,12 +98,15 @@ public class FragmentOne extends Fragment implements OnClickListener
         View view = inflater.inflate(R.layout.fragment_register_one, container, false);
         nextBtn = (Button) view.findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(this);
+        LinearLayout layout = (LinearLayout)view.findViewById(R.id.checkboxs);
+        CheckBoxUtil.initView(layout);//遍历R.id.checkboxs的LinerLayout下的所有checkBox
         return view;
     }
 
     @Override
     public void onClick(View v)
     {
+        JSONObject jsonObject = new JSONObject();
         usernameInput = username.getText().toString().trim();
         passwordInput = password.getText().toString().trim();
         repasswordInput = repassword.getText().toString().trim();
@@ -117,25 +119,27 @@ public class FragmentOne extends Fragment implements OnClickListener
                 ActivityUtil.toastShowFragment(FragmentOne.this,"两次输入的密码必须一致");
                 return;
             } else {
-                //获取复选框信息
-                soilmosChecked = soilmos.isChecked();
-                corpclassChecked = corpclass.isChecked();
-                laiChecked = lai.isChecked();
-                diseaseChecked = disease.isChecked();
                 readChecked = read.isChecked();
                 if (!readChecked) {
                     ActivityUtil.toastShowFragment(FragmentOne.this,"请阅读并同意协议");
                     return;
                 }
+
                 //拼接json串，传给FragmentTwo，注册的第二步
-                json = "{'username':'" + usernameInput + "'," + "'password':'" + passwordInput + "',"
-                        + "'soilmos':'" + soilmosChecked + "'," + "'corpclass':'" + corpclassChecked + "',"
-                        + "'lai':'" + laiChecked + "'," + "'disease':'" + diseaseChecked + "',"
-                        + "'beginDate':'" + beginDate + "'," + "'endDate':'" + endDate + "',";
+                try {
+                    jsonObject.put("username",usernameInput);
+                    jsonObject.put("password",passwordInput);
+                    jsonObject.put("producttype",CheckBoxUtil.createResultStr());
+                    jsonObject.put("beginDate",beginDate);
+                    jsonObject.put("endDate",endDate);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
 
-        ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,json);
+        ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,jsonObject.toString());
     }
 
     @Override
@@ -147,10 +151,7 @@ public class FragmentOne extends Fragment implements OnClickListener
         password = (EditText) getActivity().findViewById(R.id.pwdEt);
         repassword = (EditText) getActivity().findViewById(R.id.repwdEt);
         nextBtn = (Button) getActivity().findViewById(R.id.registerBtn);
-        soilmos = (CheckBox) getActivity().findViewById(R.id.soilmos);
-        corpclass = (CheckBox) getActivity().findViewById(R.id.corpclass);
-        lai = (CheckBox) getActivity().findViewById(R.id.lai);
-        disease = (CheckBox) getActivity().findViewById(R.id.disease);
+
         read = (CheckBox) getActivity().findViewById(R.id.read);
         beginDateLabel=(TextView)getActivity().findViewById(R.id.beginDate);
         endDateLabel=(TextView)getActivity().findViewById(R.id.endDate);

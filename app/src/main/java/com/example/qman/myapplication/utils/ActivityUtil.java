@@ -8,16 +8,13 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.qman.myapplication.R;
-import com.example.qman.myapplication.loginregister.FragmentOne;
-import com.example.qman.myapplication.loginregister.MainActivity;
-import com.example.qman.myapplication.loginregister.RegisterFragmentActivity;
-
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Created by Qman on 2017/2/15.
@@ -150,8 +147,10 @@ public class ActivityUtil extends AppCompatActivity {
      */
     public static void switchToFragment(Activity activity,Fragment fragment,int containerViewId){
         FragmentManager fm = activity.getFragmentManager();
+        Log.i("fm in switch",fm.toString());
         FragmentTransaction tx = fm.beginTransaction();
-        tx.add(containerViewId, fragment);
+     //   tx.add(containerViewId, fragment);
+        tx.replace(containerViewId,fragment);
         tx.commit();
     }
 
@@ -168,7 +167,7 @@ public class ActivityUtil extends AppCompatActivity {
         Bundle args = new Bundle();
         args.putString("param", params);
         fragment.setArguments(args);
-        tx.add(containerViewId, fragment);
+        tx.replace(containerViewId, fragment);
         tx.addToBackStack(null);
         tx.commit();
     }
@@ -216,23 +215,17 @@ public class ActivityUtil extends AppCompatActivity {
         ft.commitAllowingStateLoss();
     }*/
 
+
     /**
-     * </br><b>title : </b>       带参数进行Activity跳转
-     * </br><b>description :</b>带参数进行Activity跳转
-     * </br><b>time :</b>     2012-7-17 下午10:22:58
+     * 获取当前Activity带有的参数
      * @param activity
-     * @param target
-     * @param params
+     * @param param
+     * @return
      */
-   /* public static void switchTo(Activity activity,Class<? extends Activity> target,NameValuePair...params){
-        if( null != params ){
-            Intent intent = new Intent(activity,target);
-            for(NameValuePair param : params){
-                setValueToIntent(intent, param.getName(), param.getValue());
-            }
-            switchTo(activity, intent);
-        }
-    }*/
+    public static String getParam(Activity activity, String param){
+        Intent intent= activity.getIntent();
+        return intent.getStringExtra(param);
+    }
 
 
     /**

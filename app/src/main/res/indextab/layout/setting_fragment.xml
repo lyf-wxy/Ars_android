@@ -2,117 +2,169 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/green"
     android:orientation="vertical">
 
+    <EditText
+        android:id="@+id/oldPwdEt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_ly_top"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/white"
+        android:ems="10"
+        android:hint="原密码"
+        android:padding="10dp"
+        android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/usernameEt"
+        android:id="@+id/newPwdEt"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="35dp"
-        android:singleLine="true"
-        android:background="@drawable/qq_edit_login"
-        android:hint="请输入您的原密码"
-        android:ems="10" >
-        <requestFocus />
-    </EditText>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_ly_top"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/white"
+        android:ems="10"
+        android:hint="新密码"
+        android:padding="10dp"
+        android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/pwdEt"
+        android:id="@+id/reNewPwdEt"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="15dp"
-        android:singleLine="true"
-        android:password="true"
-        android:background="@drawable/qq_edit_login"
-        android:hint="请输入您的新密码"
-        android:ems="10" />
-
-    <EditText
-        android:id="@+id/repwdEt"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="15dp"
-        android:singleLine="true"
-        android:password="true"
-        android:background="@drawable/qq_edit_login"
-        android:hint="请再次输入您的新密码"
-        android:ems="10" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_ly_top"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/white"
+        android:ems="10"
+        android:hint="确认新密码"
+        android:padding="10dp"
+        android:textSize="20sp" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/checkboxs"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
-        android:orientation="horizontal">
-        <CheckBox
-            android:id="@+id/soilmos"
-            android:layout_width="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#fffffd"
+        android:orientation="vertical">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="土壤墒情"
-            android:textSize="17sp"
-            android:textColor="@drawable/selector_text_color"
-            style="@style/MyCheckBox"
-            android:clickable="true"/>
-        <CheckBox
-            android:id="@+id/corpclass"
-            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/NZWJXFL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:text="农作物精细分类"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+            <CheckBox
+                android:id="@+id/TRSQ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_alignParentRight="true"
+                android:text="土壤墒情监测"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="10dp"
-            android:text="农作物分类"
-            android:textSize="17sp"
-            android:textColor="@drawable/selector_text_color"
-            style="@style/MyCheckBox"
-            android:clickable="true"/>
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/NYBCHJC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:text="农业病虫害监测"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+            <CheckBox
+                android:id="@+id/TRFL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:text="土壤肥力"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/NZWZSJC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_alignParentRight="true"
+                android:text="农作物长势监测"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+            <CheckBox
+                android:id="@+id/NZWGC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:text="农作物估产"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
-        android:orientation="horizontal">
-        <CheckBox
-            android:id="@+id/lai"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="叶面积指数"
-            android:textSize="17sp"
-            android:textColor="@drawable/selector_text_color"
-            style="@style/MyCheckBox"
-            android:clickable="true"/>
-        <CheckBox
-            android:id="@+id/disease"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="10dp"
-            android:text="农业病虫害"
-            android:textSize="17sp"
-            android:textColor="@drawable/selector_text_color"
-            style="@style/MyCheckBox"
-            android:clickable="true"/>
-    </LinearLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
+        android:background="#FFFFFd"
         android:orientation="horizontal">
 
         <TextView android:id="@+id/beginDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:text="服务起始时间"
             android:textColor="#000000"
             android:textSize="17sp"
@@ -121,7 +173,9 @@
         <TextView android:id="@+id/endDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:text="服务结束时间"
             android:textColor="#000000"
             android:textSize="17sp"
@@ -130,11 +184,11 @@
 
     <Button
         android:id="@+id/saveBtn"
-        android:layout_width="104dp"
-        android:layout_height="35dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:layout_gravity="center"
-        android:layout_marginTop="18dp"
+        android:background="@drawable/button"
         android:text="保存"
-        android:background="@drawable/background_button_div" />
-
+        android:textColor="@color/button_text" />
 </LinearLayout>
