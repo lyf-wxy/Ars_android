@@ -1,16 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/main_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
 
     <com.esri.android.map.MapView
         android:id="@+id/map"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
 
         mapoptions.MapType="SATELLITE"
         mapoptions.ZoomLevel="6"
         mapoptions.center="39.9, 116.3" />
 
-</LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+        app:rippleColor="#d3dfe7"
+        app:backgroundTint="#d3dfe7"
+        app:elevation="8dp"
+        app:pressedTranslationZ="16dp"
+        android:id="@+id/search"
+            android:src="@drawable/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:layout_margin="8dp"
+
+        />
+        <android.support.design.widget.FloatingActionButton
+            app:rippleColor="#d3dfe7"
+            app:backgroundTint="#d3dfe7"
+            app:elevation="8dp"
+            app:pressedTranslationZ="16dp"
+            android:id="@+id/position"
+            android:src="@drawable/position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="80dp"
+            android:layout_marginRight="8dp"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            app:rippleColor="#d3dfe7"
+            app:backgroundTint="#d3dfe7"
+            app:elevation="8dp"
+            app:pressedTranslationZ="16dp"
+            android:id="@+id/showAll"
+            android:src="@drawable/showall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="8dp"
+            />
+
+
+
+
+
+
+</android.support.design.widget.CoordinatorLayout>
+
