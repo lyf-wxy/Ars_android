@@ -74,21 +74,9 @@ public class RequestUtil extends AppCompatActivity {
                     .build();
             Response response = null;
             response = okHttpClient.newCall(request).execute();
-
             str = response.body().string();
-                /*try {
-                    jsonObject = new JSONObject(str);
-                    String result = jsonObject.getString("result");//解析json查询结果
-                    if (result.equals("success")) {
-                        return true;
-                    } else {
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
         } catch (Exception e) {
             e.printStackTrace();
-            Log.i("Exception", e.getMessage());
         }
         return str;
     }

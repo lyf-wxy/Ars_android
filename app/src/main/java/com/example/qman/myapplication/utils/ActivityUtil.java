@@ -13,6 +13,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.areatab.AreaFragment;
+
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -21,6 +24,7 @@ import java.util.StringTokenizer;
  */
 
 public class ActivityUtil extends AppCompatActivity {
+    public static Fragment mContent;//当前显示的fragment
    /* public static void jumpFormActivityToActivity(Activity fromActivity, Class<? extends Activity> toActivity){
         Intent intent = new Intent();
         intent.setClass(fromActivity, toActivity.class);
@@ -147,15 +151,19 @@ public class ActivityUtil extends AppCompatActivity {
      */
     public static void switchToFragment(Activity activity,Fragment fragment,int containerViewId){
         FragmentManager fm = activity.getFragmentManager();
-        Log.i("fm in switch",fm.toString());
         FragmentTransaction tx = fm.beginTransaction();
-     //   tx.add(containerViewId, fragment);
-        tx.replace(containerViewId,fragment);
-        tx.commit();
+        /*tx.replace(containerViewId,fragment);
+        tx.commit();*/
+        if (!fragment.isAdded()) {    // 先判断是否被add过
+            tx.hide(mContent).add(containerViewId, fragment).commit(); // 隐藏当前的fragment，add下一个到Activity中
+        } else {
+            tx.hide(mContent).show(fragment).commit(); // 隐藏当前的fragment，显示下一个
+        }
+        mContent = fragment;
     }
 
     /**
-     * Fragment跳转到Fragment
+     * Fragment跳转到Fragment,带参数跳转
      * @param activity
      * @param fragment
      * @param containerViewId
@@ -167,55 +175,53 @@ public class ActivityUtil extends AppCompatActivity {
         Bundle args = new Bundle();
         args.putString("param", params);
         fragment.setArguments(args);
-        tx.replace(containerViewId, fragment);
-        tx.addToBackStack(null);
-        tx.commit();
+        if (!fragment.isAdded()) {    // 先判断是否被add过
+            tx.hide(mContent).add(containerViewId, fragment).commit(); // 隐藏当前的fragment，add下一个到Activity中
+        } else {
+            tx.hide(mContent).show(fragment).commit(); // 隐藏当前的fragment，显示下一个
+        }
+        mContent = fragment;
     }
 
-/*
-    public void turnToFragment(Class<? extends Fragment> fromFragmentClass, Class<? extends Fragment> toFragmentClass, Bundle args,int containerViewId) {
+    /**
+     * 设置默认显示的fragment
+     * @param fragment
+     */
+    public static void setDefaultFragment(Activity activity, Fragment fragment) {
+        FragmentManager fm = activity.getFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.add(R.id.id_content, fragment).commit();
+        mContent = fragment;
+    }
 
-        FragmentManager fm = getSupportFragmentManager();
-        //被切换的Fragment标签
-        String fromTag = fromFragmentClass.getSimpleName();
-        //切换到的Fragment标签
-        String toTag = toFragmentClass.getSimpleName();
-        //查找切换的Fragment
-        Fragment fromFragment = fm.findFragmentByTag(fromTag);
-        Fragment toFragment = fm.findFragmentByTag(toTag);
-        //如果要切换到的Fragment不存在，则创建
-        if (toFragment == null) {
-            try {
-                toFragment = toFragmentClass.newInstance();
-                toFragment.setArguments(args);
-            } catch (java.lang.InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+    //切换fragment的显示隐藏
+    public static void switchContent(Activity activity, Fragment to){
+        if (mContent != to) {
+            FragmentManager fm = activity.getFragmentManager();
+            FragmentTransaction transaction = fm.beginTransaction();
+            if (!to.isAdded()) {    // 先判断是否被add过
+                transaction.hide(mContent).add(R.id.id_content, to).commit(); // 隐藏当前的fragment，add下一个到Activity中
+            } else {
+                transaction.hide(mContent).show(to).commit(); // 隐藏当前的fragment，显示下一个
             }
+            mContent = to;
         }
-        //如果有参数传递，
-        if( args != null && !args.isEmpty() ) {
-            toFragment.getArguments().putAll(args);
-        }
-        //Fragment事务
-        FragmentTransaction ft = fm.beginTransaction();
-        *//**
-         * 如果要切换到的Fragment没有被Fragment事务添加，则隐藏被切换的Fragment，添加要切换的Fragment
-         * 否则，则隐藏被切换的Fragment，显示要切换的Fragment
-         *//*
-        if( !toFragment.isAdded()) {
-            ft.hide(fromFragment).add(containerViewId, toFragment, toTag);
-        } else {
-            ft.hide(fromFragment).show(toFragment);
-        }
-        //添加到返回堆栈
-//        ft.addToBackStack(tag);
-        //不保留状态提交事务
-        ft.commitAllowingStateLoss();
-    }*/
+    }
 
-
+    public static void switchContent(Activity activity, Fragment from, Fragment to){
+        if (mContent != to) {
+            FragmentManager fm = activity.getFragmentManager();
+            FragmentTransaction transaction = fm.beginTransaction();
+            if(from != mContent)
+                transaction.hide(from);
+            if (!to.isAdded()) {    // 先判断是否被add过
+                transaction.hide(mContent).add(R.id.id_content, to).commit(); // 隐藏当前的fragment，add下一个到Activity中
+            } else {
+                transaction.hide(mContent).show(to).commit(); // 隐藏当前的fragment，显示下一个
+            }
+            mContent = to;
+        }
+    }
     /**
      * 获取当前Activity带有的参数
      * @param activity

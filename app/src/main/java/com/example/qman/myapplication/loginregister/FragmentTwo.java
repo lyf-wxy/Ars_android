@@ -94,12 +94,10 @@ public class FragmentTwo extends Fragment implements OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.area_layout, container, false);
+        View view = inflater.inflate(R.layout.fragment_register_two, container, false);
         //取出FragmentOne跳转时传过来的数据
         if (getArguments() != null) {
             json = getArguments().getString("param");
-
-            Log.i("two",json);
         }
         listView = (ListView)view.findViewById(R.id.areaLists);
 
@@ -129,6 +127,7 @@ public class FragmentTwo extends Fragment implements OnClickListener
             e.printStackTrace();
         }
         RequestUtil.request(ajsonObject.toString(),"AndroidService/registerService",callback);
+        ActivityUtil.toastShow(getActivity(),"注册成功");
         ActivityUtil.switchTo(getActivity(), MainActivity.class);
     }
 

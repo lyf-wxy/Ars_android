@@ -18,7 +18,9 @@ import android.widget.Button;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.loginregister.FragmentTwo;
 import com.example.qman.myapplication.utils.ActivityUtil;
+import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.ListViewUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.Variables;
@@ -46,7 +48,6 @@ public class AreaFragment extends Fragment
 {
     private String json = "";
     JSONObject jsonObject = null;//利用json字符串生成json对象
-    private Button registerBtn ;
     private TextView tv_address;
 
     private ArrayList<AddressBean> provinceList = new ArrayList<>();//创建存放省份实体类的集合
@@ -66,13 +67,11 @@ public class AreaFragment extends Fragment
     private String id = "";
 
     private ListView listView;
-
-    private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
+    private ArrayList<HashMap<String,Object>> list = null;//adapt绑定的数据集
     private SimpleAdapter adapter = null;
 
     private Bundle savedState;//临时数据保存
 
-    private AreaItemFragment mAreaItem;
 
     /**
      * 将控件选择的行政区域加到listView中
@@ -81,13 +80,12 @@ public class AreaFragment extends Fragment
      * @param area
      * @return
      */
-    private ArrayList<HashMap<String, Object>> addData(String province,String city,String area){
-        HashMap<String,Object>map = new HashMap<String,Object>();
+    private void addData(String province,String city,String area){
+        HashMap<String,Object> map = new HashMap<String,Object>();
         map.put("province", province);
         map.put("city", city);
         map.put("area", area);
-        data.add(map);
-        return data;
+        list.add(map);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,17 +96,21 @@ public class AreaFragment extends Fragment
         codeidStr = ActivityUtil.getParam(getActivity(),"locno");//intent.getStringExtra("locno");
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
         listView = (ListView)view.findViewById(R.id.areaLists);
-        listView.setOnItemClickListener(null);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
+
+                JSONObject aJsonObject = new JSONObject();
+                //拼接json串，传给FragmentTwo，注册的第二步
+                try {
+                    aJsonObject.put("producttype",ActivityUtil.getParam(getActivity(),"producttype"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,aJsonObject.toString());
+            }
+        });
         listView.setOnDragListener(null);
-
-        /* 参数一多，有些人就头晕了。这里解说下，各个参数的意思。
-         * 第一个参数 this 代表的是当前上下文，可以理解为你当前所处的activity
-         * 第二个参数 getData() 一个包含了数据的List,注意这个List里存放的必须是map对象。simpleAdapter中的限制是这样的List<? extends Map<String, ?>> data
-         * 第三个参数 R.layout.user 展示信息的组件
-         * 第四个参数 一个string数组，数组内存放的是你存放数据的map里面的key。
-         * 第五个参数：一个int数组，数组内存放的是你展示信息组件中，每个数据的具体展示位置，与第四个参数一一对应
-         * */
-
         new ListViewLoadThreadTask().execute();
         return view ;
     }
@@ -117,7 +119,7 @@ public class AreaFragment extends Fragment
      * 加载listView时的新线程
      */
     class ListViewLoadThreadTask extends AsyncTask<String, Integer, String>{
-        ArrayList<HashMap<String,Object>> list = null;
+
         @Override
         protected String doInBackground(String... params) {
             list = ListViewUtil.initSplitData(codeidStr);
@@ -126,6 +128,13 @@ public class AreaFragment extends Fragment
 
         @Override
         protected void onPostExecute(String s) {
+            /* 参数含义：
+         * 第一个参数 this 代表的是当前上下文，可以理解为你当前所处的activity
+         * 第二个参数 getData() 一个包含了数据的List,注意这个List里存放的必须是map对象。simpleAdapter中的限制是这样的List<? extends Map<String, ?>> data
+         * 第三个参数 R.layout.user 展示信息的组件
+         * 第四个参数 一个string数组，数组内存放的是你存放数据的map里面的key。
+         * 第五个参数：一个int数组，数组内存放的是你展示信息组件中，每个数据的具体展示位置，与第四个参数一一对应
+         * */
             adapter = new SimpleAdapter(getActivity(), list, R.layout.city,
                     new String[]{"province","city","area"}, new int[]{R.id.province,R.id.city,R.id.area});
             listView.setAdapter(adapter);
@@ -179,8 +188,6 @@ public class AreaFragment extends Fragment
                 citiesSelected = citiesList.get(options1).get(option2);
                 areaSelecteds = areasListsList.get(options1).get(option2).get(options3);
                 tv_address.setText(address);
-                addData(provinceSelected,citiesSelected,areaSelecteds);
-                adapter.notifyDataSetChanged();
 
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
@@ -221,6 +228,8 @@ public class AreaFragment extends Fragment
             return null;
         }
 
+
+
     }
 
     class UpdateCityCodeIdThreadTask extends AsyncTask<String, Integer, String> {
@@ -238,8 +247,8 @@ public class AreaFragment extends Fragment
         }
         @Override
         protected void onPostExecute(String s) {
-            /*addData(provinceSelected,citiesSelected,areaSelecteds);
-            adapter.notifyDataSetChanged();*/
+            addData(provinceSelected,citiesSelected,areaSelecteds);
+            adapter.notifyDataSetChanged();
         }
     }
     @Override
@@ -364,39 +373,5 @@ public class AreaFragment extends Fragment
             }
         }
     };
-    /*//请求后的回调接口
-    private Callback callbackCityInfo = new Callback() {
-        @Override
-        public void onFailure(Call call, IOException e) {
-            // setResult(e.getMessage());
-        }
-        @Override
-        public void onResponse(Call call, Response response) throws IOException {
-            String str = response.body().string();
-            try {
-                jsonObject = new JSONObject(str);
-                String result =  jsonObject.getString("result");//解析json查询结果
-                if(result.equals("success")){
-                    String dataStr = jsonObject.getString("data");
-                    Log.i("dataStr",dataStr);
-                    JSONArray areaLists = new JSONArray(dataStr);
-                    if (areaLists.length()>0) {
-                        for (int i=0;i<areaLists.length();i++) {
-                            JSONArray aArea = new JSONArray(areaLists.get(i).toString());
-                            HashMap<String, Object> listm = new HashMap<String, Object>();
-                            listm.put("province", aArea.get(0).toString());
-                            listm.put("city", aArea.get(1).toString());
-                            listm.put("area", aArea.get(2).toString());
-                            data.add(listm);
-                        }
-                    }
-                    Log.d("data in function",data.toString());
-                } else {
-                    //setResult("注册失败");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };*/
+
 }
