@@ -55,6 +55,7 @@ public class AreaItemInfoFragment extends Fragment implements OnClickListener
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.area_item_info_fragment, container, false);
+
         Intent intent= getActivity().getIntent();
 
         initDatas();

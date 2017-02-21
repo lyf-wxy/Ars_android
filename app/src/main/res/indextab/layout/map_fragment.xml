@@ -9,7 +9,7 @@
 
 
     <com.esri.android.map.MapView
-        android:id="@+id/map"
+        android:id="@+id/mapofMapfragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
@@ -18,19 +18,19 @@
         mapoptions.center="39.9, 116.3" />
 
 
-        <android.support.design.widget.FloatingActionButton
+        <!--android.support.design.widget.FloatingActionButton
         app:rippleColor="#d3dfe7"
         app:backgroundTint="#d3dfe7"
         app:elevation="8dp"
         app:pressedTranslationZ="16dp"
         android:id="@+id/search"
             android:src="@drawable/search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="right|top"
-        android:layout_margin="8dp"
-
-        />
+        android:layout_marginTop="10dp"
+            android:layout_marginRight="8dp"
+        /-->
         <android.support.design.widget.FloatingActionButton
             app:rippleColor="#d3dfe7"
             app:backgroundTint="#d3dfe7"
@@ -58,9 +58,17 @@
             android:layout_margin="8dp"
             />
 
-
-
-
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:backgroundTint="#d3dfe7"
+        android:background="#d3dfe7"
+        android:layout_gravity="right|top|left"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        />
 
 
 </android.support.design.widget.CoordinatorLayout>
