@@ -5,6 +5,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +30,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -43,7 +47,8 @@ public class AreaItemFragment extends Fragment implements OnClickListener
     private String codeidStr = "";
     private String productType = "";
     private ListView listView;
-    private ArrayList<HashMap<String, Object>> adaptList = new ArrayList<HashMap<String,Object>>();
+    private RecyclerView recyclerView;
+    private List<HashMap<String, Object>> adaptList = new ArrayList<HashMap<String,Object>>();
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
     private SimpleAdapter adapter = null;
 
@@ -70,18 +75,60 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         View view = inflater.inflate(R.layout.area_item_fragment, container, false);
         productType = ActivityUtil.getParam(getActivity(),"producttype");
         listView = (ListView)view.findViewById(R.id.prodeucTypeLists);
-        initDataProductType(productType);
+        /*initDataProductType(productType);
         adapter = new SimpleAdapter(getActivity(), adaptList, R.layout.producttype,
                 new String[]{"producttype"}, new int[]{R.id.product_type});
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
+                ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);//
+            }
+        });*/
+
+
+        //recycleView
+        recyclerView = (RecyclerView) view.findViewById(R.id.prodeucTypeRecyclerView);
+        List<String> mDataList = new ArrayList<>();
+        String[] productTypes = productType.split("/");
+        for (int i = 0; i < productTypes.length; i++) {
+            mDataList.add(CheckBoxUtil.getChineseName(productTypes[i]));
+        }
+        //设置item动画
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        BaseRecyclerAdapter<String> mAdapter = new BaseRecyclerAdapter<String>(getActivity(),mDataList) {
+            @Override
+            public int getItemLayoutId(int viewType) {
+                return viewType;
+            }
+
+            @Override
+            public void bindData(RecyclerViewHolder holder, int position, String item) {
+                //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
+               holder.getTextView(R.id.title).setText(item);
+            }
+        };
+        recyclerView.setAdapter(mAdapter);
+        //添加item点击事件监听
+        ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int pos) {
                 ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
             }
         });
+        ((BaseRecyclerAdapter)mAdapter).setOnItemLongClickListener(new BaseRecyclerAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View itemView, int pos) {
+                //Toast.makeText(AdapterTestActivity.this, "long click " + pos, Toast.LENGTH_SHORT).show();
+            }
+        });
+        //设置布局样式LayoutManager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+// recyclerView.addItemDecoration(new ItemDividerDecoration(MainActivity.this, OrientationHelper.VERTICAL));
+
         return view ;
     }
+
     @Override
     public void onClick(View v)
     {

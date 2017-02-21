@@ -101,6 +101,7 @@ public class AreaItemInfoFragment extends Fragment implements OnClickListener
 
     }
 
+
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
