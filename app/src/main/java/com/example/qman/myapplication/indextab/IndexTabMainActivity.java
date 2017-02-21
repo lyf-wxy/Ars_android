@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.areatab.AreaFragment;
+import com.example.qman.myapplication.utils.ActivityUtil;
 //import com.example.qman.myapplication.R;
 
 public class IndexTabMainActivity extends Activity implements OnClickListener
@@ -38,19 +39,9 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
         mTabArea.setOnClickListener(this);
         mTabMap.setOnClickListener(this);
         // 设置默认的Fragment
-        setDefaultFragment();
-    }
-
-    // 设置默认的Fragment
-    private void setDefaultFragment()
-    {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction();
         mArea = new AreaFragment();
-        transaction.replace(R.id.id_content, mArea);
-        transaction.commit();
+        ActivityUtil.setDefaultFragment(IndexTabMainActivity.this, mArea);
     }
-
 
     @Override
     public void onClick(View v)
@@ -58,9 +49,6 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
         /**
          * tab页切换
          */
-        FragmentManager fm = getFragmentManager();
-        // 开启Fragment事务
-        FragmentTransaction transaction = fm.beginTransaction();
         switch (v.getId())
         {
             case R.id.tab01:
@@ -68,35 +56,26 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
                 {
                     mArea = new AreaFragment();
                 }
-                transaction.replace(R.id.id_content, mArea);
+                ActivityUtil.switchContent(IndexTabMainActivity.this, mArea);
                 break;
             case R.id.tab02:
                 if (mMap == null)
                 {
                     mMap = new MapFragment();
                 }
-                transaction.replace(R.id.id_content, mMap);
+                ActivityUtil.switchContent(IndexTabMainActivity.this, mMap);
                 break;
             case R.id.tab03:
+
                 if (mSetting == null)
                 {
                     mSetting = new SettingFragment();
                 }
-                // 使用当前Fragment的布局替代id_content的控件
-                transaction.replace(R.id.id_content, mSetting);
+                ActivityUtil.switchContent(IndexTabMainActivity.this, mSetting);
                 break;
             case R.id.tab04:
-               /* if (mMap == null)
-                {
-                    mMap = new MapFragment();
-                }
-                // 使用当前Fragment的布局替代id_content的控件
-                transaction.replace(R.id.id_content, mMap);*/
                 break;
         }
-        // transaction.addToBackStack();
-        // 事务提交
-        transaction.commit();
     }
 
 }

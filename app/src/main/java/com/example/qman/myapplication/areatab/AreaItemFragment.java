@@ -10,12 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.loginregister.FragmentTwo;
 import com.example.qman.myapplication.utils.ActivityUtil;
+import com.example.qman.myapplication.utils.CheckBoxUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +41,9 @@ public class AreaItemFragment extends Fragment implements OnClickListener
     JSONObject jsonObject = null;//利用json字符串生成json对象
 
     private String codeidStr = "";
-
+    private String productType = "";
+    private ListView listView;
+    private ArrayList<HashMap<String, Object>> adaptList = new ArrayList<HashMap<String,Object>>();
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
     private SimpleAdapter adapter = null;
 
@@ -46,36 +51,42 @@ public class AreaItemFragment extends Fragment implements OnClickListener
     private AreaItemInfoFragment mAreaItemInfo;
     private ArrayList<HashMap<String, Object>> initSplitData(){
         data.clear();
-
         return data;
     }
 
+    protected void initDataProductType(String productType){
+        String[] productTypes = productType.split("/");
+
+        for(String aProductType : productTypes){
+            HashMap<String, Object> listm = new HashMap<String, Object>();
+            listm.put("producttype", CheckBoxUtil.getChineseName(aProductType));
+            adaptList.add(listm);
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.area_item_fragment, container, false);
-        Intent intent= getActivity().getIntent();
-        skipBtn = (Button) view.findViewById(R.id.skipBtn);
-        skipBtn.setOnClickListener(this);
-        if (getArguments() != null) {
-            json = getArguments().getString("param");
-
-            Log.v("param from areaFragment",json);
-        }
+        productType = ActivityUtil.getParam(getActivity(),"producttype");
+        listView = (ListView)view.findViewById(R.id.prodeucTypeLists);
+        initDataProductType(productType);
+        adapter = new SimpleAdapter(getActivity(), adaptList, R.layout.producttype,
+                new String[]{"producttype"}, new int[]{R.id.product_type});
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
+                ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
+            }
+        });
         return view ;
     }
     @Override
     public void onClick(View v)
     {
-
         //跳转到AreaItemInfoFragment
         ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
-        /*FragmentManager fm = getFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction();
-        mAreaItemInfo = new AreaItemInfoFragment();
-        transaction.replace(R.id.id_content, mAreaItemInfo);
-        transaction.commit();*/
     }
 
     @Override

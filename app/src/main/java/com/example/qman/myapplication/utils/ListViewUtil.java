@@ -59,15 +59,12 @@ public class ListViewUtil extends AppCompatActivity {
        try {
             Response response = null;
             response = okHttpClient.newCall(request).execute();
-            Log.i("response",response.body().toString());
-
            String str = response.body().string();
            try {
                jsonObject = new JSONObject(str);
                String result =  jsonObject.getString("result");//解析json查询结果
                if(result.equals("success")){
                    String dataStr = jsonObject.getString("data");
-                   Log.i("dataStr",dataStr);
                    JSONArray areaLists = new JSONArray(dataStr);
                    if (areaLists.length()>0) {
                        for (int i=0;i<areaLists.length();i++) {
@@ -79,15 +76,12 @@ public class ListViewUtil extends AppCompatActivity {
                            data.add(listm);
                        }
                    }
-                   Log.d("data in function",data.toString());
                } else {
                    //setResult("注册失败");
                }
            } catch (JSONException e) {
                e.printStackTrace();
            }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -108,7 +102,6 @@ public class ListViewUtil extends AppCompatActivity {
                 String result =  jsonObject.getString("result");//解析json查询结果
                 if(result.equals("success")){
                     String dataStr = jsonObject.getString("data");
-                    Log.i("dataStr",dataStr);
                     JSONArray areaLists = new JSONArray(dataStr);
                     if (areaLists.length()>0) {
                         for (int i=0;i<areaLists.length();i++) {
@@ -120,7 +113,6 @@ public class ListViewUtil extends AppCompatActivity {
                             data.add(listm);
                         }
                     }
-                    Log.d("data in function",data.toString());
                 } else {
                     //setResult("注册失败");
                 }

@@ -49,9 +49,39 @@ public class CheckBoxUtil extends AppCompatActivity {
         public String getName(){
             return this.name;
         }
+
+
     }
 
     private static List<CheckBox> checkBoxList = new ArrayList<CheckBox>();
+
+    /**
+     * 已知英文缩写，获取中文名称
+     * @param letterName
+     * @return
+     */
+    public static String getChineseName(String letterName){
+        Type[] allType = Type.values ();
+        for (Type aType : allType) {
+            if (aType.name().equals(letterName))
+                return aType.getName();
+        }
+        return null;
+    }
+
+    /**
+     * 已知中文名称，获取英文缩写
+     * @param chineseName
+     * @return
+     */
+    public static String getLetterName(String chineseName){
+        Type[] allType = Type.values ();
+        for (Type aType : allType) {
+            if (aType.getName().equals(chineseName))
+                return aType.getName();
+        }
+        return null;
+    }
 
     public static void initView(ViewGroup viewGroup){
         checkBoxList.clear();

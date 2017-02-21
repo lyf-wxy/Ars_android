@@ -5,7 +5,8 @@
     android:orientation="vertical"
     android:layout_marginTop="0dp"
     android:layout_alignParentTop="true"
-    android:layout_centerHorizontal="true">
+    android:layout_centerHorizontal="true"
+    android:background="@color/green">
 
     <EditText
         android:id="@+id/usernameEt"
