@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.areatab.AreaFragment;
+import com.example.qman.myapplication.indextab.MapFragment;
 
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -152,13 +153,12 @@ public class ActivityUtil extends AppCompatActivity {
     public static void switchToFragment(Activity activity,Fragment fragment,int containerViewId){
         FragmentManager fm = activity.getFragmentManager();
         FragmentTransaction tx = fm.beginTransaction();
-        /*tx.replace(containerViewId,fragment);
-        tx.commit();*/
-        if (!fragment.isAdded()) {    // 先判断是否被add过
+        tx.replace(containerViewId,fragment);
+        /*if (!fragment.isAdded()) {    // 先判断是否被add过
             tx.hide(mContent).add(containerViewId, fragment); // 隐藏当前的fragment，add下一个到Activity中
         } else {
             tx.hide(mContent).show(fragment); // 隐藏当前的fragment，显示下一个
-        }
+        }*/
         tx.addToBackStack(null);
         tx.commit();
         mContent = fragment;
@@ -173,15 +173,15 @@ public class ActivityUtil extends AppCompatActivity {
     public static void switchToFragment(Activity activity,Fragment fragment,int containerViewId,String params){
         FragmentManager fm = activity.getFragmentManager();
         FragmentTransaction tx = fm.beginTransaction();
-
         Bundle args = new Bundle();
         args.putString("param", params);
         fragment.setArguments(args);
-        if (!fragment.isAdded()) {    // 先判断是否被add过
+        tx.replace(containerViewId,fragment);
+        /*if (!fragment.isAdded()) {    // 先判断是否被add过
             tx.hide(mContent).add(containerViewId, fragment); // 隐藏当前的fragment，add下一个到Activity中
         } else {
             tx.hide(mContent).show(fragment); // 隐藏当前的fragment，显示下一个
-        }
+        }*/
         tx.addToBackStack(null);
         tx.commit();
         mContent = fragment;
@@ -197,8 +197,16 @@ public class ActivityUtil extends AppCompatActivity {
         transaction.add(R.id.id_content, fragment).commit();
         mContent = fragment;
     }
-
-    //切换fragment的显示隐藏
+    //切换fragment的显示隐藏,replace()方式
+    public static void switchContentReplace(Activity activity, Fragment to){
+        if (mContent != to) {
+            FragmentManager fm = activity.getFragmentManager();
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.replace(R.id.id_content,to).commit();
+            mContent = to;
+        }
+    }
+    //切换fragment的显示隐藏,add()show()方式
     public static void switchContent(Activity activity, Fragment to){
         if (mContent != to) {
             FragmentManager fm = activity.getFragmentManager();
@@ -237,6 +245,17 @@ public class ActivityUtil extends AppCompatActivity {
         return intent.getStringExtra(param);
     }
 
+    /**
+     * 更新Bundle中的参数
+     * @param activity
+     * @param key
+     * @param val
+     */
+    public static void changeParam(Activity activity, String key, String val){
+        Intent intent= activity.getIntent();
+        intent.removeExtra(key);
+        intent.putExtra(key, (String) val);
+    }
 
     /**
      * </br><b>title : </b>       显示Toast消息。
