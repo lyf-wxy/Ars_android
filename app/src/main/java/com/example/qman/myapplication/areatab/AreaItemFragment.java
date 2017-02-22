@@ -1,9 +1,6 @@
 package com.example.qman.myapplication.areatab;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,13 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.example.qman.myapplication.R;
-import com.example.qman.myapplication.loginregister.FragmentTwo;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
 
@@ -34,61 +28,30 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 public class AreaItemFragment extends Fragment implements OnClickListener
 {
-    private String json = "";
-    private Button skipBtn;
     JSONObject jsonObject = null;//利用json字符串生成json对象
 
     private String codeidStr = "";
     private String productType = "";
-    private ListView listView;
     private RecyclerView recyclerView;
-    private List<HashMap<String, Object>> adaptList = new ArrayList<HashMap<String,Object>>();
+    private SearchView mSearchview;
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
-    private SimpleAdapter adapter = null;
 
     private Bundle savedState;//临时数据保存
-    private AreaItemInfoFragment mAreaItemInfo;
-    private ArrayList<HashMap<String, Object>> initSplitData(){
-        data.clear();
-        return data;
-    }
 
-    protected void initDataProductType(String productType){
-        String[] productTypes = productType.split("/");
-
-        for(String aProductType : productTypes){
-            HashMap<String, Object> listm = new HashMap<String, Object>();
-            listm.put("producttype", CheckBoxUtil.getChineseName(aProductType));
-            adaptList.add(listm);
-        }
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.area_item_fragment, container, false);
         productType = ActivityUtil.getParam(getActivity(),"producttype");
-        listView = (ListView)view.findViewById(R.id.prodeucTypeLists);
-        /*initDataProductType(productType);
-        adapter = new SimpleAdapter(getActivity(), adaptList, R.layout.producttype,
-                new String[]{"producttype"}, new int[]{R.id.product_type});
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
-                ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);//
-            }
-        });*/
-
 
         //recycleView
         recyclerView = (RecyclerView) view.findViewById(R.id.prodeucTypeRecyclerView);
+        mSearchview = (SearchView) view.findViewById(R.id.searchView);
         List<String> mDataList = new ArrayList<>();
         String[] productTypes = productType.split("/");
         for (int i = 0; i < productTypes.length; i++) {
@@ -126,6 +89,20 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 // recyclerView.addItemDecoration(new ItemDividerDecoration(MainActivity.this, OrientationHelper.VERTICAL));
 
+        mSearchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                Toast.makeText(getActivity().getApplicationContext(), query, Toast.LENGTH_LONG).show();
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return view ;
     }
 

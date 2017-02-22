@@ -6,15 +6,18 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.example.qman.myapplication.R;
@@ -47,7 +50,6 @@ import okhttp3.Response;
 public class AreaFragment extends Fragment
 {
     private String json = "";
-    JSONObject jsonObject = null;//利用json字符串生成json对象
     private TextView tv_address;
 
     private ArrayList<AddressBean> provinceList = new ArrayList<>();//创建存放省份实体类的集合
@@ -67,6 +69,7 @@ public class AreaFragment extends Fragment
     private String id = "";
 
     private ListView listView;
+    private SearchView mSearchview;
     private ArrayList<HashMap<String,Object>> list = null;//adapt绑定的数据集
     private SimpleAdapter adapter = null;
 
@@ -96,6 +99,32 @@ public class AreaFragment extends Fragment
         codeidStr = ActivityUtil.getParam(getActivity(),"locno");//intent.getStringExtra("locno");
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
         listView = (ListView)view.findViewById(R.id.areaLists);
+        listView.setTextFilterEnabled(true);//设置listView可以被过虑
+        mSearchview = (SearchView) view.findViewById(R.id.searchView);
+        // 设置该SearchView显示搜索按钮
+        mSearchview.setSubmitButtonEnabled(false);
+        // 设置该SearchView内默认显示的提示文本
+        mSearchview.setQueryHint("搜索");
+        mSearchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            // 用户输入字符时激发该方法
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (TextUtils.isEmpty(query)) {
+                    // 清除ListView的过滤
+                    listView.clearTextFilter();
+                } else {
+                    // 使用用户输入的内容对ListView的列表项进行过滤
+                    listView.setFilterText(query);
+                }
+                ActivityUtil.toastShow(getActivity(),query);
+                return false;
+            }
+            // 单击搜索按钮时激发该方法
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
@@ -110,6 +139,7 @@ public class AreaFragment extends Fragment
                 ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,aJsonObject.toString());
             }
         });
+
         listView.setOnDragListener(null);
         new ListViewLoadThreadTask().execute();
         return view ;
@@ -220,6 +250,8 @@ public class AreaFragment extends Fragment
                 String result = jsonObjectResult.getString("result");//解析json查询结果
                 if (result.equals("success")) {
                     codeidStr += jsonObjectResult.getString("codeid")+"/";
+                    //将缓存中的数据更新
+                    ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
                 } else {
                 }
             } catch (JSONException e) {
@@ -227,9 +259,6 @@ public class AreaFragment extends Fragment
             }
             return null;
         }
-
-
-
     }
 
     class UpdateCityCodeIdThreadTask extends AsyncTask<String, Integer, String> {
@@ -295,7 +324,6 @@ public class AreaFragment extends Fragment
     private Bundle saveState(){
         Bundle state = new Bundle();
         state.putString("codeidStr",codeidStr);
-        Log.v("saveState()",codeidStr);
         return state;
     }
     //解析获得的json字符串,放在各个集合中
@@ -329,49 +357,4 @@ public class AreaFragment extends Fragment
             e.printStackTrace();
         }
     }
-
-    //请求后的回调接口
-    private Callback callback = new Callback() {
-        @Override
-        public void onFailure(Call call, IOException e) {
-            // setResult(e.getMessage());
-        }
-        @Override
-        public void onResponse(Call call, Response response) throws IOException {
-            String str = response.body().string();
-            try {
-                jsonObject = new JSONObject(str);
-                String result =  jsonObject.getString("result");//解析json查询结果
-                if(result.equals("success")){
-                } else {
-                    //setResult("注册失败");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-    private Callback callbackCity = new Callback() {
-        @Override
-        public void onFailure(Call call, IOException e) {
-            // setResult(e.getMessage());
-        }
-
-        @Override
-        public void onResponse(Call call, Response response) throws IOException {
-            String str = response.body().string();
-            try {
-                jsonObject = new JSONObject(str);
-                String result =  jsonObject.getString("result");//解析json查询结果
-                if(result.equals("success")){
-                    codeidStr += jsonObject.getString("codeid")+"/";
-                } else {
-                    //setResult("注册失败");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
 }

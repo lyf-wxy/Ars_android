@@ -43,6 +43,17 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
         ActivityUtil.setDefaultFragment(IndexTabMainActivity.this, mArea);
     }
 
+    // 设置默认的Fragment
+    private void setDefaultFragment()
+    {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        mArea = new AreaFragment();
+        transaction.replace(R.id.id_content, mArea);
+        transaction.commit();
+    }
+
+
     @Override
     public void onClick(View v)
     {
@@ -56,14 +67,14 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
                 {
                     mArea = new AreaFragment();
                 }
-                ActivityUtil.switchContent(IndexTabMainActivity.this, mArea);
+                ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mArea);
                 break;
             case R.id.tab02:
                 if (mMap == null)
                 {
                     mMap = new MapFragment();
                 }
-                ActivityUtil.switchContent(IndexTabMainActivity.this, mMap);
+                ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mMap);
                 break;
             case R.id.tab03:
 
@@ -71,7 +82,7 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
                 {
                     mSetting = new SettingFragment();
                 }
-                ActivityUtil.switchContent(IndexTabMainActivity.this, mSetting);
+                ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mSetting);
                 break;
             case R.id.tab04:
                 break;

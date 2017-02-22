@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Locale;
 
 import okhttp3.Call;
@@ -36,11 +37,12 @@ import okhttp3.Response;
 
 public class SettingFragment extends Fragment implements View.OnClickListener
 {
-    private String json = "";
     private Button saveBtn;
     private String beginDate = null;
     private String endDate = null;
-
+    //判断开始时间和结束时间是否执行过，false表示未执行
+    private boolean isClickedBegin = false;
+    private boolean isClickedEnd = false;
     private EditText oldPwdEt = null;
     private EditText newPwdEt = null;
     private EditText reNewPwdEt = null;
@@ -51,6 +53,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
     private String id = "";
     private String productType = "";
     JSONObject jsonObject = null;//利用json字符串生成json对象
+    JSONObject ajsonObject = null;
     /**
      * 日期控件参数定义
      * */
@@ -76,6 +79,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
             beginDate = format
                     .format(dateAndTime.getTime());
             beginDateLabel.setText(beginDate);
+            isClickedBegin = true;
         }
     };
     DatePickerDialog.OnDateSetListener endDateListener = new DatePickerDialog.OnDateSetListener()
@@ -91,6 +95,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
             endDate = format
                     .format(dateAndTime.getTime());
             endDateLabel.setText(endDate);
+            isClickedEnd = true;
         }
     };
     @Override
@@ -105,40 +110,54 @@ public class SettingFragment extends Fragment implements View.OnClickListener
         CheckBoxUtil.setChecked(productType);//初始化checkBox状态
         saveBtn = (Button) view.findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(this);
+        isClickedBegin = false;
+        isClickedEnd = false;
         return view;
     }
 
     @Override
     public void onClick(View v)
     {
-        JSONObject ajsonObject = new JSONObject();
+        ajsonObject = new JSONObject();
         oldPwdInput = oldPwdEt.getText().toString().trim();
         newPwdInput = newPwdEt.getText().toString().trim();
         reNewPwdInput = reNewPwdEt.getText().toString().trim();
-
-        if (TextUtils.isEmpty(oldPwdInput) || TextUtils.isEmpty(newPwdInput) || TextUtils.isEmpty(reNewPwdInput) ||
-                (beginDateLabel == null) || (endDateLabel == null)) {
-            ActivityUtil.toastShowFragment(SettingFragment.this,"请完善所有信息");
-            return;
-        } else {
-            if (!newPwdInput.equals(reNewPwdInput)) {
-                ActivityUtil.toastShowFragment(SettingFragment.this,"两次输入的密码必须一致");
-                return;
-            } else {
-                try {
-                    ajsonObject.put("oldPwdInput",oldPwdInput);
-                    ajsonObject.put("newPwdInput",newPwdInput);
-                    ajsonObject.put("producttype",CheckBoxUtil.createResultStr());
-                    ajsonObject.put("id",id);
-                    ajsonObject.put("beginDate",beginDate);
-                    ajsonObject.put("endDate",endDate);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        try {
+            //密码信息有输入
+            if (!TextUtils.isEmpty(oldPwdInput) || !TextUtils.isEmpty(newPwdInput) || !TextUtils.isEmpty(reNewPwdInput)) {
+                //三项均不为空
+                if(!TextUtils.isEmpty(oldPwdInput) && !TextUtils.isEmpty(newPwdInput) && !TextUtils.isEmpty(reNewPwdInput)){
+                    if (!newPwdInput.equals(reNewPwdInput)) {
+                        //判断两次新密码输入是否一致
+                        ActivityUtil.toastShowFragment(SettingFragment.this,"两次输入的密码必须一致");
+                        return;
+                    } else {
+                        //一致时通过，加入json中待传给后台
+                        ajsonObject.put("oldPwdInput",oldPwdInput);
+                        ajsonObject.put("paswd",newPwdInput);
+                    }
                 }
-
+                else{
+                    //有为空项时提醒完善密码信息
+                    ActivityUtil.toastShowFragment(SettingFragment.this,"请将密码信息填完整");
+                }
+                return;
             }
+            if(!productType.equals(CheckBoxUtil.createResultStr()))
+                //当有更新时加入json中待传给后台
+                ajsonObject.put("producttype",CheckBoxUtil.createResultStr());
+            if(isClickedBegin)
+                ajsonObject.put("beginDate",beginDate);
+            if(isClickedEnd)
+                ajsonObject.put("endDate",endDate);
+            if(ajsonObject != null) {
+                //有变化时才进行更新
+                ajsonObject.put("id", id);
+                RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserInfoService",callback);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserInfoService",callback);
     }
     //请求后的回调接口
     private Callback callback = new Callback() {
@@ -154,6 +173,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener
                 String result =  jsonObject.getString("result");//解析json查询结果
                 if(result.equals("success")){
                     ActivityUtil.toastShow(getActivity(),"修改成功");
+                    Iterator iterator = ajsonObject.keys();
+                    while(iterator.hasNext()){
+                        String key = (String) iterator.next();
+                        String value = ajsonObject.getString(key);
+                        if(!key.equals("id")) {
+                            //将缓存中的数据更新
+                            ActivityUtil.changeParam(getActivity(), key, value);
+                        }
+                    }
                 } else {
                     ActivityUtil.toastShow(getActivity(),"修改失败");
                 }
@@ -162,6 +190,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
             }
         }
     };
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -172,7 +201,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener
         newPwdEt = (EditText) getActivity().findViewById(R.id.newPwdEt);
         reNewPwdEt = (EditText) getActivity().findViewById(R.id.reNewPwdEt);
         saveBtn = (Button) getActivity().findViewById(R.id.saveBtn);
-
 
         beginDateLabel=(TextView)getActivity().findViewById(R.id.beginDate);
         endDateLabel=(TextView)getActivity().findViewById(R.id.endDate);
