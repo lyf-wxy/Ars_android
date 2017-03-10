@@ -100,7 +100,7 @@ public class FragmentTwo extends Fragment implements OnClickListener
             json = getArguments().getString("param");
         }
         listView = (ListView)view.findViewById(R.id.areaLists);
-
+        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"注册");
         /* 参数一多，有些人就头晕了。这里解说下，各个参数的意思。
          * 第一个参数 this 代表的是当前上下文，可以理解为你当前所处的activity
          * 第二个参数 getData() 一个包含了数据的List,注意这个List里存放的必须是map对象。simpleAdapter中的限制是这样的List<? extends Map<String, ?>> data

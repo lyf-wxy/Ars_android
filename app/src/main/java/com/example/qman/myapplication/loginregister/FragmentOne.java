@@ -100,6 +100,7 @@ public class FragmentOne extends Fragment implements OnClickListener
         nextBtn.setOnClickListener(this);
         LinearLayout layout = (LinearLayout)view.findViewById(R.id.checkboxs);
         CheckBoxUtil.initView(layout);//遍历R.id.checkboxs的LinerLayout下的所有checkBox
+        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"注册");
         return view;
     }
 

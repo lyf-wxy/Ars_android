@@ -112,6 +112,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
         saveBtn.setOnClickListener(this);
         isClickedBegin = false;
         isClickedEnd = false;
+        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"个人设置");
         return view;
     }
 

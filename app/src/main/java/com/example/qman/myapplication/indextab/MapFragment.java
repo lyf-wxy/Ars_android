@@ -22,6 +22,7 @@ import com.esri.android.map.ags.ArcGISImageServiceLayer;
 import com.esri.core.map.MosaicRule;
 import com.esri.core.map.RasterFunction;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.GPSTracker;
 
 
@@ -42,6 +43,7 @@ public class MapFragment extends Fragment {
         //mSearch = (FloatingActionButton)view.findViewById(R.id.search);
         mShowall = (FloatingActionButton) view.findViewById(R.id.showAll);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
+        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"地图");
 //        mSearch.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v)

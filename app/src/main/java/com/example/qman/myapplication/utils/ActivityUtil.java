@@ -9,8 +9,11 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.qman.myapplication.R;
@@ -152,15 +155,15 @@ public class ActivityUtil extends AppCompatActivity {
      */
     public static void switchToFragment(Activity activity,Fragment fragment,int containerViewId){
         FragmentManager fm = activity.getFragmentManager();
-        FragmentTransaction tx = fm.beginTransaction();
-        tx.replace(containerViewId,fragment);
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(containerViewId,fragment);
         /*if (!fragment.isAdded()) {    // 先判断是否被add过
             tx.hide(mContent).add(containerViewId, fragment); // 隐藏当前的fragment，add下一个到Activity中
         } else {
             tx.hide(mContent).show(fragment); // 隐藏当前的fragment，显示下一个
         }*/
-        tx.addToBackStack(null);
-        tx.commit();
+        transaction.addToBackStack(fragment.getClass().getName());
+        transaction.commit();
         mContent = fragment;
     }
 
@@ -172,21 +175,55 @@ public class ActivityUtil extends AppCompatActivity {
      */
     public static void switchToFragment(Activity activity,Fragment fragment,int containerViewId,String params){
         FragmentManager fm = activity.getFragmentManager();
-        FragmentTransaction tx = fm.beginTransaction();
+        FragmentTransaction transaction = fm.beginTransaction();
         Bundle args = new Bundle();
         args.putString("param", params);
         fragment.setArguments(args);
-        tx.replace(containerViewId,fragment);
+        transaction.replace(containerViewId,fragment);
         /*if (!fragment.isAdded()) {    // 先判断是否被add过
             tx.hide(mContent).add(containerViewId, fragment); // 隐藏当前的fragment，add下一个到Activity中
         } else {
             tx.hide(mContent).show(fragment); // 隐藏当前的fragment，显示下一个
         }*/
-        tx.addToBackStack(null);
-        tx.commit();
+        transaction.addToBackStack(fragment.getClass().getName());
+        transaction.commit();
         mContent = fragment;
     }
 
+    /**
+     * 设置标题栏显示文字
+     * @param activity
+     * @param containerViewId
+     * @param params
+     */
+    public static void setTitle(Activity activity,int containerViewId,String params){
+        TextView title = (TextView)activity.findViewById(containerViewId);
+        title.setText(params);
+    }
+
+    /**
+     * 全部可见
+     * @param title
+     * @param toolbar_search
+     * @param toolbar_add
+     */
+    public static void setAllVisibilitys(TextView title, Button toolbar_search, Button toolbar_add){
+        title.setVisibility(View.VISIBLE);
+        toolbar_search.setVisibility(View.VISIBLE);
+        toolbar_add.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 只可见标题栏
+     * @param title
+     * @param toolbar_search
+     * @param toolbar_add
+     */
+    public static void setOnlyVisibilitys(TextView title, Button toolbar_search, Button toolbar_add){
+        title.setVisibility(View.VISIBLE);
+        toolbar_search.setVisibility(View.GONE);
+        toolbar_add.setVisibility(View.GONE);
+    }
     /**
      * 设置默认显示的fragment
      * @param fragment
@@ -197,16 +234,25 @@ public class ActivityUtil extends AppCompatActivity {
         transaction.add(R.id.id_content, fragment).commit();
         mContent = fragment;
     }
-    //切换fragment的显示隐藏,replace()方式
-    public static void switchContentReplace(Activity activity, Fragment to){
+
+    /**
+     * 切换fragment的tab页显示隐藏,replace()方式,包含清空回退栈
+     * @param activity 当前活动的activity
+     * @param to 要跳转到的fragment
+     */
+    public static void switchContentReplace(Activity activity, Fragment to ){
         if (mContent != to) {
             FragmentManager fm = activity.getFragmentManager();
+            //把第一个及他之上的所有内容出栈并显示上一个Fragment，即清空回退栈
+            if(fm.getBackStackEntryCount() > 0)
+                fm.popBackStackImmediate(fm.getBackStackEntryAt(0).getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             FragmentTransaction transaction = fm.beginTransaction();
-            transaction.replace(R.id.id_content,to).commit();
+            transaction.replace(R.id.id_content,to);
+            transaction.commit();
             mContent = to;
         }
     }
-    //切换fragment的显示隐藏,add()show()方式
+    //切换fragment的tab页显示隐藏,add()show()方式
     public static void switchContent(Activity activity, Fragment to){
         if (mContent != to) {
             FragmentManager fm = activity.getFragmentManager();
@@ -216,6 +262,7 @@ public class ActivityUtil extends AppCompatActivity {
             } else {
                 transaction.hide(mContent).show(to).commit(); // 隐藏当前的fragment，显示下一个
             }
+            //transaction.addToBackStack(null);
             mContent = to;
         }
     }
@@ -231,6 +278,7 @@ public class ActivityUtil extends AppCompatActivity {
             } else {
                 transaction.hide(mContent).show(to).commit(); // 隐藏当前的fragment，显示下一个
             }
+            //transaction.addToBackStack(null);
             mContent = to;
         }
     }

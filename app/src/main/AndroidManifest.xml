@@ -8,7 +8,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -26,11 +26,12 @@
         </activity>
         <activity android:name=".loginregister.IndexActivity" />
         <activity android:name=".loginregister.RegisterFragmentActivity" />
-
         <activity android:name=".indextab.IndexTabMainActivity" />
-        <!--<activity android:name=".RightFragment" />
-        <activity android:name=".LeftFragment">-->
-
+        <activity android:name=".utils.TitleActivity" />
+        <!--
+        <activity android:name=".RightFragment" />
+        <activity android:name=".LeftFragment">
+        -->
 
     </application>
 

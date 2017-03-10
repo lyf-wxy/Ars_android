@@ -2,6 +2,7 @@ package com.example.qman.myapplication.areatab;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,15 @@ import java.util.List;
  */
 
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerViewHolder> {
+    protected int resource;
     protected final List<T> mData;
     protected final Context mContext;
     protected LayoutInflater mInflater;
     private OnItemClickListener mClickListener;
     private OnItemLongClickListener mLongClickListener;
 
-    public BaseRecyclerAdapter(Context ctx, List<T> list) {
+    public BaseRecyclerAdapter(int resource, Context ctx, List<T> list) {
+        this.resource = resource;
         mData = (list != null) ? list : new ArrayList<T>();
         mContext = ctx;
         mInflater = LayoutInflater.from(ctx);
@@ -31,7 +34,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final RecyclerViewHolder holder = new RecyclerViewHolder(mContext,
-                mInflater.inflate(R.layout.area_item_fragment_cardview, parent, false));//getItemLayoutId(viewType)
+                mInflater.inflate(resource, parent, false));//getItemLayoutId(viewType)
         if (mClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
