@@ -6,12 +6,19 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+<<<<<<< HEAD
 import android.support.design.widget.FloatingActionButton;
+=======
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+>>>>>>> Qman29/master
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
@@ -30,6 +37,8 @@ import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.ListViewUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
+import com.example.qman.myapplication.utils.TitleActivity;
+import com.example.qman.myapplication.utils.TitleInterface;
 import com.example.qman.myapplication.utils.Variables;
 import com.example.qman.myapplication.indextab.AddressBean;
 import com.example.qman.myapplication.indextab.JsonUtils;
@@ -42,14 +51,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class AreaFragment extends Fragment
 {
@@ -75,12 +76,14 @@ public class AreaFragment extends Fragment
 
     private ListView listView;
     private SearchView mSearchview;
+    private RecyclerView recyclerView;
     private ArrayList<HashMap<String,Object>> list = null;//adapt绑定的数据集
-    private SimpleAdapter adapter = null;
-
+    //private SimpleAdapter adapter = null;
+    private BaseRecyclerAdapter<String> mAdapter = null;
     private Bundle savedState;//临时数据保存
-
-
+    private TextView title;
+    private Button toolbar_search;
+    private Button toolbar_add;
     /**
      * 将控件选择的行政区域加到listView中
      * @param province
@@ -104,8 +107,27 @@ public class AreaFragment extends Fragment
         codeidStr = ActivityUtil.getParam(getActivity(),"locno");//intent.getStringExtra("locno");
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
         listView = (ListView)view.findViewById(R.id.areaLists);
-        listView.setTextFilterEnabled(true);//设置listView可以被过虑
+        recyclerView = (RecyclerView) view.findViewById(R.id.areaRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
+        toolbar_search = (Button)getActivity().findViewById(R.id.toolbar_search);
+        toolbar_add = (Button)getActivity().findViewById(R.id.toolbar_add);
+        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"区域");
+        toolbar_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mSearchview.getVisibility() == View.VISIBLE){
+                    mSearchview.setVisibility(View.GONE);
+                }
+                else if(mSearchview.getVisibility() == View.GONE){
+                    mSearchview.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        listView.setTextFilterEnabled(true);//设置listView可以被过虑
+        new ListViewLoadThreadTask().execute();
+
+        // 设置该SearchView默认是否自动缩小为图标
+        mSearchview.setIconifiedByDefault(false);
         // 设置该SearchView显示搜索按钮
         mSearchview.setSubmitButtonEnabled(false);
         // 设置该SearchView内默认显示的提示文本
@@ -130,6 +152,8 @@ public class AreaFragment extends Fragment
                 return false;
             }
         });
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
@@ -146,14 +170,15 @@ public class AreaFragment extends Fragment
         });
 
         listView.setOnDragListener(null);
-        new ListViewLoadThreadTask().execute();
         return view ;
     }
+
 
     /**
      * 加载listView时的新线程
      */
     class ListViewLoadThreadTask extends AsyncTask<String, Integer, String>{
+
 
         @Override
         protected String doInBackground(String... params) {
@@ -163,27 +188,41 @@ public class AreaFragment extends Fragment
 
         @Override
         protected void onPostExecute(String s) {
-            /* 参数含义：
-         * 第一个参数 this 代表的是当前上下文，可以理解为你当前所处的activity
-         * 第二个参数 getData() 一个包含了数据的List,注意这个List里存放的必须是map对象。simpleAdapter中的限制是这样的List<? extends Map<String, ?>> data
-         * 第三个参数 R.layout.user 展示信息的组件
-         * 第四个参数 一个string数组，数组内存放的是你存放数据的map里面的key。
-         * 第五个参数：一个int数组，数组内存放的是你展示信息组件中，每个数据的具体展示位置，与第四个参数一一对应
-         * */
-            adapter = new SimpleAdapter(getActivity(), list, R.layout.city,
-                    new String[]{"province","city","area"}, new int[]{R.id.province,R.id.city,R.id.area});
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            List<String> mDataList = new ArrayList<>();
+            String[] productTypes = codeidStr.split("/");
+            for (int i = 0; i < productTypes.length; i++) {
+                mDataList.add(productTypes[i]);
+            }
+            //设置item动画
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            mAdapter = new BaseRecyclerAdapter<String>(R.layout.area_layout_cardview,getActivity(),mDataList) {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    //获得选中项的HashMap对象
-                    HashMap<String,String> map=(HashMap<String,String>)listView.getItemAtPosition(position);
-                    String title=map.get("province");
-                    String content=map.get("area");
-                    //跳转到AreaItemFragment
-                    ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content,json);
+                public int getItemLayoutId(int viewType) {
+                    return viewType;
+                }
+
+                @Override
+                public void bindData(RecyclerViewHolder holder, int position, String item) {
+                    //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
+                    holder.getTextView(R.id.title).setText(item);
+                }
+            };
+            recyclerView.setAdapter(mAdapter);
+            //添加item点击事件监听
+            ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View itemView, int pos) {
+                    ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
                 }
             });
+            ((BaseRecyclerAdapter)mAdapter).setOnItemLongClickListener(new BaseRecyclerAdapter.OnItemLongClickListener() {
+                @Override
+                public void onItemLongClick(View itemView, int pos) {
+                    //Toast.makeText(AdapterTestActivity.this, "long click " + pos, Toast.LENGTH_SHORT).show();
+                }
+            });
+            //设置布局样式LayoutManager
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         }
     }
 
@@ -235,7 +274,7 @@ public class AreaFragment extends Fragment
             }
         });
         //点击文本框的时候,显示地址选择框
-        tv_address.setOnClickListener(new View.OnClickListener() {
+        toolbar_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mPvOptions.show();
@@ -297,7 +336,8 @@ public class AreaFragment extends Fragment
         @Override
         protected void onPostExecute(String s) {
             addData(provinceSelected,citiesSelected,areaSelecteds);
-            adapter.notifyDataSetChanged();
+            //adapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
         }
     }
     @Override

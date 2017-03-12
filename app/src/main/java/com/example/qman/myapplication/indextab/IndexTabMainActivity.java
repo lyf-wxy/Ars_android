@@ -5,27 +5,44 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+<<<<<<< HEAD
 import android.widget.Toast;
+=======
+import android.widget.TextView;
+>>>>>>> Qman29/master
 
 
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.areatab.AreaFragment;
 
 import com.example.qman.myapplication.utils.ActivityUtil;
+import com.example.qman.myapplication.utils.TitleActivity;
 //import com.example.qman.myapplication.R;
 
-public class IndexTabMainActivity extends Activity implements OnClickListener
+public class IndexTabMainActivity extends TitleActivity implements OnClickListener
 {
     private LinearLayout mTabSetting;
     private LinearLayout mTabArea;
     private LinearLayout mTabMap;
+    private LinearLayout mTabOther;
     private SettingFragment mSetting;
     private AreaFragment mArea;
     private MapFragment mMap;
+<<<<<<< HEAD
+=======
+    private BlankFragment mOther;
+
+    private TextView title;
+    private Button toolbar_search;
+    private Button toolbar_add;
+>>>>>>> Qman29/master
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,11 +55,21 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
         mTabSetting = (LinearLayout) findViewById(R.id.tab03);
         mTabArea = (LinearLayout) findViewById(R.id.tab01);
         mTabMap = (LinearLayout) findViewById(R.id.tab02);
+        mTabOther = (LinearLayout) findViewById(R.id.tab04);
         mTabSetting.setOnClickListener(this);
         mTabArea.setOnClickListener(this);
         mTabMap.setOnClickListener(this);
+        mTabOther.setOnClickListener(this);
         // 设置默认的Fragment
         mArea = new AreaFragment();
+
+
+        toolbar_add = (Button) findViewById(R.id.toolbar_add);
+        toolbar_search = (Button) findViewById(R.id.toolbar_search);
+        title = (TextView) findViewById(R.id.toolbar_title);
+
+        ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add);
+        ActivityUtil.setTitle(IndexTabMainActivity.this,R.id.toolbar_title,"区域");
         ActivityUtil.setDefaultFragment(IndexTabMainActivity.this, mArea);
     }
 
@@ -70,6 +97,9 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
                 {
                     mArea = new AreaFragment();
                 }
+
+                ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add);
+                //需要从AreaItemFragment开始将回退栈清空
                 ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mArea);
                 break;
             case R.id.tab02:
@@ -77,7 +107,9 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
                 {
                     mMap = new MapFragment();
                 }
-                ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mMap);
+
+                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add);
+                ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mMap );
                 break;
             case R.id.tab03:
 
@@ -85,9 +117,18 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
                 {
                     mSetting = new SettingFragment();
                 }
+
+                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add);
                 ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mSetting);
                 break;
             case R.id.tab04:
+                if (mOther == null)
+                {
+                    mOther = new BlankFragment();
+                }
+
+                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add);
+                //ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mOther);
                 break;
         }
     }

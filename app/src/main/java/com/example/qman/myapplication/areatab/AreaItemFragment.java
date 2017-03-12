@@ -59,7 +59,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         }
         //设置item动画
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        BaseRecyclerAdapter<String> mAdapter = new BaseRecyclerAdapter<String>(getActivity(),mDataList) {
+        BaseRecyclerAdapter<String> mAdapter = new BaseRecyclerAdapter<String>(R.layout.area_item_fragment_cardview,getActivity(),mDataList) {
             @Override
             public int getItemLayoutId(int viewType) {
                 return viewType;
@@ -71,6 +71,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
                holder.getTextView(R.id.title).setText(item);
             }
         };
+        //recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, true));
         recyclerView.setAdapter(mAdapter);
         //添加item点击事件监听
         ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {

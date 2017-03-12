@@ -8,5 +8,8 @@
 
     <color name="white">#FFFFFF</color>
     <color name="blue">#3E697A</color>
-    <color name="green">#99CC99</color>  <!--63b670  66CC99-->
+    <color name="green">#41a35a</color>  <!--63b670  66CC99   99CC99  68b12b-->
+    <color name="greenbutton">#009d46</color> <!--99CC99-->
+    <color name="gray">#eff0f2</color><!--e3e2e2-->
+    <color name="deepgray">#55545a</color><!--e3e2e2-->
 </resources>
