@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/LinearLayout1ofsavedrawarea"
+        android:orientation="horizontal"
+        >
+        <com.esri.android.map.MapView
+            android:id="@+id/mapofsavedrawarea"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            mapoptions.MapType="SATELLITE"
+            mapoptions.ZoomLevel="6"
+            mapoptions.center="39.9, 116.3" />
+    </LinearLayout>
+
+    <TextView
+        android:gravity="center"
+        android:text="请输入地块名称"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="200dp"
+        android:id="@+id/textView" />
+
+    <EditText
+        android:id="@+id/fieldNameofDrawArea"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="240dp"
+        android:background="#ffffff"/>
+    <android.support.design.widget.FloatingActionButton
+        app:rippleColor="#d3dfe7"
+        app:backgroundTint="#d3dfe7"
+        app:elevation="8dp"
+        app:pressedTranslationZ="16dp"
+        android:id="@+id/cancelOfSaveDrawArea"
+        android:src="@drawable/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
+
+        />
+    <android.support.design.widget.FloatingActionButton
+        app:rippleColor="#d3dfe7"
+        app:backgroundTint="#d3dfe7"
+        app:elevation="8dp"
+        app:pressedTranslationZ="16dp"
+        android:id="@+id/saveOfSaveDrawArea"
+        android:src="@drawable/ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+
+        />
+
+
+</android.support.design.widget.CoordinatorLayout>

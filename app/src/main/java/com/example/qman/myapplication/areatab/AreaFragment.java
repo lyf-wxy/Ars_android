@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +22,10 @@ import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.indextab.IndexTabMainActivity;
 import com.example.qman.myapplication.loginregister.FragmentTwo;
+import com.example.qman.myapplication.lyf.drawarea.DrawArea;
+
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.ListViewUtil;
@@ -50,7 +54,8 @@ import okhttp3.Response;
 public class AreaFragment extends Fragment
 {
     private String json = "";
-    private TextView tv_address;
+    private Button tv_address;
+    private Button tv_draw;
 
     private ArrayList<AddressBean> provinceList = new ArrayList<>();//创建存放省份实体类的集合
 
@@ -189,7 +194,9 @@ public class AreaFragment extends Fragment
             //第一次进入做一些初始化操作
         }
 
-        tv_address = (TextView) getActivity().findViewById(R.id.tv_address);
+        tv_address = (Button) getActivity().findViewById(R.id.tv_address);
+        tv_draw = (Button) getActivity().findViewById(R.id.tv_draw);
+
         //获取json字符串,用来解析以获取集合
         String jsonString = JsonUtils.getJsonString(getActivity(),
                 "province_data.json");
@@ -217,7 +224,8 @@ public class AreaFragment extends Fragment
                 provinceSelected = provinceList.get(options1).getPickerViewText();
                 citiesSelected = citiesList.get(options1).get(option2);
                 areaSelecteds = areasListsList.get(options1).get(option2).get(options3);
-                tv_address.setText(address);
+
+                //tv_address.setText(address);
 
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
@@ -231,8 +239,20 @@ public class AreaFragment extends Fragment
             @Override
             public void onClick(View view) {
                 mPvOptions.show();
+//                selectAreaOrDraw mselectAreaOrDraw =  new selectAreaOrDraw();
+//                ActivityUtil.switchToFragment(getActivity(), mselectAreaOrDraw,R.id.fullscreen);
             }
         });
+
+        //Draw
+        tv_draw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DrawArea mDrawArea =  new DrawArea();
+                ActivityUtil.switchToFragment(getActivity(), mDrawArea,R.id.fullscreen);
+            }
+        });
+
     }
 
     class QueryCityCodeIdThreadTask extends AsyncTask<String, Integer, String>{

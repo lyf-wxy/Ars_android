@@ -2,32 +2,104 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:id="@+id/area_layout_id"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SearchView
-        android:id="@+id/searchView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:backgroundTint="#d3dfe7"
-        android:background="#d3dfe7"
-        android:layout_gravity="right|top|left"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        />
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        >
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            >
+            <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:backgroundTint="#d3dfe7"
+            android:background="#d3dfe7"
+            android:layout_gravity="right|top|left"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="8dp"
+                />
+
+
+
+
+        </LinearLayout>
+        <!--LinearLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            >
+
+            <android.support.design.widget.FloatingActionButton
+                app:rippleColor="#d3dfe7"
+                app:backgroundTint="#d3dfe7"
+                app:elevation="8dp"
+                app:pressedTranslationZ="16dp"
+                android:id="@+id/tv_address"
+                android:src="@drawable/add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|top"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                />
+
+
+
+        </LinearLayout-->
+
+
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/areaLists"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
     </ListView>
 
-    <TextView
-        android:id="@+id/tv_address"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_gravity="center"
-        android:text="点击添加区域"
-        android:textSize="22sp"/>
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        >
+        <Button
+            android:layout_weight="0.5"
+            android:id="@+id/tv_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_gravity="center"
+            android:text="点击添加区域"
+            android:textSize="22sp"/>
+        <Button
+            android:layout_weight="0.5"
+            android:id="@+id/tv_draw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_gravity="center"
+            android:text="Draw"
+            android:textSize="22sp"/>
+    </LinearLayout>
+
 
 </LinearLayout>

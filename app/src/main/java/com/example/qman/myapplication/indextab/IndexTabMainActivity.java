@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.areatab.AreaFragment;
+
 import com.example.qman.myapplication.utils.ActivityUtil;
 //import com.example.qman.myapplication.R;
 
@@ -24,6 +26,7 @@ public class IndexTabMainActivity extends Activity implements OnClickListener
     private SettingFragment mSetting;
     private AreaFragment mArea;
     private MapFragment mMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

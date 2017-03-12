@@ -69,14 +69,15 @@ public class GPSTracker extends Service implements LocationListener {
 
             isWifiEnabled = locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
 
-
             if (!isGPSEnabled && !isNetworkEnabled && !isWifiEnabled) {
                 // no network provider is enabled
+                Log.d("allproviderenable", "allproviderenable");
             } else {
 
                 this.canGetLocation = true;
 
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                if (mContext.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && mContext.checkCallingOrSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -92,7 +93,7 @@ public class GPSTracker extends Service implements LocationListener {
 
 
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    Log.d("Network", "Network");
+                    Log.d("isNetworkEnabled", "Network");
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (location != null) {
@@ -103,44 +104,31 @@ public class GPSTracker extends Service implements LocationListener {
                     }
                 }
                 // if GPS Enabled get lat/long using GPS Services
-                if (isGPSEnabled) {
-                    if (location == null) {
+                else if (isGPSEnabled) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    Log.d("isGPSEnabled", "isGPSEnabled");
+                    if (locationManager != null) {
+                        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
 
-
-                        locationManager.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER,
-                                MIN_TIME_BW_UPDATES,
-                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
-                        if (locationManager != null) {
-                            location = locationManager
-                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null) {
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
-
-                            }
                         }
                     }
+
                 }
 
 
-                if (isWifiEnabled) {
+                else if (isWifiEnabled) {
 
-                    if (location == null) {
-                        locationManager.requestLocationUpdates(
-                                LocationManager.PASSIVE_PROVIDER,
-                                MIN_TIME_BW_UPDATES,
-                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
-                        if (locationManager != null) {
-                            location = locationManager
-                                    .getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-                            if (location != null) {
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
+                    locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    Log.d("isWifiEnabled", "isWifiEnabled");
+                    if (locationManager != null) {
+                        location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
 
-                            }
                         }
                     }
 
@@ -155,6 +143,7 @@ public class GPSTracker extends Service implements LocationListener {
             }
 
         } catch (Exception e) {
+            Log.d("Exception11", e.getMessage());
         }
         return location;
     }
