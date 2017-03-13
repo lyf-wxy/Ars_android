@@ -155,7 +155,7 @@ public class AreaItemInfoFragment extends Fragment implements OnClickListener
         mDatas = new ArrayList<Integer>(Arrays.asList(R.drawable.a,
                 R.drawable.b, R.drawable.a, R.drawable.b, R.drawable.a,
                 R.drawable.b, R.drawable.a, R.drawable.b, R.drawable.a));
-        mdatetime = new ArrayList<String>(Arrays.asList("1","2","3","4","5","6","7","8","9"));
+        mdatetime = new ArrayList<String>(Arrays.asList("2017-02-01","2017-02-02","2017-02-03","2017-02-04","2017-02-05","2017-02-06","2017-02-07","2017-02-08","2017-02-09"));
     }
 
 }

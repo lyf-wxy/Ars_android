@@ -6,9 +6,13 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import android.support.design.widget.FloatingActionButton;
+
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +29,10 @@ import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.indextab.IndexTabMainActivity;
 import com.example.qman.myapplication.loginregister.FragmentTwo;
+import com.example.qman.myapplication.lyf.drawarea.DrawArea;
+
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.ListViewUtil;
@@ -48,7 +55,8 @@ import java.util.List;
 public class AreaFragment extends Fragment
 {
     private String json = "";
-    private TextView tv_address;
+    private Button tv_address;
+    private Button tv_draw;
 
     private ArrayList<AddressBean> provinceList = new ArrayList<>();//创建存放省份实体类的集合
 
@@ -98,7 +106,7 @@ public class AreaFragment extends Fragment
         id = ActivityUtil.getParam(getActivity(),"id");
         codeidStr = ActivityUtil.getParam(getActivity(),"locno");//intent.getStringExtra("locno");
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
-        listView = (ListView)view.findViewById(R.id.areaLists);
+        //listView = (ListView)view.findViewById(R.id.areaLists);
         recyclerView = (RecyclerView) view.findViewById(R.id.areaRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
         toolbar_search = (Button)getActivity().findViewById(R.id.toolbar_search);
@@ -115,7 +123,9 @@ public class AreaFragment extends Fragment
                 }
             }
         });
-        listView.setTextFilterEnabled(true);//设置listView可以被过虑
+
+        //listView.setTextFilterEnabled(true);//设置listView可以被过虑
+
         new ListViewLoadThreadTask().execute();
 
         // 设置该SearchView默认是否自动缩小为图标
@@ -146,22 +156,22 @@ public class AreaFragment extends Fragment
         });
 
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
-
-                JSONObject aJsonObject = new JSONObject();
-                //拼接json串，传给FragmentTwo，注册的第二步
-                try {
-                    aJsonObject.put("producttype",ActivityUtil.getParam(getActivity(),"producttype"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,aJsonObject.toString());
-            }
-        });
-
-        listView.setOnDragListener(null);
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
+//
+//                JSONObject aJsonObject = new JSONObject();
+//                //拼接json串，传给FragmentTwo，注册的第二步
+//                try {
+//                    aJsonObject.put("producttype",ActivityUtil.getParam(getActivity(),"producttype"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,aJsonObject.toString());
+//            }
+//        });
+//
+//        listView.setOnDragListener(null);
         return view ;
     }
 
@@ -225,7 +235,9 @@ public class AreaFragment extends Fragment
             //第一次进入做一些初始化操作
         }
 
-        tv_address = (TextView) getActivity().findViewById(R.id.tv_address);
+        tv_address = (Button) getActivity().findViewById(R.id.tv_address);
+        tv_draw = (Button) getActivity().findViewById(R.id.tv_draw);
+
         //获取json字符串,用来解析以获取集合
         String jsonString = JsonUtils.getJsonString(getActivity(),
                 "province_data.json");
@@ -253,7 +265,8 @@ public class AreaFragment extends Fragment
                 provinceSelected = provinceList.get(options1).getPickerViewText();
                 citiesSelected = citiesList.get(options1).get(option2);
                 areaSelecteds = areasListsList.get(options1).get(option2).get(options3);
-                tv_address.setText(address);
+
+                //tv_address.setText(address);
 
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
@@ -267,8 +280,20 @@ public class AreaFragment extends Fragment
             @Override
             public void onClick(View view) {
                 mPvOptions.show();
+//                selectAreaOrDraw mselectAreaOrDraw =  new selectAreaOrDraw();
+//                ActivityUtil.switchToFragment(getActivity(), mselectAreaOrDraw,R.id.fullscreen);
             }
         });
+
+        //Draw
+        tv_draw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DrawArea mDrawArea =  new DrawArea();
+                ActivityUtil.switchToFragment(getActivity(), mDrawArea,R.id.fullscreen);
+            }
+        });
+
     }
 
     class QueryCityCodeIdThreadTask extends AsyncTask<String, Integer, String>{

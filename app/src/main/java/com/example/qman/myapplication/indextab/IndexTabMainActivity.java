@@ -12,11 +12,16 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import android.widget.Toast;
+
 import android.widget.TextView;
+
 
 
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.areatab.AreaFragment;
+
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.TitleActivity;
 //import com.example.qman.myapplication.R;
@@ -30,11 +35,13 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
     private SettingFragment mSetting;
     private AreaFragment mArea;
     private MapFragment mMap;
+
     private BlankFragment mOther;
 
     private TextView title;
     private Button toolbar_search;
     private Button toolbar_add;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
