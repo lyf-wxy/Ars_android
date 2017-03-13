@@ -12,11 +12,11 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-<<<<<<< HEAD
+
 import android.widget.Toast;
-=======
+
 import android.widget.TextView;
->>>>>>> Qman29/master
+
 
 
 import com.example.qman.myapplication.R;
@@ -35,14 +35,13 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
     private SettingFragment mSetting;
     private AreaFragment mArea;
     private MapFragment mMap;
-<<<<<<< HEAD
-=======
+
     private BlankFragment mOther;
 
     private TextView title;
     private Button toolbar_search;
     private Button toolbar_add;
->>>>>>> Qman29/master
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

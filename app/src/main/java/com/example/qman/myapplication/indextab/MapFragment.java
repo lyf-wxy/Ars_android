@@ -76,13 +76,13 @@ public class MapFragment extends Fragment {
         //mSearch = (FloatingActionButton)view.findViewById(R.id.search);
         mShowall = (FloatingActionButton) view.findViewById(R.id.showAll);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
-<<<<<<< HEAD
+
 
         final MarkerSymbol positionSymbol = new PictureMarkerSymbol(getActivity().getDrawable(R.drawable.positionsymbol));
 
-=======
+
         ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"地图");
->>>>>>> Qman29/master
+
 //        mSearch.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v)

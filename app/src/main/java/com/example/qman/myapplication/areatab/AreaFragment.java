@@ -6,13 +6,13 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-<<<<<<< HEAD
+
 import android.support.design.widget.FloatingActionButton;
-=======
+
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
->>>>>>> Qman29/master
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -106,7 +106,7 @@ public class AreaFragment extends Fragment
         id = ActivityUtil.getParam(getActivity(),"id");
         codeidStr = ActivityUtil.getParam(getActivity(),"locno");//intent.getStringExtra("locno");
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
-        listView = (ListView)view.findViewById(R.id.areaLists);
+        //listView = (ListView)view.findViewById(R.id.areaLists);
         recyclerView = (RecyclerView) view.findViewById(R.id.areaRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
         toolbar_search = (Button)getActivity().findViewById(R.id.toolbar_search);
@@ -123,7 +123,9 @@ public class AreaFragment extends Fragment
                 }
             }
         });
-        listView.setTextFilterEnabled(true);//设置listView可以被过虑
+
+        //listView.setTextFilterEnabled(true);//设置listView可以被过虑
+
         new ListViewLoadThreadTask().execute();
 
         // 设置该SearchView默认是否自动缩小为图标
@@ -154,22 +156,22 @@ public class AreaFragment extends Fragment
         });
 
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
-
-                JSONObject aJsonObject = new JSONObject();
-                //拼接json串，传给FragmentTwo，注册的第二步
-                try {
-                    aJsonObject.put("producttype",ActivityUtil.getParam(getActivity(),"producttype"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,aJsonObject.toString());
-            }
-        });
-
-        listView.setOnDragListener(null);
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
+//
+//                JSONObject aJsonObject = new JSONObject();
+//                //拼接json串，传给FragmentTwo，注册的第二步
+//                try {
+//                    aJsonObject.put("producttype",ActivityUtil.getParam(getActivity(),"producttype"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,aJsonObject.toString());
+//            }
+//        });
+//
+//        listView.setOnDragListener(null);
         return view ;
     }
 

@@ -35,6 +35,7 @@ import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.areatab.AreaItemFragment;
 import com.example.qman.myapplication.loginregister.MainActivity;
 import com.example.qman.myapplication.utils.ActivityUtil;
 
@@ -319,8 +320,9 @@ public class DrawArea extends Fragment  {
                     SaveDrawArea mSaveDrawArea =  SaveDrawArea.newInstance(str);
 
                     //ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.fullscreen);
-                    ActivityUtil.switchContent(getActivity(), ActivityUtil.mContent,mSaveDrawArea,R.id.fullscreen);
+                    //ActivityUtil.switchContent(getActivity(), ActivityUtil.mContent,mSaveDrawArea,R.id.fullscreen);
 
+                    ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.fullscreen);
 
 
                 }
