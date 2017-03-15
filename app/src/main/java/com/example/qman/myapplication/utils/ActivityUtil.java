@@ -210,10 +210,11 @@ public class ActivityUtil extends AppCompatActivity {
      * @param toolbar_search
      * @param toolbar_add
      */
-    public static void setAllVisibilitys(TextView title, Button toolbar_search, Button toolbar_add){
+    public static void setAllVisibilitys(TextView title, Button toolbar_search, Button toolbar_add, Button toolbar_draw){
         title.setVisibility(View.VISIBLE);
         toolbar_search.setVisibility(View.VISIBLE);
         toolbar_add.setVisibility(View.VISIBLE);
+        toolbar_draw.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -222,10 +223,11 @@ public class ActivityUtil extends AppCompatActivity {
      * @param toolbar_search
      * @param toolbar_add
      */
-    public static void setOnlyVisibilitys(TextView title, Button toolbar_search, Button toolbar_add){
+    public static void setOnlyVisibilitys(TextView title, Button toolbar_search, Button toolbar_add, Button toolbar_draw){
         title.setVisibility(View.VISIBLE);
         toolbar_search.setVisibility(View.GONE);
         toolbar_add.setVisibility(View.GONE);
+        toolbar_draw.setVisibility(View.GONE);
     }
     /**
      * 设置默认显示的fragment

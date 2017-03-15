@@ -41,7 +41,7 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
     private TextView title;
     private Button toolbar_search;
     private Button toolbar_add;
-
+    private Button toolbar_draw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -66,8 +66,9 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
         toolbar_add = (Button) findViewById(R.id.toolbar_add);
         toolbar_search = (Button) findViewById(R.id.toolbar_search);
         title = (TextView) findViewById(R.id.toolbar_title);
+        toolbar_draw = (Button) findViewById(R.id.toolbar_draw);
 
-        ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add);
+        ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
         ActivityUtil.setTitle(IndexTabMainActivity.this,R.id.toolbar_title,"区域");
         ActivityUtil.setDefaultFragment(IndexTabMainActivity.this, mArea);
     }
@@ -97,7 +98,7 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
                     mArea = new AreaFragment();
                 }
 
-                ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add);
+                ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
                 //需要从AreaItemFragment开始将回退栈清空
                 ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mArea);
                 break;
@@ -107,7 +108,7 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
                     mMap = new MapFragment();
                 }
 
-                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add);
+                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
                 ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mMap );
                 break;
             case R.id.tab03:
@@ -117,7 +118,7 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
                     mSetting = new SettingFragment();
                 }
 
-                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add);
+                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
                 ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mSetting);
                 break;
             case R.id.tab04:
@@ -126,7 +127,7 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
                     mOther = new BlankFragment();
                 }
 
-                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add);
+                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
                 //ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mOther);
                 break;
         }
