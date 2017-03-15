@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,7 +79,7 @@ public class MapFragment extends Fragment {
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
 
 
-        final MarkerSymbol positionSymbol = new PictureMarkerSymbol(getActivity().getDrawable(R.drawable.positionsymbol));
+        final MarkerSymbol positionSymbol = new PictureMarkerSymbol(ContextCompat.getDrawable(getActivity(),R.drawable.positionsymbol));
 
 
         ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"地图");

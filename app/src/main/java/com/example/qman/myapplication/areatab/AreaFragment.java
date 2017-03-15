@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -51,12 +53,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class AreaFragment extends Fragment
 {
     private String json = "";
-    private Button tv_address;
-    private Button tv_draw;
 
     private ArrayList<AddressBean> provinceList = new ArrayList<>();//创建存放省份实体类的集合
 
@@ -74,30 +75,17 @@ public class AreaFragment extends Fragment
     private String codeidStr = "";
     private String id = "";
 
-    private ListView listView;
     private SearchView mSearchview;
     private RecyclerView recyclerView;
-    private ArrayList<HashMap<String,Object>> list = null;//adapt绑定的数据集
-    //private SimpleAdapter adapter = null;
-    private BaseRecyclerAdapter<String> mAdapter = null;
+    private List<HashMap<String,Object>> list = null;//adapt绑定的数据集
+    private BaseRecyclerAdapter<HashMap<String,Object>> mAdapter = null;
     private Bundle savedState;//临时数据保存
-    private TextView title;
     private Button toolbar_search;
     private Button toolbar_add;
-    /**
-     * 将控件选择的行政区域加到listView中
-     * @param province
-     * @param city
-     * @param area
-     * @return
-     */
-    private void addData(String province,String city,String area){
-        HashMap<String,Object> map = new HashMap<String,Object>();
-        map.put("province", province);
-        map.put("city", city);
-        map.put("area", area);
-        list.add(map);
-    }
+    private Button toolbar_draw;
+    private String addAreaName = "";//未被添加过，需要刷新RecyclerAdapter
+    private String codeIdTemp = "";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -106,11 +94,11 @@ public class AreaFragment extends Fragment
         id = ActivityUtil.getParam(getActivity(),"id");
         codeidStr = ActivityUtil.getParam(getActivity(),"locno");//intent.getStringExtra("locno");
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
-        //listView = (ListView)view.findViewById(R.id.areaLists);
         recyclerView = (RecyclerView) view.findViewById(R.id.areaRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
         toolbar_search = (Button)getActivity().findViewById(R.id.toolbar_search);
         toolbar_add = (Button)getActivity().findViewById(R.id.toolbar_add);
+        toolbar_draw = (Button)getActivity().findViewById(R.id.toolbar_draw);
         ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"区域");
         toolbar_search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,8 +112,6 @@ public class AreaFragment extends Fragment
             }
         });
 
-        //listView.setTextFilterEnabled(true);//设置listView可以被过虑
-
         new ListViewLoadThreadTask().execute();
 
         // 设置该SearchView默认是否自动缩小为图标
@@ -138,40 +124,16 @@ public class AreaFragment extends Fragment
             // 用户输入字符时激发该方法
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (TextUtils.isEmpty(query)) {
-                    // 清除ListView的过滤
-                    listView.clearTextFilter();
-                } else {
-                    // 使用用户输入的内容对ListView的列表项进行过滤
-                    listView.setFilterText(query);
-                }
-                ActivityUtil.toastShow(getActivity(),query);
-                return false;
+                return true;
             }
             // 单击搜索按钮时激发该方法
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                mAdapter.getFilter().
+                        filter(newText);
+                return true;
             }
         });
-
-
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
-//
-//                JSONObject aJsonObject = new JSONObject();
-//                //拼接json串，传给FragmentTwo，注册的第二步
-//                try {
-//                    aJsonObject.put("producttype",ActivityUtil.getParam(getActivity(),"producttype"));
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,aJsonObject.toString());
-//            }
-//        });
-//
-//        listView.setOnDragListener(null);
         return view ;
     }
 
@@ -181,62 +143,58 @@ public class AreaFragment extends Fragment
      */
     class ListViewLoadThreadTask extends AsyncTask<String, Integer, String>{
 
-
         @Override
         protected String doInBackground(String... params) {
-            list = ListViewUtil.initSplitData(codeidStr);
+
+            list = ListViewUtil.initSplitData(ActivityUtil.getParam(getActivity(),"id"), codeidStr);
             return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            List<String> mDataList = new ArrayList<>();
-            String[] productTypes = codeidStr.split("/");
-            for (int i = 0; i < productTypes.length; i++) {
-                mDataList.add(productTypes[i]);
-            }
-            //设置item动画
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            mAdapter = new BaseRecyclerAdapter<String>(R.layout.area_layout_cardview,getActivity(),mDataList) {
-                @Override
-                public int getItemLayoutId(int viewType) {
-                    return viewType;
-                }
+            try{
+                //设置item动画
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                mAdapter = new BaseRecyclerAdapter<HashMap<String,Object>>(R.layout.area_layout_cardview,getActivity(),list) {//HashMap<String,Object>
+                    @Override
+                    public int getItemLayoutId(int viewType) {
+                        return viewType;
+                    }
 
-                @Override
-                public void bindData(RecyclerViewHolder holder, int position, String item) {
-                    //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
-                    holder.getTextView(R.id.title).setText(item);
-                }
-            };
-            recyclerView.setAdapter(mAdapter);
-            //添加item点击事件监听
-            ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(View itemView, int pos) {
-                    ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
-                }
-            });
-            ((BaseRecyclerAdapter)mAdapter).setOnItemLongClickListener(new BaseRecyclerAdapter.OnItemLongClickListener() {
-                @Override
-                public void onItemLongClick(View itemView, int pos) {
-                    //Toast.makeText(AdapterTestActivity.this, "long click " + pos, Toast.LENGTH_SHORT).show();
-                }
-            });
-            //设置布局样式LayoutManager
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    @Override
+                    public void bindData(RecyclerViewHolder holder, int position, HashMap<String,Object> item) {
+                        //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
+                        holder.getTextView(R.id.title).setText(item.get("ordername").toString());
+                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
+                        holder.getImageView(R.id.image).setImageBitmap(bit);
+                    }
+                };
+                recyclerView.setAdapter(mAdapter);
+                //添加item点击事件监听
+                ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View itemView, int pos) {
+                        ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
+                    }
+                });
+                ((BaseRecyclerAdapter)mAdapter).setOnItemLongClickListener(new BaseRecyclerAdapter.OnItemLongClickListener() {
+                    @Override
+                    public void onItemLongClick(View itemView, int pos) {
+                        //Toast.makeText(AdapterTestActivity.this, "long click " + pos, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                //设置布局样式LayoutManager
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(!restoreStateFromArguments()){
-            //第一次进入做一些初始化操作
-        }
-
-        tv_address = (Button) getActivity().findViewById(R.id.tv_address);
-        tv_draw = (Button) getActivity().findViewById(R.id.tv_draw);
 
         //获取json字符串,用来解析以获取集合
         String jsonString = JsonUtils.getJsonString(getActivity(),
@@ -268,10 +226,9 @@ public class AreaFragment extends Fragment
 
                 //tv_address.setText(address);
 
+                addAreaName = "";//默认该行政区域未被添加过，需要更新RecyclerView
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
-                //确定添加，更新数据库的codeid字段
-                new UpdateCityCodeIdThreadTask().execute();
 
             }
         });
@@ -286,7 +243,7 @@ public class AreaFragment extends Fragment
         });
 
         //Draw
-        tv_draw.setOnClickListener(new View.OnClickListener() {
+        toolbar_draw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DrawArea mDrawArea =  new DrawArea();
@@ -297,7 +254,6 @@ public class AreaFragment extends Fragment
     }
 
     class QueryCityCodeIdThreadTask extends AsyncTask<String, Integer, String>{
-
         @Override
         protected String doInBackground(String... params) {
             //查询订购区域代码codeid
@@ -309,16 +265,31 @@ public class AreaFragment extends Fragment
                 String str = RequestUtil.request(jsonObject.toString(),"AndroidService/cityService");
                 JSONObject jsonObjectResult = new JSONObject(str);
                 String result = jsonObjectResult.getString("result");//解析json查询结果
+
                 if (result.equals("success")) {
-                    codeidStr += jsonObjectResult.getString("codeid")+"/";
-                    //将缓存中的数据更新
-                    ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
+                    codeIdTemp = jsonObjectResult.getString("codeid");
+                    if(codeidStr.indexOf(codeIdTemp)!=-1){
+                        addAreaName = "";//已被添加过，不需要更新RecyclerAdapter
+                        //该区域已经被添加过
+                        ActivityUtil.toastShow(getActivity(),"该区域已经被添加过");
+                    }else{
+                        addAreaName = provinceSelected + " " + citiesSelected + " " + areaSelecteds;
+                        codeidStr += jsonObjectResult.getString("codeid") +"/";
+                        //将缓存中的数据更新
+                        ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
+                    }
                 } else {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return null;
+            return addAreaName;
+        }
+        //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
+        @Override
+        protected void onPostExecute(String s) {
+            //确定添加，更新数据库的codeid字段
+            new UpdateCityCodeIdThreadTask().execute();
         }
     }
 
@@ -329,65 +300,28 @@ public class AreaFragment extends Fragment
             try {
                 ajsonObject.put("id",id);
                 ajsonObject.put("codeidStr",codeidStr);
+                ajsonObject.put("ordername",addAreaName);
+                ajsonObject.put("sdpath","pathTemp");
+                ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
+                ajsonObject.put("codeid",codeIdTemp);
+                ajsonObject.put("geometry","000");
+                RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
+                RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");
+                ListViewUtil.addData(addAreaName,"pathTemp","000");//第二个参数为缩略图显示地址
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");
+
             return null;
         }
         @Override
         protected void onPostExecute(String s) {
-            addData(provinceSelected,citiesSelected,areaSelecteds);
+
             //adapter.notifyDataSetChanged();
             mAdapter.notifyDataSetChanged();
         }
     }
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
-        //可能再次保存临时数据
-        saveStateToArguments();
-    }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        //也有可能再次保存临时数据
-        saveStateToArguments();
-    }
-    //保存临时数据
-    private void saveStateToArguments(){
-        savedState = saveState();
-
-        if(savedState != null){
-            getActivity().getIntent().getExtras();
-            Bundle b = getActivity().getIntent().getExtras();//getArguments();
-            b.putBundle("codeidStr",savedState);
-        }
-    }
-    //取出临时数据
-    private boolean restoreStateFromArguments(){
-        Bundle b = getArguments();
-        if(b!=null)
-            savedState = b.getBundle("codeidStr");
-        if(savedState != null){
-            restoreState();
-            return true;
-        }
-        return false;
-    }
-
-    private void restoreState(){
-        if(savedState != null){
-            codeidStr = savedState.getString("codeidStr");
-        }
-    }
-
-    private Bundle saveState(){
-        Bundle state = new Bundle();
-        state.putString("codeidStr",codeidStr);
-        return state;
-    }
     //解析获得的json字符串,放在各个集合中
     private void parseJson(String json){
         try {

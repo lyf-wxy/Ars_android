@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,10 @@ import com.esri.core.map.Graphic;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.areatab.AreaFragment;
+import com.example.qman.myapplication.utils.ActivityUtil;
+import com.example.qman.myapplication.utils.IncreasingId;
+import com.example.qman.myapplication.utils.RequestUtil;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
@@ -59,6 +64,8 @@ public class SaveDrawArea extends Fragment {
     FloatingActionButton mCancel;
 
     EditText mDrawAreaName;
+    String fieldName = "";
+    String FileDirectory = "";
     public static SaveDrawArea newInstance(String graphic)
     {
         SaveDrawArea newFragment = new SaveDrawArea();
@@ -118,14 +125,16 @@ public class SaveDrawArea extends Fragment {
             public void onClick(View v) {
 
                 //"/storage/sdcard0/Arsandroid/liua.png"
-                String fieldName = mDrawAreaName.getText().toString();
+                fieldName = mDrawAreaName.getText().toString();
 
                 Bitmap bitmap=getViewBitmap(mMapView);
 
-                String FileDirectory = saveMyBitmap(fieldName,bitmap);//保存缩略图，并返回文件路径
+                FileDirectory = saveMyBitmap(fieldName,bitmap);//保存缩略图，并返回文件路径
 
                 bitmap.recycle();
-                Log.d("mSave",getSDPath());
+                new AreaCodeInfoServiceThreadTask().execute();
+
+
 
 
             }
@@ -147,6 +156,34 @@ public class SaveDrawArea extends Fragment {
         });
 
         return view;
+    }
+
+    class AreaCodeInfoServiceThreadTask extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            JSONObject ajsonObject = new JSONObject();
+            try {
+                String codeIdTemp = "10"+ (int)((Math.random()*9+1)*1000);
+                ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
+                ajsonObject.put("codeid",codeIdTemp);
+                ajsonObject.put("sdpath",FileDirectory);
+                ajsonObject.put("geometry","000");
+                ajsonObject.put("ordername",fieldName);
+                RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
+                ajsonObject.put("codeidStr",ActivityUtil.getParam(getActivity(),"locno")+codeIdTemp+"/");
+                ajsonObject.put("id",ActivityUtil.getParam(getActivity(),"id"));
+                RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");//更新用户表中的区域codeid字段
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return "";
+        }
+        //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
+        @Override
+        protected void onPostExecute(String s) {
+            ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
+        }
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
