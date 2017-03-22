@@ -187,12 +187,8 @@ public class AreaFragment extends Fragment
 
                         Toast.makeText(getActivity(), mDataList.get(pos), Toast.LENGTH_SHORT).show();
 
-                        AreaItemFragment areaItemFragment = new AreaItemFragment();
-                     /*   Bundle bundle = new Bundle();
-                        bundle.putString("codeid",mDataList.get(pos));
-                        areaItemFragment.setArguments(bundle);*/
                         ActivityUtil.putParam(getActivity(),"codeid",mDataList.get(pos));
-                        ActivityUtil.switchToFragment(getActivity(),areaItemFragment,R.id.id_content);
+                        ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
 
                     }
                 });

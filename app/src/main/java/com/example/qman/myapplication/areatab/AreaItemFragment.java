@@ -1,6 +1,7 @@
 package com.example.qman.myapplication.areatab;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
+import com.example.qman.myapplication.utils.RequestUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +46,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
 
     private String mField;
     private String userid;
+    private String geometry;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -85,7 +88,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
                 ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
 
                 String selectedClass = mDataList.get(pos);
-                Toast.makeText(getActivity(), mField+","+mDataList.get(pos), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), mField+","+mDataList.get(pos), Toast.LENGTH_SHORT).show();
 
                 AreaItemInfoFragment areaItemInfoFragment = new AreaItemInfoFragment();
                 Bundle bundle = new Bundle();
@@ -114,7 +117,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                Toast.makeText(getActivity().getApplicationContext(), query, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity().getApplicationContext(), query, Toast.LENGTH_LONG).show();
 
                 return false;
             }
@@ -124,9 +127,51 @@ public class AreaItemFragment extends Fragment implements OnClickListener
                 return false;
             }
         });
+        new QueryOrdersThreadTask().execute();//查询该项信息
         return view ;
     }
 
+    class QueryOrdersThreadTask extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            //查询订购区域代码codeid
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("codeid",mField);
+                jsonObject.put("userid",userid);
+                String str = RequestUtil.request(jsonObject.toString(),"AndroidService/cityInfoService");//服务名称不规范
+                JSONObject jsonObjectResult = new JSONObject(str);
+                String result = jsonObjectResult.getString("result");//解析json查询结果
+                if (result.equals("success")) {
+                    String dataStr = jsonObjectResult.getString("data");
+                    JSONArray areaLists = new JSONArray(dataStr);
+                    if (areaLists.length() > 0) {
+                        for (int i = 0; i < areaLists.length(); i++) {
+                            JSONArray aArea = new JSONArray(areaLists.get(i).toString());
+                            geometry = aArea.get(2).toString();
+                            ActivityUtil.putParam(getActivity(),"geometry",geometry);
+                            //addData(aArea.get(0).toString(), aArea.get(1).toString(), aArea.get(2).toString());
+                       /* HashMap<String, Object> listm = new HashMap<String, Object>();
+                        listm.put("ordername", aArea.get(0).toString());
+                        listm.put("sdpath", aArea.get(1).toString());
+                        listm.put("geometry", aArea.get(2).toString());*/
+
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return "";
+        }
+        //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
+        @Override
+        protected void onPostExecute(String s) {
+
+
+        }
+    }
     @Override
     public void onClick(View v) {
         //跳转到AreaItemInfoFragment
