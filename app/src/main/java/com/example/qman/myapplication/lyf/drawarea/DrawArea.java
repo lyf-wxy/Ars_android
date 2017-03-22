@@ -317,12 +317,14 @@ public class DrawArea extends Fragment  {
 
                     String str = GeometryEngine.geometryToJson(mMapView.getSpatialReference(),mPolygLineOrPolygonGraphic.getGeometry());
 
-                    SaveDrawArea mSaveDrawArea =  SaveDrawArea.newInstance(str);
+                    SaveDrawArea mSaveDrawArea = new SaveDrawArea();
 
                     //ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.fullscreen);
                     //ActivityUtil.switchContent(getActivity(), ActivityUtil.mContent,mSaveDrawArea,R.id.fullscreen);
-
-                    ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.fullscreen);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("DrawAreaString",str);
+                    mSaveDrawArea.setArguments(bundle);
+                    ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.id_content);
 
 
                 }

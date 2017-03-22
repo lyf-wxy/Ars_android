@@ -65,7 +65,7 @@ public class FragmentTwo extends Fragment implements OnClickListener
 
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
     private SimpleAdapter adapter = null;
-
+    private String addAreaName = "";
     /**
      * listView初始化为空
      * @return
@@ -121,8 +121,10 @@ public class FragmentTwo extends Fragment implements OnClickListener
     {
         JSONObject ajsonObject = null;
         try {
+            addAreaName = provinceSelected + " " + citiesSelected + " " + areaSelecteds;
             ajsonObject = new JSONObject(json);
             ajsonObject.put("codeidStr",codeidStr);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -232,6 +234,13 @@ public class FragmentTwo extends Fragment implements OnClickListener
                 jsonObject = new JSONObject(str);
                 String result =  jsonObject.getString("result");//解析json查询结果
                 if(result.equals("success")){
+                    JSONObject ajsonObject = new JSONObject();
+                    ajsonObject.put("ordername",addAreaName);
+                    ajsonObject.put("sdpath","pathTemp");
+                    ajsonObject.put("userid",jsonObject.getString("id"));
+                    ajsonObject.put("codeid",jsonObject.getString("codeid"));
+                    ajsonObject.put("geometry","000");
+                    RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
                 } else {
                     //setResult("注册失败");
                 }
@@ -255,6 +264,7 @@ public class FragmentTwo extends Fragment implements OnClickListener
                 if(result.equals("success")){
                     codeidStr += jsonObject.getString("codeid") + "/";
                     Log.i("codeid",codeidStr);
+
                 } else {
                     //setResult("注册失败");
                 }
