@@ -319,9 +319,6 @@ public class DrawArea extends Fragment  {
 
                     SaveDrawArea mSaveDrawArea = new SaveDrawArea();
 
-                    Log.d("DrawArea",str);
-                    //ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.fullscreen);
-                    //ActivityUtil.switchContent(getActivity(), ActivityUtil.mContent,mSaveDrawArea,R.id.fullscreen);
                     ActivityUtil.putParam(getActivity(),"DrawAreaString",str);
                     ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.id_content);
 
