@@ -2,9 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="120dp"
     android:layout_height="120dp"
-    android:clickable="true"
-    android:focusableInTouchMode="true"
-    android:focusable="true"
+
     android:background="@drawable/item_bg02">
     <ImageView
         android:id="@+id/id_index_gallery_item_image"
@@ -27,3 +25,8 @@
         android:text="some info"
         android:textSize="12dp" />
 </RelativeLayout>
+<!--
+ android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+-->

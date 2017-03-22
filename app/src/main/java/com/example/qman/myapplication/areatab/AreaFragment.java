@@ -86,6 +86,7 @@ public class AreaFragment extends Fragment
     private String addAreaName = "";//未被添加过，需要刷新RecyclerAdapter
     private String codeIdTemp = "";
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -153,6 +154,12 @@ public class AreaFragment extends Fragment
         @Override
         protected void onPostExecute(String s) {
             try{
+                final List<String> mDataList = new ArrayList<>();
+                String[] productTypes = codeidStr.split("/");
+                for (int i = 0; i < productTypes.length; i++) {
+                    mDataList.add(productTypes[i]);
+                }
+
                 //设置item动画
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
                 mAdapter = new BaseRecyclerAdapter<HashMap<String,Object>>(R.layout.area_layout_cardview,getActivity(),list) {//HashMap<String,Object>
@@ -174,7 +181,18 @@ public class AreaFragment extends Fragment
                 ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View itemView, int pos) {
-                        ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
+
+                        //ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
+
+                        Toast.makeText(getActivity(), mDataList.get(pos), Toast.LENGTH_SHORT).show();
+
+                        AreaItemFragment areaItemFragment = new AreaItemFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("field",mDataList.get(pos));
+                        areaItemFragment.setArguments(bundle);
+
+                        ActivityUtil.switchToFragment(getActivity(),areaItemFragment,R.id.id_content);
+
                     }
                 });
                 ((BaseRecyclerAdapter)mAdapter).setOnItemLongClickListener(new BaseRecyclerAdapter.OnItemLongClickListener() {
@@ -277,6 +295,7 @@ public class AreaFragment extends Fragment
                         codeidStr += jsonObjectResult.getString("codeid") +"/";
                         //将缓存中的数据更新
                         ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
+
                     }
                 } else {
                 }

@@ -125,7 +125,7 @@ public class SaveDrawArea extends Fragment {
             public void onClick(View v) {
 
                 //"/storage/sdcard0/Arsandroid/liua.png"
-                fieldName = mDrawAreaName.getText().toString();
+                fieldName = mDrawAreaName.getText().toString();//地块名称
 
                 Bitmap bitmap=getViewBitmap(mMapView);
 

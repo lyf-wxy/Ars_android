@@ -42,6 +42,8 @@ public class AreaItemFragment extends Fragment implements OnClickListener
 
     private Bundle savedState;//临时数据保存
 
+    private String mField;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -52,11 +54,20 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         //recycleView
         recyclerView = (RecyclerView) view.findViewById(R.id.prodeucTypeRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
-        List<String> mDataList = new ArrayList<>();
+        final List<String> mDataList = new ArrayList<>();
         String[] productTypes = productType.split("/");
         for (int i = 0; i < productTypes.length; i++) {
             mDataList.add(CheckBoxUtil.getChineseName(productTypes[i]));
         }
+
+        Bundle args = getArguments();
+        if(args!=null)
+        {
+            mField = args.getString("field");
+            Log.d("AreaItemFragment",mField);
+        }
+
+
         //设置item动画
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         BaseRecyclerAdapter<String> mAdapter = new BaseRecyclerAdapter<String>(R.layout.area_item_fragment_cardview,getActivity(),mDataList) {
@@ -78,6 +89,21 @@ public class AreaItemFragment extends Fragment implements OnClickListener
             @Override
             public void onItemClick(View itemView, int pos) {
                 ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
+
+                String selectedClass = mDataList.get(pos);
+                Toast.makeText(getActivity(), mField+","+mDataList.get(pos), Toast.LENGTH_SHORT).show();
+
+                AreaItemInfoFragment areaItemInfoFragment = new AreaItemInfoFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("field",mField);
+                bundle.putString("selectedClass",selectedClass);
+                areaItemInfoFragment.setArguments(bundle);
+
+                Log.d("field",mField);
+                Log.d("selectedClass",selectedClass);
+
+                ActivityUtil.switchToFragment(getActivity(),areaItemInfoFragment,R.id.id_content);
+
             }
         });
         ((BaseRecyclerAdapter)mAdapter).setOnItemLongClickListener(new BaseRecyclerAdapter.OnItemLongClickListener() {
