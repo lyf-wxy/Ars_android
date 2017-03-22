@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class AreaFragment extends Fragment
@@ -187,10 +188,10 @@ public class AreaFragment extends Fragment
                         Toast.makeText(getActivity(), mDataList.get(pos), Toast.LENGTH_SHORT).show();
 
                         AreaItemFragment areaItemFragment = new AreaItemFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("field",mDataList.get(pos));
-                        areaItemFragment.setArguments(bundle);
-
+                     /*   Bundle bundle = new Bundle();
+                        bundle.putString("codeid",mDataList.get(pos));
+                        areaItemFragment.setArguments(bundle);*/
+                        ActivityUtil.putParam(getActivity(),"codeid",mDataList.get(pos));
                         ActivityUtil.switchToFragment(getActivity(),areaItemFragment,R.id.id_content);
 
                     }

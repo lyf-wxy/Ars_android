@@ -147,6 +147,7 @@ public class ActivityUtil extends AppCompatActivity {
         }
     }
 
+
     /**
      * Activity跳转到Fragment
      * @param activity
@@ -300,6 +301,11 @@ public class ActivityUtil extends AppCompatActivity {
             }
             mContent = to;
         }
+    }
+
+    public static void putParam(Activity activity, String key, String val){
+        Intent intent= activity.getIntent();
+        intent.putExtra(key, (String) val);
     }
     /**
      * 获取当前Activity带有的参数

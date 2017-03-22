@@ -322,6 +322,7 @@ public class DrawArea extends Fragment  {
                     Log.d("DrawArea",str);
                     //ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.fullscreen);
                     //ActivityUtil.switchContent(getActivity(), ActivityUtil.mContent,mSaveDrawArea,R.id.fullscreen);
+
                     Bundle bundle = new Bundle();
                     bundle.putString("DrawAreaString",str);
                     mSaveDrawArea.setArguments(bundle);
