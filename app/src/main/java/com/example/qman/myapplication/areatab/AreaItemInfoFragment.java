@@ -76,9 +76,7 @@ public class AreaItemInfoFragment extends Fragment
         View view = inflater.inflate(R.layout.area_item_info_fragment, container, false);
 
         String geometry = ActivityUtil.getParam(getActivity(),"geometry");
-        Log.i("geometry",geometry);
-//        Intent intent= getActivity().getIntent();
-//
+
         Bundle args = getArguments();
         if(args!=null)
         {

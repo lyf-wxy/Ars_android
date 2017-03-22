@@ -1,6 +1,8 @@
 package com.example.qman.myapplication.areatab;
 
 import android.app.Fragment;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -40,6 +43,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
     private String productType = "";
     private RecyclerView recyclerView;
     private SearchView mSearchview;
+    private ImageView imageView;
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
 
     private Bundle savedState;//临时数据保存
@@ -58,6 +62,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         //recycleView
         recyclerView = (RecyclerView) view.findViewById(R.id.prodeucTypeRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
+        imageView = (ImageView) view.findViewById(R.id.backdrop);
         final List<String> mDataList = new ArrayList<>();
         String[] productTypes = productType.split("/");
         for (int i = 0; i < productTypes.length; i++) {
@@ -150,12 +155,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
                             JSONArray aArea = new JSONArray(areaLists.get(i).toString());
                             geometry = aArea.get(2).toString();
                             ActivityUtil.putParam(getActivity(),"geometry",geometry);
-                            //addData(aArea.get(0).toString(), aArea.get(1).toString(), aArea.get(2).toString());
-                       /* HashMap<String, Object> listm = new HashMap<String, Object>();
-                        listm.put("ordername", aArea.get(0).toString());
-                        listm.put("sdpath", aArea.get(1).toString());
-                        listm.put("geometry", aArea.get(2).toString());*/
-
+                            return aArea.get(1).toString();
                         }
                     }
                 }
@@ -168,7 +168,8 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
         protected void onPostExecute(String s) {
-
+            Bitmap bit = BitmapFactory.decodeFile(s); //自定义//路径
+            imageView.setImageBitmap(bit);
 
         }
     }
