@@ -43,14 +43,15 @@ public class AreaItemFragment extends Fragment implements OnClickListener
     private Bundle savedState;//临时数据保存
 
     private String mField;
-
+    private String userid;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.area_item_fragment, container, false);
         productType = ActivityUtil.getParam(getActivity(),"producttype");
-
+        mField = ActivityUtil.getParam(getActivity(),"codeid");
+        userid = ActivityUtil.getParam(getActivity(),"id");
         //recycleView
         recyclerView = (RecyclerView) view.findViewById(R.id.prodeucTypeRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
@@ -58,13 +59,6 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         String[] productTypes = productType.split("/");
         for (int i = 0; i < productTypes.length; i++) {
             mDataList.add(CheckBoxUtil.getChineseName(productTypes[i]));
-        }
-
-        Bundle args = getArguments();
-        if(args!=null)
-        {
-            mField = args.getString("field");
-            Log.d("AreaItemFragment",mField);
         }
 
 
