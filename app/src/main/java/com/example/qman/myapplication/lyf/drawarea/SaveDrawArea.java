@@ -86,13 +86,13 @@ public class SaveDrawArea extends Fragment {
         mDrawAreaName = (EditText)view.findViewById(R.id.fieldNameofDrawArea);
 
 
-        Bundle args = getArguments();
+        /*Bundle args = getArguments();
         if(args!=null)
         {
             mDrawAreaStr = args.getString("DrawAreaString");
             Log.d("SaveDrawArea",mDrawAreaStr);
-        }
-
+        }*/
+        mDrawAreaStr = ActivityUtil.getParam(getActivity(),"DrawAreaString");
         try{
             JsonFactory factory = new JsonFactory();
             JsonParser jsonParser = factory.createJsonParser(mDrawAreaStr);
@@ -167,10 +167,12 @@ public class SaveDrawArea extends Fragment {
                 ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
                 ajsonObject.put("codeid",codeIdTemp);
                 ajsonObject.put("sdpath",FileDirectory);
-                ajsonObject.put("geometry","000");
+                ajsonObject.put("geometry",mDrawAreaStr);
                 ajsonObject.put("ordername",fieldName);
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
-                ajsonObject.put("codeidStr",ActivityUtil.getParam(getActivity(),"locno")+codeIdTemp+"/");
+                String newLocno = ActivityUtil.getParam(getActivity(),"locno")+codeIdTemp+"/";//拼接新的codeid字符串
+                ajsonObject.put("codeidStr",newLocno);
+                ActivityUtil.changeParam(getActivity(),"locno",newLocno);
                 ajsonObject.put("id",ActivityUtil.getParam(getActivity(),"id"));
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");//更新用户表中的区域codeid字段
             } catch (JSONException e) {

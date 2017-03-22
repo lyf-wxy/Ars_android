@@ -265,7 +265,7 @@ public class AreaFragment extends Fragment
             @Override
             public void onClick(View view) {
                 DrawArea mDrawArea =  new DrawArea();
-                ActivityUtil.switchToFragment(getActivity(), mDrawArea,R.id.fullscreen);
+                ActivityUtil.switchToFragment(getActivity(), mDrawArea,R.id.id_content);
             }
         });
 
