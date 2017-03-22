@@ -159,16 +159,16 @@ public class MapFragment extends Fragment {
 //            }
 //        });
 
-        mArcGISImageServiceLayer = new ArcGISImageServiceLayer("http://10.2.3.222:6080/arcgis/rest/services/sde_DBO_shangxi/ImageServer",null);
+        mArcGISImageServiceLayer = new ArcGISImageServiceLayer("http://10.2.3.222:6080/arcgis/rest/services/TRSQ/ImageServer",null);
 
         MosaicRule mMosaicRule = new MosaicRule();
         mMosaicRule.setWhere("OBJECTID<14");
         mArcGISImageServiceLayer.setMosaicRule(mMosaicRule);
 
-        RasterFunction renderingRule = new RasterFunction();
-        String rasterFunctionTemplate = "14";
-        renderingRule.setFunctionName(rasterFunctionTemplate);
-        mArcGISImageServiceLayer.setRenderingRule(renderingRule);
+//        RasterFunction renderingRule = new RasterFunction();
+//        String rasterFunctionTemplate = "14";
+//        renderingRule.setFunctionName(rasterFunctionTemplate);
+//        mArcGISImageServiceLayer.setRenderingRule(renderingRule);
 
         mMapView.addLayer(mArcGISImageServiceLayer);
 

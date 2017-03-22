@@ -10,7 +10,7 @@
         android:layout_height="200dp"
         android:id="@+id/LinearLayout1ofsavedrawarea"
         android:orientation="horizontal"
-        >
+        android:background="@color/gray">
         <com.esri.android.map.MapView
             android:id="@+id/mapofsavedrawarea"
             android:layout_width="match_parent"

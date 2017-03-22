@@ -78,7 +78,7 @@ public class CheckBoxUtil extends AppCompatActivity {
         Type[] allType = Type.values ();
         for (Type aType : allType) {
             if (aType.getName().equals(chineseName))
-                return aType.getName();
+                return aType.name();
         }
         return null;
     }
