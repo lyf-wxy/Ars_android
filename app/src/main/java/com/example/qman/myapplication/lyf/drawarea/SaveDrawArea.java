@@ -93,6 +93,7 @@ public class SaveDrawArea extends Fragment {
             Log.d("SaveDrawArea",mDrawAreaStr);
         }*/
         mDrawAreaStr = ActivityUtil.getParam(getActivity(),"DrawAreaString");
+        Log.d("SaveDrawArea",mDrawAreaStr);
         try{
             JsonFactory factory = new JsonFactory();
             JsonParser jsonParser = factory.createJsonParser(mDrawAreaStr);

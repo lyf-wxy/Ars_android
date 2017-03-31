@@ -90,10 +90,10 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int pos) {
-                ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
+                //ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
 
                 String selectedClass = mDataList.get(pos);
-                //Toast.makeText(getActivity(), mField+","+mDataList.get(pos), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), mField+","+mDataList.get(pos), Toast.LENGTH_SHORT).show();
 
                 AreaItemInfoFragment areaItemInfoFragment = new AreaItemInfoFragment();
                 Bundle bundle = new Bundle();
