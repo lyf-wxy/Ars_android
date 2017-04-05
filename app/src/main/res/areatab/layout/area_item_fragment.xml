@@ -55,18 +55,6 @@
             android:orientation="vertical"
             android:paddingTop="24dp">
 
-        <SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:backgroundTint="#d3dfe7"
-            android:background="#d3dfe7"
-            android:layout_gravity="right|top|left"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"
-            />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/prodeucTypeRecyclerView"
             android:layout_width="match_parent"
@@ -80,5 +68,4 @@
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
-
 </android.support.design.widget.CoordinatorLayout>

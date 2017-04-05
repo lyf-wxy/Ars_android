@@ -231,6 +231,7 @@ public class SaveDrawArea extends Fragment {
                 ajsonObject.put("sdpath",fileURL);
                 ajsonObject.put("geometry",mDrawAreaStr);//mDrawAreaStr
                 ajsonObject.put("ordername",fieldName);
+                ajsonObject.put("cropkinds","小麦");
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
                 String newLocno = ActivityUtil.getParam(getActivity(),"locno")+mCodeIdOfArea+"/";//拼接新的codeid字符串
                 ajsonObject.put("codeidStr",newLocno);
