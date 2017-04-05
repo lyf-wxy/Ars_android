@@ -3,12 +3,16 @@ package com.example.qman.myapplication.areatab;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 
 import android.support.v7.widget.DefaultItemAnimator;
@@ -30,17 +34,32 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
+import com.esri.android.map.GraphicsLayer;
+import com.esri.android.map.MapView;
+import com.esri.core.geometry.Envelope;
+import com.esri.core.geometry.Geometry;
+import com.esri.core.geometry.GeometryEngine;
+import com.esri.core.geometry.SpatialReference;
+import com.esri.core.map.FeatureResult;
+import com.esri.core.map.Graphic;
+import com.esri.core.renderer.SimpleRenderer;
+import com.esri.core.symbol.SimpleFillSymbol;
+import com.esri.core.tasks.query.QueryParameters;
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.indextab.IndexTabMainActivity;
 import com.example.qman.myapplication.loginregister.FragmentTwo;
 import com.example.qman.myapplication.lyf.drawarea.DrawArea;
 
+import com.example.qman.myapplication.lyf.drawarea.SaveDrawArea;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
+import com.example.qman.myapplication.utils.FormFile;
 import com.example.qman.myapplication.utils.ListViewUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
+import com.example.qman.myapplication.utils.SocketHttpRequester;
 import com.example.qman.myapplication.utils.TitleActivity;
 import com.example.qman.myapplication.utils.TitleInterface;
+import com.example.qman.myapplication.utils.Util;
 import com.example.qman.myapplication.utils.Variables;
 import com.example.qman.myapplication.indextab.AddressBean;
 import com.example.qman.myapplication.indextab.JsonUtils;
@@ -49,12 +68,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import com.esri.core.tasks.query.QueryTask;
+import com.esri.core.map.Feature;
+import com.esri.core.geometry.Point;
+
+import static android.R.id.message;
+import static android.content.ContentValues.TAG;
+import static com.example.qman.myapplication.R.id.map;
+import static com.example.qman.myapplication.utils.Variables.targetServerURL;
 
 public class AreaFragment extends Fragment
 {
@@ -86,8 +114,13 @@ public class AreaFragment extends Fragment
     private Button toolbar_draw;
     private String addAreaName = "";//未被添加过，需要刷新RecyclerAdapter
     private String codeIdTemp = "";
+    private MapView mMapView;
 
+    ProgressDialog progress;
+    GraphicsLayer graphicsLayer;
+    File upfile;
 
+    public static String TAG = "AreaFragment";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -98,6 +131,9 @@ public class AreaFragment extends Fragment
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
         recyclerView = (RecyclerView) view.findViewById(R.id.areaRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
+
+        mMapView = (MapView) view.findViewById(R.id.mapofAreaFragment);
+
         toolbar_search = (Button)getActivity().findViewById(R.id.toolbar_search);
         toolbar_add = (Button)getActivity().findViewById(R.id.toolbar_add);
         toolbar_draw = (Button)getActivity().findViewById(R.id.toolbar_draw);
@@ -173,8 +209,16 @@ public class AreaFragment extends Fragment
                     public void bindData(RecyclerViewHolder holder, int position, HashMap<String,Object> item) {
                         //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
                         holder.getTextView(R.id.title).setText(item.get("ordername").toString());
-                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
-                        holder.getImageView(R.id.image).setImageBitmap(bit);
+
+                        Log.d("AreaFragment-bindData",item.get("sdpath").toString());
+                        //用Volley加载图片
+                        Util util =new Util();
+                        Util.VolleyLoadPicture vlp = util.new VolleyLoadPicture(mContext, holder.getImageView(R.id.image));
+                        vlp.getmImageLoader().get(item.get("sdpath").toString(), vlp.getOne_listener());
+
+
+//                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
+//                        holder.getImageView(R.id.image).setImageBitmap(bit);
                     }
                 };
                 recyclerView.setAdapter(mAdapter);
@@ -288,7 +332,7 @@ public class AreaFragment extends Fragment
                         //该区域已经被添加过
                         ActivityUtil.toastShow(getActivity(),"该区域已经被添加过");
                     }else{
-                        addAreaName = provinceSelected + " " + citiesSelected + " " + areaSelecteds;
+                        addAreaName = provinceSelected + "-" + citiesSelected + "-" + areaSelecteds;
                         codeidStr += jsonObjectResult.getString("codeid") +"/";
                         //将缓存中的数据更新
                         ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
@@ -304,26 +348,215 @@ public class AreaFragment extends Fragment
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
         protected void onPostExecute(String s) {
-            //确定添加，更新数据库的codeid字段
-            new UpdateCityCodeIdThreadTask().execute();
+
+            //进行行政区域缩略图生成操作
+            String targetLayer = Variables.targetServerURL.concat("/0");
+
+            String[] queryArray = { targetLayer, "ADCODE99='110100'" };
+            AsyncQueryTask ayncQuery = new AsyncQueryTask();
+            ayncQuery.execute(queryArray);
+
         }
     }
+    /**
+     *
+     * Query Task executes asynchronously.
+     *
+     */
+    private class AsyncQueryTask extends AsyncTask<String, Void, FeatureResult> {
 
+        @Override
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(getActivity(), "", "Please wait....query task is executing");
+
+        }
+
+        /**
+         * First member in string array is the query URL; second member is the where
+         * clause.
+         */
+        @Override
+        protected FeatureResult doInBackground(String... queryArray) {
+            if (queryArray == null || queryArray.length <= 1)
+                return null;
+
+            String url = queryArray[0];
+            QueryParameters qParameters = new QueryParameters();
+            String whereClause = queryArray[1];
+            SpatialReference sr = SpatialReference.create(102100);
+            //qParameters.setGeometry(new Envelope(-20147112.9593773, 557305.257274575, -6569564.7196889, 11753184.6153385));
+            qParameters.setOutSpatialReference(sr);
+            qParameters.setReturnGeometry(true);
+            qParameters.setWhere(whereClause);
+
+            QueryTask qTask = new QueryTask(url);
+
+            try {
+                FeatureResult results = qTask.execute(qParameters);
+                return results;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(FeatureResult results) {
+
+//            mMapView.removeAll();
+//
+            graphicsLayer = new GraphicsLayer();
+            SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(Color.RED);
+            simpleFillSymbol.setAlpha(100);
+            SimpleRenderer sr = new SimpleRenderer(simpleFillSymbol);
+            graphicsLayer.setRenderer(sr);
+            mMapView.addLayer(graphicsLayer);
+
+
+
+            String message = "No result comes back";
+            if (results != null) {
+                int i = 0;
+                Geometry[] GeosforExtent = new Geometry[(int)results.featureCount()];
+
+                for (Object element : results) {
+                    if (element instanceof Feature) {
+                        Feature feature = (Feature) element;
+                        // turn feature into graphic
+                        Graphic graphic = new Graphic(feature.getGeometry(), feature.getSymbol(), feature.getAttributes());
+
+                        GeosforExtent[i] = feature.getGeometry();
+
+                        // add graphic to layer
+                        graphicsLayer.addGraphic(graphic);
+                        i++;
+                    }
+                }
+                // update message with results
+                message = String.valueOf(results.featureCount()) + " results have returned from query.";
+
+                Geometry geometryUnion = GeometryEngine.union(GeosforExtent,mMapView.getSpatialReference());
+
+                Envelope env = new Envelope();
+                geometryUnion.queryEnvelope(env);
+
+                Log.d(TAG,env.toString());
+                mMapView.setExtent(env);
+            }
+
+
+            //mMapView.setExtent(newExtent);
+
+            /**
+             * upload image file
+
+             */
+            Bitmap bitmap=Util.getViewBitmap(mMapView);
+
+            String FileDirectory = Util.saveMyBitmap(codeIdTemp,bitmap);//保存缩略图，并返回文件路径
+
+            Log.d(TAG,FileDirectory);
+
+            bitmap.recycle();
+            // 开启一个子线程，进行网络操作，等待有返回结果，使用handler通知UI
+            upfile = new File(FileDirectory);
+            new Thread(runnable).start();
+
+
+            progress.dismiss();
+
+            Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_LONG);
+            toast.show();
+
+
+
+        }
+
+    }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String val = data.getString("value");
+            Log.i("mylog", "请求结果为-->" + val);
+            // TODO
+            // UI界面的更新等相关操作
+        }
+    };
+
+    Runnable runnable=new Runnable() {
+
+        @Override
+        public void run() {
+            Log.i(TAG, "runnable run");
+            uploadFile(upfile);
+            //handler.postDelayed(runnable, 5000);
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", "请求结果");
+            msg.setData(data);
+            handler.sendMessage(msg);
+        }
+
+    };
+    /**
+     * 上传图片到服务器
+     *
+     * @param imageFile 包含路径
+     */
+    public void uploadFile(File imageFile) {
+        Log.i(TAG, "upload start");
+        try {
+            String requestUrl = Variables.serviceIP+"upload/UploadAction.do";
+            //请求普通信息
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", ActivityUtil.getParam(getActivity(),"id"));
+            params.put("username", ActivityUtil.getParam(getActivity(),"username"));
+//            params.put("age", "21");
+            params.put("fileName", imageFile.getName());
+
+            Log.i(TAG, imageFile.getName());
+
+            //上传文件
+            FormFile formfile = new FormFile(imageFile.getName(), imageFile, "image", "application/octet-stream");
+
+            SocketHttpRequester.post(requestUrl, params, formfile);
+            Log.i(TAG, "upload success");
+        } catch (Exception e) {
+            Log.i(TAG, "upload error");
+            e.printStackTrace();
+        }
+        finally {
+            //            更新数据库表
+            //确定添加，更新数据库的codeid字段
+            new UpdateCityCodeIdThreadTask().execute();
+
+        }
+        Log.i(TAG, "upload end");
+    }
     class UpdateCityCodeIdThreadTask extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
             JSONObject ajsonObject = new JSONObject();
             try {
+
+                String fileURL = Variables.serviceIP+"upload/image/"+ActivityUtil.getParam(getActivity(),"id")+"/"+upfile.getName();
+
                 ajsonObject.put("id",id);
                 ajsonObject.put("codeidStr",codeidStr);
                 ajsonObject.put("ordername",addAreaName);
-                ajsonObject.put("sdpath","pathTemp");
+                //ajsonObject.put("sdpath","pathTemp");
+                //http://10.2.3.222:8080/upload/image/55/2017-03-28-16-47-00_test11.png
+                ajsonObject.put("sdpath",fileURL);
                 ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
                 ajsonObject.put("codeid",codeIdTemp);
                 ajsonObject.put("geometry","000");
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");
-                ListViewUtil.addData(addAreaName,"pathTemp","000");//第二个参数为缩略图显示地址
+                ListViewUtil.addData(addAreaName,fileURL,"000");//第二个参数为缩略图显示地址
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -333,7 +566,12 @@ public class AreaFragment extends Fragment
         @Override
         protected void onPostExecute(String s) {
 
-            //adapter.notifyDataSetChanged();
+            //删除设备上的中间文件
+            if (upfile.delete())
+            {
+                Log.i(TAG, upfile.getName()+" local delete");
+            }
+
             mAdapter.notifyDataSetChanged();
         }
     }

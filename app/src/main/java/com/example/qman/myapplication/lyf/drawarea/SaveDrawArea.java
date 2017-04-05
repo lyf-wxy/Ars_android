@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,7 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import com.esri.android.map.GraphicsLayer;
+import com.esri.android.map.Layer;
 import com.esri.android.map.MapView;
+import com.esri.android.map.ags.ArcGISTiledMapServiceLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
@@ -29,13 +32,17 @@ import com.esri.core.geometry.Point;
 import com.esri.core.geometry.Polygon;
 import com.esri.core.geometry.SpatialReference;
 import com.esri.core.map.Graphic;
+import com.esri.core.renderer.SimpleRenderer;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.areatab.AreaFragment;
 import com.example.qman.myapplication.utils.ActivityUtil;
+import com.example.qman.myapplication.utils.FormFile;
 import com.example.qman.myapplication.utils.IncreasingId;
 import com.example.qman.myapplication.utils.RequestUtil;
+import com.example.qman.myapplication.utils.SocketHttpRequester;
+import com.example.qman.myapplication.utils.Variables;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
@@ -50,7 +57,16 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import static android.R.attr.bitmap;
+import static android.content.ContentValues.TAG;
+import static com.example.qman.myapplication.R.string.username;
+import static com.example.qman.myapplication.utils.Variables.targetServerURL;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import android.os.Handler;
+import android.widget.Toast;
+
 /**
  * Created by lyf on 08/03/2017.
  */
@@ -66,6 +82,12 @@ public class SaveDrawArea extends Fragment {
     EditText mDrawAreaName;
     String fieldName = "";
     String FileDirectory = "";
+    String TAG = "SaveDrawArea";
+
+    String mCodeIdOfArea;
+
+    File upfile;
+
     public static SaveDrawArea newInstance(String graphic)
     {
         SaveDrawArea newFragment = new SaveDrawArea();
@@ -94,46 +116,81 @@ public class SaveDrawArea extends Fragment {
         }*/
         mDrawAreaStr = ActivityUtil.getParam(getActivity(),"DrawAreaString");
         Log.d("SaveDrawArea",mDrawAreaStr);
-        try{
-            JsonFactory factory = new JsonFactory();
-            JsonParser jsonParser = factory.createJsonParser(mDrawAreaStr);
-            MapGeometry mapGeometry = GeometryEngine.jsonToGeometry(jsonParser);
-            Geometry geometry = mapGeometry.getGeometry();
 
-            SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(Color.YELLOW);
-            simpleFillSymbol.setAlpha(100);
-            simpleFillSymbol.setOutline(new SimpleLineSymbol(Color.BLACK, 4));
-            Graphic graphic = new Graphic(geometry, (simpleFillSymbol));
+        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
 
-            //DrawAreaGraphicLayer = new GraphicsLayer();
-            DrawAreaGraphicLayer.addGraphic(graphic);
-            mMapView.addLayer(DrawAreaGraphicLayer);
+            private static final long serialVersionUID = 1L;
 
-            Log.d("SaveDrawArea","added");
-        }
-        catch(IOException ex)
-        {
-            ex.printStackTrace();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+            @Override
+            public void onStatusChanged(Object source, STATUS status) {
+                if (source == mMapView && status == STATUS.INITIALIZED) {
+                    try{
+                        JsonFactory factory = new JsonFactory();
+                        JsonParser jsonParser = factory.createJsonParser(mDrawAreaStr);
+                        MapGeometry mapGeometry = GeometryEngine.jsonToGeometry(jsonParser);
+                        Geometry geometry = mapGeometry.getGeometry();
+
+                        SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(Color.YELLOW);
+                        simpleFillSymbol.setAlpha(100);
+                        simpleFillSymbol.setOutline(new SimpleLineSymbol(Color.BLACK, 4));
+                        Graphic graphic = new Graphic(geometry, (simpleFillSymbol));
+
+                        //DrawAreaGraphicLayer = new GraphicsLayer();
+                        DrawAreaGraphicLayer.addGraphic(graphic);
+                        mMapView.addLayer(DrawAreaGraphicLayer);
+
+
+                        Envelope env = new Envelope();
+                        geometry.queryEnvelope(env);
+
+                        Envelope newEnv = new Envelope(env.getCenter(),env.getWidth()*2,env.getHeight()*2);
+
+                        Log.d(TAG,env.toString());
+                        Log.d(TAG,newEnv.toString());
+
+                        mMapView.setExtent(newEnv);
+                        Log.d(TAG,"added");
+
+
+                    }
+                    catch(IOException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
+
 
 
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //"/storage/sdcard0/Arsandroid/liua.png"
+                //"/storage/sdcard0/Arsandroid/2017-03-27-14-49-42_test5.png"
                 fieldName = mDrawAreaName.getText().toString();//地块名称
+                mCodeIdOfArea = "10"+ (int)((Math.random()*9+1)*1000);
 
                 Bitmap bitmap=getViewBitmap(mMapView);
 
-                FileDirectory = saveMyBitmap(fieldName,bitmap);//保存缩略图，并返回文件路径
+                FileDirectory = saveMyBitmap(mCodeIdOfArea,bitmap);//保存缩略图，并返回文件路径
+
+                Log.d(TAG,FileDirectory);
 
                 bitmap.recycle();
-                new AreaCodeInfoServiceThreadTask().execute();
+                // 开启一个子线程，进行网络操作，等待有返回结果，使用handler通知UI
+                upfile = new File(FileDirectory);
+                new Thread(runnable).start();
+                //更新数据库表
+                //new AreaCodeInfoServiceThreadTask().execute();
+
+
 
 
 
@@ -164,14 +221,18 @@ public class SaveDrawArea extends Fragment {
         protected String doInBackground(String... params) {
             JSONObject ajsonObject = new JSONObject();
             try {
-                String codeIdTemp = "10"+ (int)((Math.random()*9+1)*1000);
+                //String codeIdTemp = "10"+ (int)((Math.random()*9+1)*1000);
+
+                String fileURL = Variables.serviceIP+"upload/image/"+ActivityUtil.getParam(getActivity(),"id")+"/"+upfile.getName();
+
                 ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
-                ajsonObject.put("codeid",codeIdTemp);
-                ajsonObject.put("sdpath",FileDirectory);
+                ajsonObject.put("codeid",mCodeIdOfArea);
+                //ajsonObject.put("sdpath",FileDirectory);
+                ajsonObject.put("sdpath",fileURL);
                 ajsonObject.put("geometry",mDrawAreaStr);//mDrawAreaStr
                 ajsonObject.put("ordername",fieldName);
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
-                String newLocno = ActivityUtil.getParam(getActivity(),"locno")+codeIdTemp+"/";//拼接新的codeid字符串
+                String newLocno = ActivityUtil.getParam(getActivity(),"locno")+mCodeIdOfArea+"/";//拼接新的codeid字符串
                 ajsonObject.put("codeidStr",newLocno);
                 ActivityUtil.changeParam(getActivity(),"locno",newLocno);
                 ajsonObject.put("id",ActivityUtil.getParam(getActivity(),"id"));
@@ -185,7 +246,16 @@ public class SaveDrawArea extends Fragment {
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
         protected void onPostExecute(String s) {
+            //删除设备上的中间文件
+            if (upfile.delete())
+            {
+                Log.i(TAG, upfile.getName()+" local delete");
+            }
+
             ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
+
+
+
         }
     }
     @Override
@@ -294,5 +364,67 @@ public class SaveDrawArea extends Fragment {
             }
         }
         return fileDirectory;
+    }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String val = data.getString("value");
+            Log.i("mylog", "请求结果为-->" + val);
+            // TODO
+            // UI界面的更新等相关操作
+        }
+    };
+
+    Runnable runnable=new Runnable() {
+
+        @Override
+        public void run() {
+            Log.i(TAG, "runnable run");
+            uploadFile(upfile);
+            //handler.postDelayed(runnable, 5000);
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", "请求结果");
+            msg.setData(data);
+            handler.sendMessage(msg);
+        }
+
+    };
+    /**
+     * 上传图片到服务器
+     *
+     * @param imageFile 包含路径
+     */
+    public void uploadFile(File imageFile) {
+        Log.i(TAG, "upload start");
+        try {
+            String requestUrl = Variables.serviceIP+"upload/UploadAction.do";
+            //请求普通信息
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", ActivityUtil.getParam(getActivity(),"id"));
+            params.put("username", ActivityUtil.getParam(getActivity(),"username"));
+//            params.put("age", "21");
+            params.put("fileName", imageFile.getName());
+
+            Log.i(TAG, imageFile.getName());
+
+            //上传文件
+            FormFile formfile = new FormFile(imageFile.getName(), imageFile, "image", "application/octet-stream");
+
+            SocketHttpRequester.post(requestUrl, params, formfile);
+            Log.i(TAG, "upload success");
+        } catch (Exception e) {
+            Log.i(TAG, "upload error");
+            e.printStackTrace();
+        }
+        finally {
+//            更新数据库表
+            new AreaCodeInfoServiceThreadTask().execute();
+
+        }
+        Log.i(TAG, "upload end");
     }
 }
