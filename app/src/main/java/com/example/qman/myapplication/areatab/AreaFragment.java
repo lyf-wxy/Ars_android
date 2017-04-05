@@ -567,6 +567,7 @@ public class AreaFragment extends Fragment
         protected void onPostExecute(String s) {
 
             //删除设备上的中间文件
+            //删除设备上的中间文件
             if (upfile.delete())
             {
                 Log.i(TAG, upfile.getName()+" local delete");
