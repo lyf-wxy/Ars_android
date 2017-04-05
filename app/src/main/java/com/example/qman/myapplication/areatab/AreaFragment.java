@@ -548,6 +548,7 @@ public class AreaFragment extends Fragment
                 ajsonObject.put("id",id);
                 ajsonObject.put("codeidStr",codeidStr);
                 ajsonObject.put("ordername",addAreaName);
+                ajsonObject.put("cropkinds","000");
                 //ajsonObject.put("sdpath","pathTemp");
                 //http://10.2.3.222:8080/upload/image/55/2017-03-28-16-47-00_test11.png
                 ajsonObject.put("sdpath",fileURL);
