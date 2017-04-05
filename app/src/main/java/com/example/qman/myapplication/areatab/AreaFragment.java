@@ -565,7 +565,8 @@ public class AreaFragment extends Fragment
         }
         @Override
         protected void onPostExecute(String s) {
-
+            String test="testtest";
+            //删除设备上的中间文件
             //删除设备上的中间文件
             if (upfile.delete())
             {
