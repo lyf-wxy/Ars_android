@@ -98,6 +98,7 @@ public class AreaItemInfoFragment extends Fragment
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
+        initDatesListView();
 
         // load map
         new LoadMapAsyncTask().execute();
@@ -236,7 +237,7 @@ public class AreaItemInfoFragment extends Fragment
             addLayer2MapView(mSelectedClass);
             addLegend2MapView(mSelectedClass);
 
-            initDatesListView();
+            //initDatesListView();
 
             return null;
         }
