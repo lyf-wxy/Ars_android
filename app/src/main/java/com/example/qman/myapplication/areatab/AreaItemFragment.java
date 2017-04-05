@@ -21,6 +21,7 @@ import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
+import com.example.qman.myapplication.utils.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -168,8 +169,13 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
         protected void onPostExecute(String s) {
-            Bitmap bit = BitmapFactory.decodeFile(s); //自定义//路径
-            imageView.setImageBitmap(bit);
+            //用Volley加载图片
+            Util util =new Util();
+            Util.VolleyLoadPicture vlp = util.new VolleyLoadPicture(getActivity(), imageView);
+            vlp.getmImageLoader().get(s, vlp.getOne_listener());
+
+//            Bitmap bit = BitmapFactory.decodeFile(s); //自定义//路径
+//            imageView.setImageBitmap(bit);
 
         }
     }

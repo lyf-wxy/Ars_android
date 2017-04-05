@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
@@ -17,7 +19,15 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.ImageLoader.ImageCache;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
+import com.esri.android.map.MapView;
 import com.example.qman.myapplication.R;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.R.attr.type;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
@@ -107,7 +117,109 @@ public class Util {
         }
         return LegendType;
     }
-    class VolleyLoadPicture {
+    public static Bitmap getViewBitmap(MapView v) {
+
+        v.clearFocus();
+        v.setPressed(false);
+
+        boolean willNotCache = v.willNotCacheDrawing();
+        v.setWillNotCacheDrawing(false);
+        int color = v.getDrawingCacheBackgroundColor();
+        v.setDrawingCacheBackgroundColor(0);
+        if (color != 0) {
+            v.destroyDrawingCache();
+        }
+        v.buildDrawingCache();
+        Bitmap cacheBitmap = null;
+        while (cacheBitmap == null) {
+            cacheBitmap = v.getDrawingMapCache(0, 0, v.getWidth(),
+                    v.getHeight());
+        }
+        Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);
+        v.destroyDrawingCache();
+        v.setWillNotCacheDrawing(willNotCache);
+        v.setDrawingCacheBackgroundColor(color);
+        return bitmap;
+    }
+    public static String saveMyBitmap(String bitName,Bitmap mBitmap){
+
+        //String FileName=this.getInnerSDCardPath() + "/" + bitName + ".png";
+        //获取当前系统时间
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        Date curDate =new Date(System.currentTimeMillis());
+        String DateStr = formatter.format(curDate);
+        Log.d("saveMyBitmap",DateStr);
+
+        String FileName = null;
+        try{
+
+            String FileDir = CreateFileDir("Arsandroid");
+            FileName = FileDir+ "/" + DateStr+"_"+bitName + ".png";
+
+            Log.d("saveMyBitmap",FileName);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
+        //ShowMessage(FileName);
+        File f = new File(FileName);
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            Log.e("在保存"+FileName+"图片时出错：" + e.toString(),"在保存"+FileName+"图片时出错：" + e.toString());
+        }
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return FileName;
+    }
+
+    public static String getSDPath(){
+        File sdDir = null;
+        boolean sdCardExist = Environment.getExternalStorageState()
+                .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+        if (sdCardExist)
+        {
+            sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+        }
+        return sdDir.toString();
+    }
+    //创建文件夹及文件
+    public static String CreateFileDir(String fileDir) throws IOException {
+
+        String fileDirectory = getSDPath()+"/"+fileDir;//文件夹路径
+        File filedir = new File(fileDirectory);
+        if (!filedir.exists()) {
+            try {
+                //按照指定的路径创建文件夹
+                filedir.mkdirs();
+                return fileDirectory;
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }
+        return fileDirectory;
+    }
+    public class VolleyLoadPicture {
 
         private ImageLoader mImageLoader = null;
         private BitmapCache mBitmapCache;
@@ -185,4 +297,5 @@ public class Util {
 
 
     }
+
 }

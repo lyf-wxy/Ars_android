@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.text.TextUtils;
 
+import com.esri.android.runtime.ArcGISRuntime;
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.Variables;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //初始化组件
         initView();
         //登陆按钮事件
