@@ -6,6 +6,9 @@
     android:background="@color/gray">
 
 
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -98,14 +101,7 @@
                         android:layout_marginRight="3.0dip"
                          />
                 </LinearLayout>
-                <!--TextView
-                    android:text="low"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/legendInfo_low"
-                    android:textSize="5dip"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="3.0dip"/-->
+
 
 
 
@@ -136,7 +132,26 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="#f1f2a305"
+        >
+        <TextView
 
+            android:id="@+id/TitleOfAreaItemInfo"
+            android:textSize="15dip"
+            android:textColor="#ed000000"
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            />
+    </LinearLayout>
     <!--Button
         android:layout_width="70dp"
         android:layout_height="70dp"
