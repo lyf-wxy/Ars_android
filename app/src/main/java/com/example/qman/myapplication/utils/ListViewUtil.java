@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,12 +49,34 @@ public class ListViewUtil extends AppCompatActivity {
      * @param geometry
      * @return
      */
-    public static HashMap<String,Object> addData(String ordername,String sdpath,String geometry){
+    public static HashMap<String,Object> addData(String ordername,String sdpath,String geometry,String codeidStr){
         HashMap<String,Object> map = new HashMap<String,Object>();
+
         map.put("ordername", ordername);
         map.put("sdpath", sdpath);
         map.put("geometry", geometry);
+        map.put("codeidStr", codeidStr);
         data.add(map);
+        return  map;
+    }
+
+    /**
+     * 删除数据
+     * @param codeidStr
+     * @return
+     */
+    public static HashMap<String,Object> deleteData(String codeidStr){
+        HashMap<String,Object> map = new HashMap<String,Object>();
+        //删除
+        String s = codeidStr.substring(0,codeidStr.length());
+        for(int i = 0 , len= data.size();i<len;++i){
+            String string = data.get(i).get("codeidStr").toString();
+            if(string.contains(codeidStr)){
+                data.remove(i);
+                --len;//减少一个
+                --i;
+            }
+        }
         return  map;
     }
     /**
@@ -76,7 +99,7 @@ public class ListViewUtil extends AppCompatActivity {
                     for (int i=0;i<areaLists.length();i++) {
                         JSONArray aArea = new JSONArray(areaLists.get(i).toString());
 
-                        addData(aArea.get(0).toString(),aArea.get(1).toString(),aArea.get(2).toString());
+                        addData(aArea.get(0).toString(),aArea.get(1).toString(),aArea.get(2).toString(),aArea.get(3).toString());
                        /* HashMap<String, Object> listm = new HashMap<String, Object>();
                         listm.put("ordername", aArea.get(0).toString());
                         listm.put("sdpath", aArea.get(1).toString());

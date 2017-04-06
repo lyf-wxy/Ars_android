@@ -104,6 +104,8 @@ public class AreaFragment extends Fragment
     private String codeidStr = "";
     private String id = "";
 
+    private  List<String> mDataList = new ArrayList<>();
+
     private SearchView mSearchview;
     private RecyclerView recyclerView;
     private List<HashMap<String,Object>> list = null;//adapt绑定的数据集
@@ -183,7 +185,8 @@ public class AreaFragment extends Fragment
 
         @Override
         protected String doInBackground(String... params) {
-
+            Log.i("codeidStr listLoad",codeidStr);
+            Log.i("mDataList",mDataList.toString());
             list = ListViewUtil.initSplitData(ActivityUtil.getParam(getActivity(),"id"), codeidStr);
             return null;
         }
@@ -191,12 +194,13 @@ public class AreaFragment extends Fragment
         @Override
         protected void onPostExecute(String s) {
             try{
-                final List<String> mDataList = new ArrayList<>();
-                String[] productTypes = codeidStr.split("/");
-                for (int i = 0; i < productTypes.length; i++) {
-                    mDataList.add(productTypes[i]);
-                }
 
+                if(mDataList.size() == 0) {
+                    String[] productTypes = codeidStr.split("/");
+                    for (int i = 0; i < productTypes.length; i++) {
+                        mDataList.add(productTypes[i]);
+                    }
+                }
                 //设置item动画
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
                 mAdapter = new BaseRecyclerAdapter<HashMap<String,Object>>(R.layout.area_layout_cardview,getActivity(),list) {//HashMap<String,Object>
@@ -209,8 +213,9 @@ public class AreaFragment extends Fragment
                     public void bindData(RecyclerViewHolder holder, int position, HashMap<String,Object> item) {
                         //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
                         holder.getTextView(R.id.title).setText(item.get("ordername").toString());
+                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
+                        holder.getImageView(R.id.image).setImageBitmap(bit);
 
-                        Log.d("AreaFragment-bindData",item.get("sdpath").toString());
                         //用Volley加载图片
                         Util util =new Util();
                         Util.VolleyLoadPicture vlp = util.new VolleyLoadPicture(mContext, holder.getImageView(R.id.image));
@@ -226,11 +231,6 @@ public class AreaFragment extends Fragment
                 ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View itemView, int pos) {
-
-                        //ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
-
-                        Toast.makeText(getActivity(), mDataList.get(pos), Toast.LENGTH_SHORT).show();
-
                         ActivityUtil.putParam(getActivity(),"codeid",mDataList.get(pos));
                         ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
 
@@ -240,6 +240,8 @@ public class AreaFragment extends Fragment
                     @Override
                     public void onItemLongClick(View itemView, int pos) {
                         //Toast.makeText(AdapterTestActivity.this, "long click " + pos, Toast.LENGTH_SHORT).show();
+                        DeleteThreadTask deleteThreadTask = new DeleteThreadTask();
+                        deleteThreadTask.execute(pos);
                     }
                 });
                 //设置布局样式LayoutManager
@@ -355,6 +357,36 @@ public class AreaFragment extends Fragment
             String[] queryArray = { targetLayer, "ADCODE99='110100'" };
             AsyncQueryTask ayncQuery = new AsyncQueryTask();
             ayncQuery.execute(queryArray);
+
+        }
+    }
+
+    class DeleteThreadTask extends AsyncTask<Integer, Integer, Integer> {
+        @Override
+        protected Integer doInBackground(Integer... params) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("id", id);
+                String codeidTempt = mDataList.get(params[0]);
+                codeidStr = codeidStr.replace(codeidTempt + "/", "");
+                jsonObject.put("codeidStr", codeidStr);
+                jsonObject.put("codeid", codeidTempt);
+                ActivityUtil.changeParam(getActivity(),"codeidStr",codeidStr);
+                RequestUtil.request(jsonObject.toString(), "AndroidService/updateUserCodeIdService");
+                RequestUtil.request(jsonObject.toString(), "AndroidService/deleteAreaCodeInfoService");
+                ListViewUtil.deleteData(codeidTempt);//第二个参数为缩略图显示地址
+                mDataList.remove(codeidTempt);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return params[0];
+        }
+
+        //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
+        @Override
+        protected void onPostExecute(Integer s) {
+            mAdapter.notifyItemRemoved(s);
+            //ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
 
         }
     }
@@ -554,27 +586,25 @@ public class AreaFragment extends Fragment
                 ajsonObject.put("sdpath",fileURL);
                 ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
                 ajsonObject.put("codeid",codeIdTemp);
+                ajsonObject.put("cropkinds","小麦");
                 ajsonObject.put("geometry","000");
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");
-                ListViewUtil.addData(addAreaName,fileURL,"000");//第二个参数为缩略图显示地址
+                ListViewUtil.addData(addAreaName,fileURL,"000",codeIdTemp);//第二个参数为缩略图显示地址
+                mDataList.add(codeIdTemp);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
         @Override
         protected void onPostExecute(String s) {
-            String test="testtest";
-            //删除设备上的中间文件
-            //删除设备上的中间文件
             if (upfile.delete())
             {
                 Log.i(TAG, upfile.getName()+" local delete");
             }
-
-            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemInserted(mAdapter.getItemCount());
+            //mAdapter.notifyDataSetChanged();
         }
     }
 

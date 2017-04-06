@@ -5,19 +5,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.loginregister.MainActivity;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
@@ -43,7 +46,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
     private String codeidStr = "";
     private String productType = "";
     private RecyclerView recyclerView;
-    private SearchView mSearchview;
+
     private ImageView imageView;
     private ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String,Object>>();
 
@@ -52,6 +55,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
     private String mField;
     private String userid;
     private String geometry;
+    private String areaTitle;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -60,9 +64,10 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         productType = ActivityUtil.getParam(getActivity(),"producttype");
         mField = ActivityUtil.getParam(getActivity(),"codeid");
         userid = ActivityUtil.getParam(getActivity(),"id");
+        codeidStr =  ActivityUtil.getParam(getActivity(),"locno");
         //recycleView
         recyclerView = (RecyclerView) view.findViewById(R.id.prodeucTypeRecyclerView);
-        mSearchview = (SearchView) view.findViewById(R.id.searchView);
+
         imageView = (ImageView) view.findViewById(R.id.backdrop);
         final List<String> mDataList = new ArrayList<>();
         String[] productTypes = productType.split("/");
@@ -119,20 +124,6 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 // recyclerView.addItemDecoration(new ItemDividerDecoration(MainActivity.this, OrientationHelper.VERTICAL));
 
-        mSearchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-                //Toast.makeText(getActivity().getApplicationContext(), query, Toast.LENGTH_LONG).show();
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
         new QueryOrdersThreadTask().execute();//查询该项信息
         return view ;
     }
@@ -156,6 +147,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
                             JSONArray aArea = new JSONArray(areaLists.get(i).toString());
                             geometry = aArea.get(2).toString();
                             ActivityUtil.putParam(getActivity(),"geometry",geometry);
+                            areaTitle = aArea.get(0).toString();
                             return aArea.get(1).toString();
                         }
                     }
@@ -173,7 +165,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
             Util util =new Util();
             Util.VolleyLoadPicture vlp = util.new VolleyLoadPicture(getActivity(), imageView);
             vlp.getmImageLoader().get(s, vlp.getOne_listener());
-
+            ActivityUtil.setTitle(getActivity(),R.id.toolbar_title, areaTitle);
 //            Bitmap bit = BitmapFactory.decodeFile(s); //自定义//路径
 //            imageView.setImageBitmap(bit);
 
@@ -184,4 +176,5 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         //跳转到AreaItemInfoFragment
         ActivityUtil.switchToFragment(getActivity(), new AreaItemInfoFragment(), R.id.id_content);
     }
+
 }
