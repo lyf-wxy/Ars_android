@@ -69,6 +69,8 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         recyclerView = (RecyclerView) view.findViewById(R.id.prodeucTypeRecyclerView);
 
         imageView = (ImageView) view.findViewById(R.id.backdrop);
+
+        ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
         final List<String> mDataList = new ArrayList<>();
         String[] productTypes = productType.split("/");
         for (int i = 0; i < productTypes.length; i++) {
@@ -122,7 +124,6 @@ public class AreaItemFragment extends Fragment implements OnClickListener
         });
         //设置布局样式LayoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-// recyclerView.addItemDecoration(new ItemDividerDecoration(MainActivity.this, OrientationHelper.VERTICAL));
 
         new QueryOrdersThreadTask().execute();//查询该项信息
         return view ;
@@ -152,7 +153,6 @@ public class AreaItemFragment extends Fragment implements OnClickListener
                         }
                     }
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }

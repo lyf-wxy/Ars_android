@@ -230,6 +230,43 @@ public class ActivityUtil extends AppCompatActivity {
         toolbar_add.setVisibility(View.GONE);
         toolbar_draw.setVisibility(View.GONE);
     }
+
+    /**
+     * 只可见标题栏，带activity
+     * @param activity
+     * @param title_Id
+     * @param toolbar_search_Id
+     * @param toolbar_add_Id
+     * @param toolbar_draw_Id
+     */
+    public static void setAllVisibilitys(Activity activity,int title_Id, int toolbar_search_Id, int toolbar_add_Id, int toolbar_draw_Id){
+        TextView titleActivity = (TextView)activity.findViewById(title_Id);
+        Button toolbar_search_button = (Button)activity.findViewById(toolbar_search_Id);
+        Button toolbar_add_button = (Button)activity.findViewById(toolbar_add_Id);
+        Button toolbar_draw_button = (Button)activity.findViewById(toolbar_draw_Id);
+        titleActivity.setVisibility(View.VISIBLE);
+        toolbar_search_button.setVisibility(View.VISIBLE);
+        toolbar_add_button.setVisibility(View.VISIBLE);
+        toolbar_draw_button.setVisibility(View.VISIBLE);
+    }
+    /**
+     * 只可见标题栏，带activity
+     * @param activity
+     * @param title_Id
+     * @param toolbar_search_Id
+     * @param toolbar_add_Id
+     * @param toolbar_draw_Id
+     */
+    public static void setOnlyVisibilitys(Activity activity,int title_Id, int toolbar_search_Id, int toolbar_add_Id, int toolbar_draw_Id){
+        TextView titleActivity = (TextView)activity.findViewById(title_Id);
+        Button toolbar_search_button = (Button)activity.findViewById(toolbar_search_Id);
+        Button toolbar_add_button = (Button)activity.findViewById(toolbar_add_Id);
+        Button toolbar_draw_button = (Button)activity.findViewById(toolbar_draw_Id);
+        titleActivity.setVisibility(View.VISIBLE);
+        toolbar_search_button.setVisibility(View.GONE);
+        toolbar_add_button.setVisibility(View.GONE);
+        toolbar_draw_button.setVisibility(View.GONE);
+    }
     /**
      * 设置默认显示的fragment
      * @param fragment

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -140,6 +143,7 @@ public class AreaFragment extends Fragment
         toolbar_add = (Button)getActivity().findViewById(R.id.toolbar_add);
         toolbar_draw = (Button)getActivity().findViewById(R.id.toolbar_draw);
         ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"区域");
+        ActivityUtil.setAllVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
         toolbar_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -241,10 +245,27 @@ public class AreaFragment extends Fragment
                 });
                 ((BaseRecyclerAdapter)mAdapter).setOnItemLongClickListener(new BaseRecyclerAdapter.OnItemLongClickListener() {
                     @Override
-                    public void onItemLongClick(View itemView, int pos) {
-                        //Toast.makeText(AdapterTestActivity.this, "long click " + pos, Toast.LENGTH_SHORT).show();
-                        DeleteThreadTask deleteThreadTask = new DeleteThreadTask();
-                        deleteThreadTask.execute(pos);
+                    public void onItemLongClick(View itemView, final int pos) {
+                        //弹框提醒
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("确认删除吗?");
+                        builder.setTitle("提示");
+                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DeleteThreadTask deleteThreadTask = new DeleteThreadTask();
+                                deleteThreadTask.execute(pos);
+                                dialog.dismiss();
+                            }
+                        });
+
+                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.create().show();
                     }
                 });
                 //设置布局样式LayoutManager
@@ -389,6 +410,7 @@ public class AreaFragment extends Fragment
         @Override
         protected void onPostExecute(Integer s) {
             mAdapter.notifyItemRemoved(s);
+            ActivityUtil.toastShow(getActivity(),"删除成功");
             //ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
 
         }
@@ -589,7 +611,7 @@ public class AreaFragment extends Fragment
                 ajsonObject.put("sdpath",fileURL);
                 ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
                 ajsonObject.put("codeid",codeIdTemp);
-                //ajsonObject.put("cropkinds","小麦");
+
                 ajsonObject.put("geometry","000");
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");
