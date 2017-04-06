@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SearchView;
 
 import com.esri.android.map.GraphicsLayer;
@@ -79,6 +81,13 @@ public class SaveDrawArea extends Fragment {
     FloatingActionButton mSave;
     FloatingActionButton mCancel;
 
+    RadioGroup CropKindsRadioGroup;
+
+    RadioButton CropKindsOfWheat;
+    RadioButton CropKindsOfRice;
+    RadioButton CropKindsOfCorn;
+
+    String mCropKind = "";
     EditText mDrawAreaName;
     String fieldName = "";
     String FileDirectory = "";
@@ -107,7 +116,13 @@ public class SaveDrawArea extends Fragment {
 
         mDrawAreaName = (EditText)view.findViewById(R.id.fieldNameofDrawArea);
 
+        CropKindsRadioGroup = (RadioGroup)view.findViewById(R.id.CropKindsRadioGroup);
 
+        CropKindsOfWheat  = (RadioButton)view.findViewById(R.id.CropKindsOfWheat);
+        CropKindsOfRice  = (RadioButton)view.findViewById(R.id.CropKindsOfRice);
+        CropKindsOfCorn  = (RadioButton)view.findViewById(R.id.CropKindsOfCorn);
+
+        CropKindsRadioGroup.setOnCheckedChangeListener(new RadioGroupListener());
         /*Bundle args = getArguments();
         if(args!=null)
         {
@@ -216,6 +231,28 @@ public class SaveDrawArea extends Fragment {
         return view;
     }
 
+    class RadioGroupListener implements RadioGroup.OnCheckedChangeListener{
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (checkedId==CropKindsOfWheat.getId()){
+                System.out.println("CropKindsOfWheat!");
+                mCropKind = CropKindsOfWheat.getText().toString();
+
+            }else if (checkedId==CropKindsOfRice.getId()){
+                System.out.println("CropKindsOfWheat!");
+                mCropKind = CropKindsOfRice.getText().toString();
+            }else if(checkedId==CropKindsOfCorn.getId())
+            {
+                mCropKind = CropKindsOfCorn.getText().toString();
+                System.out.println("CropKindsOfCorn!");
+            }else {
+                mCropKind = "";
+            }
+
+        }
+    }
+
+
     class AreaCodeInfoServiceThreadTask extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -231,7 +268,9 @@ public class SaveDrawArea extends Fragment {
                 ajsonObject.put("sdpath",fileURL);
                 ajsonObject.put("geometry",mDrawAreaStr);//mDrawAreaStr
                 ajsonObject.put("ordername",fieldName);
-                ajsonObject.put("cropkinds","小麦");
+
+                ajsonObject.put("cropkinds",mCropKind);
+
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
                 String newLocno = ActivityUtil.getParam(getActivity(),"locno")+mCodeIdOfArea+"/";//拼接新的codeid字符串
                 ajsonObject.put("codeidStr",newLocno);

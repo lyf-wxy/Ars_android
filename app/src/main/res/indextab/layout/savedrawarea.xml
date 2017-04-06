@@ -23,10 +23,11 @@
 
     <TextView
         android:gravity="center"
-        android:text="请输入地块名称"
+        android:text="请输入地块名称:"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginTop="200dp"
+
         android:id="@+id/textView" />
 
     <EditText
@@ -34,7 +35,107 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="240dp"
+        android:hint="地块名称"
         android:background="#ffffff"/>
+
+    <TextView
+        android:gravity="center"
+        android:text="请选择种植农作物:"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="280dp"
+        android:id="@+id/textView1" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/CropKindsCheckboxs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#fffffd"
+        android:orientation="vertical"
+        android:layout_marginTop="320dp">
+        <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/CropKind1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:text="小麦"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/CropKind2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:text="玉米"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+
+
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/CropKind3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:text="水稻"
+                android:textSize="17sp"
+                android:textColor="@drawable/selector_text_color"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+
+
+        </LinearLayout-->
+
+        <RadioGroup
+            android:id="@+id/CropKindsRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <RadioButton
+                android:id="@+id/CropKindsOfWheat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="小麦"
+                />
+            <RadioButton
+                android:id="@+id/CropKindsOfRice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="水稻"/>
+            <RadioButton
+                android:id="@+id/CropKindsOfCorn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="玉米"/>
+        </RadioGroup>
+    </LinearLayout>
+
+
     <android.support.design.widget.FloatingActionButton
         app:rippleColor="#d3dfe7"
         app:backgroundTint="#d3dfe7"
