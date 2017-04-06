@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.esri.android.map.MapView;
@@ -58,6 +59,7 @@ public class AreaItemInfoFragment extends Fragment
     private ImageView legendPic;
 
     private MapView mMapView;
+    private TextView mTitle;
 
     private RecyclerView mRecyclerView;
     private GalleryAdapter mAdapter;
@@ -89,7 +91,7 @@ public class AreaItemInfoFragment extends Fragment
 
         legendPic = (ImageView) view.findViewById(R.id.legendPic);
         mMapView = (MapView)view.findViewById(R.id.mapofAreaItemInfo);
-
+        mTitle = (TextView)view.findViewById(R.id.TitleOfAreaItemInfo);
 
         //得到控件
         mRecyclerView = (RecyclerView) view.findViewById(R.id.id_recyclerview_horizontal);
@@ -186,6 +188,7 @@ public class AreaItemInfoFragment extends Fragment
     private void addLegend2MapView(String productType)
     {
 
+        mTitle.setText(productType);
         //getMapLegend
         legendPic.setImageResource(R.drawable.legend);
 

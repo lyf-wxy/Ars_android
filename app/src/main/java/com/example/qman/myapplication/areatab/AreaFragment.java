@@ -217,8 +217,11 @@ public class AreaFragment extends Fragment
                     public void bindData(RecyclerViewHolder holder, int position, HashMap<String,Object> item) {
                         //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
                         holder.getTextView(R.id.title).setText(item.get("ordername").toString());
-                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
-                        holder.getImageView(R.id.image).setImageBitmap(bit);
+
+                        holder.getTextView(R.id.desc).setText(item.get("cropkinds").toString());
+
+//                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
+//                        holder.getImageView(R.id.image).setImageBitmap(bit);
 
                         //用Volley加载图片
                         Util util =new Util();
@@ -608,11 +611,11 @@ public class AreaFragment extends Fragment
                 ajsonObject.put("sdpath",fileURL);
                 ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
                 ajsonObject.put("codeid",codeIdTemp);
-               // ajsonObject.put("cropkinds","小麦");
+
                 ajsonObject.put("geometry","000");
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");
-                ListViewUtil.addData(addAreaName,fileURL,"000",codeIdTemp);//第二个参数为缩略图显示地址
+                ListViewUtil.addData(addAreaName,fileURL,"000",codeIdTemp,"000");//第二个参数为缩略图显示地址
                 mDataList.add(codeIdTemp);
             } catch (JSONException e) {
                 e.printStackTrace();

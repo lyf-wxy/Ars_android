@@ -49,13 +49,14 @@ public class ListViewUtil extends AppCompatActivity {
      * @param geometry
      * @return
      */
-    public static HashMap<String,Object> addData(String ordername,String sdpath,String geometry,String codeidStr){
+    public static HashMap<String,Object> addData(String ordername,String sdpath,String geometry,String codeidStr,String cropkinds){
         HashMap<String,Object> map = new HashMap<String,Object>();
 
         map.put("ordername", ordername);
         map.put("sdpath", sdpath);
         map.put("geometry", geometry);
         map.put("codeidStr", codeidStr);
+        map.put("cropkinds", cropkinds);
         data.add(map);
         return  map;
     }
@@ -99,7 +100,7 @@ public class ListViewUtil extends AppCompatActivity {
                     for (int i=0;i<areaLists.length();i++) {
                         JSONArray aArea = new JSONArray(areaLists.get(i).toString());
 
-                        addData(aArea.get(0).toString(),aArea.get(1).toString(),aArea.get(2).toString(),aArea.get(3).toString());
+                        addData(aArea.get(0).toString(),aArea.get(1).toString(),aArea.get(2).toString(),aArea.get(3).toString(),aArea.get(4).toString());
                        /* HashMap<String, Object> listm = new HashMap<String, Object>();
                         listm.put("ordername", aArea.get(0).toString());
                         listm.put("sdpath", aArea.get(1).toString());
