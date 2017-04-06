@@ -96,7 +96,8 @@ public class DrawArea extends Fragment  {
 
         mSavebar = (LinearLayout)view.findViewById(R.id.savabarofareaSelectorDraw);
         mUndo = (Button)view.findViewById(R.id.undoofareaSelectorDraw);
-
+        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"勾画区域");
+        ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
         // Set listeners on MapView
         mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
             private static final long serialVersionUID = 1L;

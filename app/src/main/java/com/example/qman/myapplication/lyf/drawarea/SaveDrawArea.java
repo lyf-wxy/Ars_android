@@ -42,6 +42,7 @@ import com.example.qman.myapplication.areatab.AreaFragment;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.FormFile;
 import com.example.qman.myapplication.utils.IncreasingId;
+import com.example.qman.myapplication.utils.ListViewUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.SocketHttpRequester;
 import com.example.qman.myapplication.utils.Variables;
@@ -123,6 +124,9 @@ public class SaveDrawArea extends Fragment {
         CropKindsOfCorn  = (RadioButton)view.findViewById(R.id.CropKindsOfCorn);
 
         CropKindsRadioGroup.setOnCheckedChangeListener(new RadioGroupListener());
+
+        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"保存区域");
+        ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
         /*Bundle args = getArguments();
         if(args!=null)
         {
@@ -277,6 +281,7 @@ public class SaveDrawArea extends Fragment {
                 ActivityUtil.changeParam(getActivity(),"locno",newLocno);
                 ajsonObject.put("id",ActivityUtil.getParam(getActivity(),"id"));
                 RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");//更新用户表中的区域codeid字段
+                ListViewUtil.addData(fieldName,fileURL,"000",mCodeIdOfArea,"000");//第二个参数为缩略图显示地址
             } catch (JSONException e) {
                 e.printStackTrace();
             }

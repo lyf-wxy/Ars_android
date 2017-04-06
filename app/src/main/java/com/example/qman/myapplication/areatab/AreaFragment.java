@@ -393,6 +393,7 @@ public class AreaFragment extends Fragment
                 jsonObject.put("id", id);
                 String codeidTempt = mDataList.get(params[0]);
                 codeidStr = codeidStr.replace(codeidTempt + "/", "");
+                ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
                 jsonObject.put("codeidStr", codeidStr);
                 jsonObject.put("codeid", codeidTempt);
                 ActivityUtil.changeParam(getActivity(),"codeidStr",codeidStr);
