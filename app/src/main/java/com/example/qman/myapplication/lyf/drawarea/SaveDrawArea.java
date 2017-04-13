@@ -45,6 +45,7 @@ import com.example.qman.myapplication.utils.IncreasingId;
 import com.example.qman.myapplication.utils.ListViewUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.SocketHttpRequester;
+import com.example.qman.myapplication.utils.Util;
 import com.example.qman.myapplication.utils.Variables;
 
 import org.codehaus.jackson.JsonFactory;
@@ -62,6 +63,8 @@ import java.text.SimpleDateFormat;
 import static android.R.attr.bitmap;
 import static android.content.ContentValues.TAG;
 import static com.example.qman.myapplication.R.string.username;
+import static com.example.qman.myapplication.utils.Util.getViewBitmap;
+import static com.example.qman.myapplication.utils.Util.saveMyBitmap;
 import static com.example.qman.myapplication.utils.Variables.targetServerURL;
 
 import java.util.Date;
@@ -196,9 +199,9 @@ public class SaveDrawArea extends Fragment {
                 fieldName = mDrawAreaName.getText().toString();//地块名称
                 mCodeIdOfArea = "10"+ (int)((Math.random()*9+1)*1000);
 
-                Bitmap bitmap=getViewBitmap(mMapView);
+                Bitmap bitmap=Util.getViewBitmap(mMapView);
 
-                FileDirectory = saveMyBitmap(mCodeIdOfArea,bitmap);//保存缩略图，并返回文件路径
+                FileDirectory = Util.saveMyBitmap(mCodeIdOfArea,bitmap);//保存缩略图，并返回文件路径
 
                 Log.d(TAG,FileDirectory);
 
@@ -308,108 +311,108 @@ public class SaveDrawArea extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
-    private Bitmap getViewBitmap(MapView v) {
+//    private Bitmap getViewBitmap(MapView v) {
+//
+//        v.clearFocus();
+//        v.setPressed(false);
+//
+//        boolean willNotCache = v.willNotCacheDrawing();
+//        v.setWillNotCacheDrawing(false);
+//        int color = v.getDrawingCacheBackgroundColor();
+//        v.setDrawingCacheBackgroundColor(0);
+//        if (color != 0) {
+//            v.destroyDrawingCache();
+//        }
+//        v.buildDrawingCache();
+//        Bitmap cacheBitmap = null;
+//        while (cacheBitmap == null) {
+//            cacheBitmap = v.getDrawingMapCache(0, 0, v.getWidth(),
+//                    v.getHeight());
+//        }
+//        Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);
+//        v.destroyDrawingCache();
+//        v.setWillNotCacheDrawing(willNotCache);
+//        v.setDrawingCacheBackgroundColor(color);
+//        return bitmap;
+//    }
+//    public String saveMyBitmap(String bitName,Bitmap mBitmap){
+//
+//        //String FileName=this.getInnerSDCardPath() + "/" + bitName + ".png";
+//        //获取当前系统时间
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+//        Date curDate =new Date(System.currentTimeMillis());
+//        String DateStr = formatter.format(curDate);
+//        Log.d("saveMyBitmap",DateStr);
+//
+//        String FileName = null;
+//        try{
+//
+//            String FileDir = Util.CreateFileDir("Arsandroid");
+//            FileName = FileDir+ "/" + DateStr+"_"+bitName + ".png";
+//
+//            Log.d("saveMyBitmap",FileName);
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+//
+//
+//        //ShowMessage(FileName);
+//        File f = new File(FileName);
+//        try {
+//            f.createNewFile();
+//        } catch (IOException e) {
+//        // TODO Auto-generated catch block
+//            Log.e("在保存"+FileName+"图片时出错：" + e.toString(),"在保存"+FileName+"图片时出错：" + e.toString());
+//        }
+//        FileOutputStream fOut = null;
+//        try {
+//            fOut = new FileOutputStream(f);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+//        try {
+//            fOut.flush();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            fOut.close();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return FileName;
+//    }
 
-        v.clearFocus();
-        v.setPressed(false);
-
-        boolean willNotCache = v.willNotCacheDrawing();
-        v.setWillNotCacheDrawing(false);
-        int color = v.getDrawingCacheBackgroundColor();
-        v.setDrawingCacheBackgroundColor(0);
-        if (color != 0) {
-            v.destroyDrawingCache();
-        }
-        v.buildDrawingCache();
-        Bitmap cacheBitmap = null;
-        while (cacheBitmap == null) {
-            cacheBitmap = v.getDrawingMapCache(0, 0, v.getWidth(),
-                    v.getHeight());
-        }
-        Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);
-        v.destroyDrawingCache();
-        v.setWillNotCacheDrawing(willNotCache);
-        v.setDrawingCacheBackgroundColor(color);
-        return bitmap;
-    }
-    public String saveMyBitmap(String bitName,Bitmap mBitmap){
-
-        //String FileName=this.getInnerSDCardPath() + "/" + bitName + ".png";
-        //获取当前系统时间
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        Date curDate =new Date(System.currentTimeMillis());
-        String DateStr = formatter.format(curDate);
-        Log.d("saveMyBitmap",DateStr);
-
-        String FileName = null;
-        try{
-
-            String FileDir = CreateFileDir("Arsandroid");
-            FileName = FileDir+ "/" + DateStr+"_"+bitName + ".png";
-
-            Log.d("saveMyBitmap",FileName);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-
-        //ShowMessage(FileName);
-        File f = new File(FileName);
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-        // TODO Auto-generated catch block
-            Log.e("在保存"+FileName+"图片时出错：" + e.toString(),"在保存"+FileName+"图片时出错：" + e.toString());
-        }
-        FileOutputStream fOut = null;
-        try {
-            fOut = new FileOutputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-        try {
-            fOut.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            fOut.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return FileName;
-    }
-
-    public String getSDPath(){
-        File sdDir = null;
-        boolean sdCardExist = Environment.getExternalStorageState()
-                .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
-        if (sdCardExist)
-        {
-            sdDir = Environment.getExternalStorageDirectory();//获取跟目录
-        }
-        return sdDir.toString();
-    }
-    //创建文件夹及文件
-    public String CreateFileDir(String fileDir) throws IOException {
-
-        String fileDirectory = getSDPath()+"/"+fileDir;//文件夹路径
-        File filedir = new File(fileDirectory);
-        if (!filedir.exists()) {
-            try {
-                //按照指定的路径创建文件夹
-                filedir.mkdirs();
-                return fileDirectory;
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
-        }
-        return fileDirectory;
-    }
+//    public String getSDPath(){
+//        File sdDir = null;
+//        boolean sdCardExist = Environment.getExternalStorageState()
+//                .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+//        if (sdCardExist)
+//        {
+//            sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+//        }
+//        return sdDir.toString();
+//    }
+//    //创建文件夹及文件
+//    public String CreateFileDir(String fileDir) throws IOException {
+//
+//        String fileDirectory = getSDPath()+"/"+fileDir;//文件夹路径
+//        File filedir = new File(fileDirectory);
+//        if (!filedir.exists()) {
+//            try {
+//                //按照指定的路径创建文件夹
+//                filedir.mkdirs();
+//                return fileDirectory;
+//            } catch (Exception e) {
+//                // TODO: handle exception
+//            }
+//        }
+//        return fileDirectory;
+//    }
 
     Handler handler = new Handler() {
         @Override
