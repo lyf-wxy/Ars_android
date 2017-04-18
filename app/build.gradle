@@ -36,6 +36,8 @@ android {
                     'src/main/res/layout',
                     'src/main/res',
             ]
+            jniLibs.srcDirs = ['src/main/jniLibs']
+            jniLibs.srcDirs = ['libs']//百度地图的jar包存放位置
         }
     }
 }

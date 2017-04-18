@@ -1,5 +1,13 @@
 package com.example.qman.myapplication.loginregister;
 
+import android.app.Notification;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +33,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.text.TextUtils;
 
+import com.baidu.android.pushservice.CustomPushNotificationBuilder;
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
 import com.esri.android.runtime.ArcGISRuntime;
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.utils.RequestUtil;
+import com.example.qman.myapplication.utils.Util;
 import com.example.qman.myapplication.utils.Variables;
 import com.example.qman.myapplication.indextab.IndexTabMainActivity;
 import com.example.qman.myapplication.utils.ActivityUtil;
+
+
+
+import android.provider.MediaStore.Audio;
+
+import static android.view.View.Y;
+import static com.example.qman.myapplication.utils.Util.CreateFileDir;
 
 /*
 登录页
@@ -45,10 +64,46 @@ public class MainActivity extends AppCompatActivity {
     private String passwordInput = null;
     int counter = 3;
 
+    String mNotiRing = "ars.ogg";
+    String mNotiRingPath = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+//        try
+//        {
+//            String FileDir = CreateFileDir("Arsandroid");
+//            mNotiRingPath = FileDir+ "/" + mNotiRing;
+//
+//            Util.CreateFile(getApplicationContext(),mNotiRingPath);
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+//
+//
+//        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY,Variables.api_key);
+//
+//
+//
+//        CustomPushNotificationBuilder cBuilder = new CustomPushNotificationBuilder(R.layout.notification_custom_builder,R.id.notification_icon,R.id.notification_title,R.id.notification_text);
+//
+//        cBuilder.setNotificationFlags(Notification.FLAG_AUTO_CANCEL);
+//        cBuilder.setNotificationDefaults(Notification.DEFAULT_VIBRATE);
+//        cBuilder.setStatusbarIcon(R.drawable.earth);
+//        cBuilder.setLayoutDrawable(R.drawable.earth);
+//
+//
+//        long[] vibrates = { 0, 1000, 1000, 1000 };
+//        cBuilder.setNotificationVibrate(vibrates);
+//
+//        cBuilder.setNotificationSound(mNotiRingPath);
+//        Log.d("music",mNotiRingPath);
+//
+//        PushManager.setNotificationBuilder(this, 1, cBuilder);
 
         //初始化组件
         initView();
@@ -132,4 +187,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
 }

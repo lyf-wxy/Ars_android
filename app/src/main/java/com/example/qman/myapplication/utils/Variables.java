@@ -14,4 +14,6 @@ public class Variables {
 
     public static String targetServerURL = "http://10.2.3.222:6080/arcgis/rest/services/ChinaCountry/MapServer";
 
+    public static String api_key = "DRqcoy3fb192V2L84fKsUONG";
+
 }
