@@ -71,53 +71,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        *创建通知铃声
-        */
-        try
-        {
-            String FileDir = CreateFileDir("Arsandroid");
-            mNotiRingPath = FileDir+ "/" + mNotiRing;
 
-            Util.CreateFile(getApplicationContext(),mNotiRingPath);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        /*
-        设置通知栏
-         */
-        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY,Variables.api_key);
-
-//        CustomPushNotificationBuilder cBuilder = new CustomPushNotificationBuilder(
-//                resource.getIdentifier(
-//                        "notification_custom_builder", "layout", pkgName),
-//                resource.getIdentifier("notification_icon", "id", pkgName),
-//                resource.getIdentifier("notification_title", "id", pkgName),
-//                resource.getIdentifier("notification_text", "id", pkgName));
-        //cBuilder.setStatusbarIcon(this.getApplicationInfo().icon);
-        //cBuilder.setLayoutDrawable(resource.getIdentifier("earth", "drawable", pkgName));
-        //cBuilder.setNotificationSound(Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6").toString());
+//        try
+//        {
+//            String FileDir = CreateFileDir("Arsandroid");
+//            mNotiRingPath = FileDir+ "/" + mNotiRing;
 //
-        CustomPushNotificationBuilder cBuilder = new CustomPushNotificationBuilder(R.layout.notification_custom_builder,R.id.notification_icon,R.id.notification_title,R.id.notification_text);
-
-        cBuilder.setNotificationFlags(Notification.FLAG_AUTO_CANCEL);
-        cBuilder.setNotificationDefaults(Notification.DEFAULT_VIBRATE);
-        cBuilder.setStatusbarIcon(R.drawable.earth);
-        cBuilder.setLayoutDrawable(R.drawable.earth);
-
-
-//        cBuilder.setNotificationSound(Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6").toString());
-        long[] vibrates = { 0, 1000, 1000, 1000 };
-        cBuilder.setNotificationVibrate(vibrates);
-
-        cBuilder.setNotificationSound(mNotiRingPath);
-        Log.d("music",mNotiRingPath);
-        // 推送高级设置，通知栏样式设置为下面的ID
-        PushManager.setNotificationBuilder(this, 1, cBuilder);
-
+//            Util.CreateFile(getApplicationContext(),mNotiRingPath);
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+//
+//
+//        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY,Variables.api_key);
+//
+//
+//
+//        CustomPushNotificationBuilder cBuilder = new CustomPushNotificationBuilder(R.layout.notification_custom_builder,R.id.notification_icon,R.id.notification_title,R.id.notification_text);
+//
+//        cBuilder.setNotificationFlags(Notification.FLAG_AUTO_CANCEL);
+//        cBuilder.setNotificationDefaults(Notification.DEFAULT_VIBRATE);
+//        cBuilder.setStatusbarIcon(R.drawable.earth);
+//        cBuilder.setLayoutDrawable(R.drawable.earth);
+//
+//
+//        long[] vibrates = { 0, 1000, 1000, 1000 };
+//        cBuilder.setNotificationVibrate(vibrates);
+//
+//        cBuilder.setNotificationSound(mNotiRingPath);
+//        Log.d("music",mNotiRingPath);
+//
+//        PushManager.setNotificationBuilder(this, 1, cBuilder);
 
         //初始化组件
         initView();

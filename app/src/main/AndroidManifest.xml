@@ -46,13 +46,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".loginregister.MainActivity">
+        <activity android:name=".loginregister.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".loginregister.MainActivity" />
         <activity android:name=".loginregister.IndexActivity" />
         <activity android:name=".loginregister.RegisterFragmentActivity" />
         <activity android:name=".indextab.IndexTabMainActivity" />
