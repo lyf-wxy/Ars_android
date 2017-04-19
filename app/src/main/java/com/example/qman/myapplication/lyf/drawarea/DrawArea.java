@@ -89,7 +89,7 @@ public class DrawArea extends Fragment  {
 
     Graphic mPolygLineOrPolygonGraphic;
 
-    private GraphicsLayer graphicsLayerPosition = new GraphicsLayer();
+    private GraphicsLayer graphicsLayerPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,6 +97,7 @@ public class DrawArea extends Fragment  {
         View view = inflater.inflate(R.layout.aera_item_selectordraw, container, false);
 
         final MarkerSymbol positionSymbol = new PictureMarkerSymbol(ContextCompat.getDrawable(getActivity(),R.drawable.positionsymbol));
+
 
         mExit = (Button)view.findViewById(R.id.exitofareaSelectorDraw);
         mSearchView = (SearchView)view.findViewById(R.id.searchofareaSelectorDraw);
@@ -118,6 +119,9 @@ public class DrawArea extends Fragment  {
                     if (source instanceof MapView) {
                         mGraphicsLayerEditing = new GraphicsLayer();
                         mMapView.addLayer(mGraphicsLayerEditing);
+
+                        graphicsLayerPosition = new GraphicsLayer();
+                        mMapView.addLayer(graphicsLayerPosition);
                     }
                 }
             }

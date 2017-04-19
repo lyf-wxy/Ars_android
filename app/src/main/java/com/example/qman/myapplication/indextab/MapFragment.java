@@ -65,7 +65,7 @@ public class MapFragment extends Fragment {
     FloatingActionButton mShowall;
     private ArcGISImageServiceLayer mArcGISImageServiceLayer;
     private SearchView mSearchview;
-    private GraphicsLayer graphicsLayerPosition = new GraphicsLayer();
+    private GraphicsLayer graphicsLayerPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,7 +80,7 @@ public class MapFragment extends Fragment {
 
 
         final MarkerSymbol positionSymbol = new PictureMarkerSymbol(ContextCompat.getDrawable(getActivity(),R.drawable.positionsymbol));
-
+        graphicsLayerPosition = new GraphicsLayer();
 
         ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"地图");
 
@@ -108,6 +108,7 @@ public class MapFragment extends Fragment {
                 Point positionProj = (Point)GeometryEngine.project(position, SpatialReference.create(4326),mMapView.getSpatialReference());
                 //图层的创建
                 Graphic graphicPoint = new Graphic(positionProj,positionSymbol);
+
                 graphicsLayerPosition.removeAll();
                 graphicsLayerPosition.addGraphic(graphicPoint);
 
