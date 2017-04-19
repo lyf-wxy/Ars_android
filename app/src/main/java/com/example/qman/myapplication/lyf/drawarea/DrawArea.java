@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -31,6 +32,8 @@ import com.esri.core.geometry.SpatialReference;
 import com.esri.core.map.CallbackListener;
 import com.esri.core.map.FeatureEditResult;
 import com.esri.core.map.Graphic;
+import com.esri.core.symbol.MarkerSymbol;
+import com.esri.core.symbol.PictureMarkerSymbol;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
@@ -38,6 +41,7 @@ import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.areatab.AreaItemFragment;
 import com.example.qman.myapplication.loginregister.MainActivity;
 import com.example.qman.myapplication.utils.ActivityUtil;
+import com.example.qman.myapplication.utils.GPSTracker;
 
 import java.util.ArrayList;
 
@@ -84,10 +88,16 @@ public class DrawArea extends Fragment  {
     SimpleMarkerSymbol mGreenMarkerSymbol = new SimpleMarkerSymbol(Color.GREEN, 15, SimpleMarkerSymbol.STYLE.CIRCLE);
 
     Graphic mPolygLineOrPolygonGraphic;
+
+    private GraphicsLayer graphicsLayerPosition = new GraphicsLayer();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.aera_item_selectordraw, container, false);
+
+        final MarkerSymbol positionSymbol = new PictureMarkerSymbol(ContextCompat.getDrawable(getActivity(),R.drawable.positionsymbol));
+
         mExit = (Button)view.findViewById(R.id.exitofareaSelectorDraw);
         mSearchView = (SearchView)view.findViewById(R.id.searchofareaSelectorDraw);
         mPosition = (Button)view.findViewById(R.id.positionofareaSelectorDraw);
@@ -118,6 +128,31 @@ public class DrawArea extends Fragment  {
         if (!TextUtils.isEmpty(mMapState)) {
             mMapView.restoreState(mMapState);
         }
+
+        mPosition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                GPSTracker gps = new GPSTracker(getActivity().getApplicationContext());
+                double latitude = gps.getLatitude();
+                double longitude = gps.getLongitude();
+
+                Log.d("latitude+longitude",String.valueOf(latitude)+","+String.valueOf(longitude));
+
+                Point position = new Point(longitude,latitude);
+                Point positionProj = (Point)GeometryEngine.project(position, SpatialReference.create(4326),mMapView.getSpatialReference());
+                //图层的创建
+                Graphic graphicPoint = new Graphic(positionProj,positionSymbol);
+                graphicsLayerPosition.removeAll();
+                graphicsLayerPosition.addGraphic(graphicPoint);
+
+                mMapView.centerAndZoom(latitude,longitude,16);
+
+                //GPSTracker.getPositionNamebyLatLon(position,getActivity(),graphicsLayerPosition,mMapView);
+            }
+        });
+
         return view;
     }
     @Override
@@ -153,12 +188,7 @@ public class DrawArea extends Fragment  {
             }
         });
 
-        mPosition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
     }
     @Override
     public void onResume() {
