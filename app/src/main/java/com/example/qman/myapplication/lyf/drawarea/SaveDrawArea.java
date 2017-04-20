@@ -101,6 +101,8 @@ public class SaveDrawArea extends Fragment {
 
     File upfile;
 
+//    Geometry mgeometry;
+
     public static SaveDrawArea newInstance(String graphic)
     {
         SaveDrawArea newFragment = new SaveDrawArea();
@@ -147,38 +149,43 @@ public class SaveDrawArea extends Fragment {
             public void onStatusChanged(Object source, STATUS status) {
                 if (source == mMapView && status == STATUS.INITIALIZED) {
                     try{
-                        JsonFactory factory = new JsonFactory();
-                        JsonParser jsonParser = factory.createJsonParser(mDrawAreaStr);
-                        MapGeometry mapGeometry = GeometryEngine.jsonToGeometry(jsonParser);
-                        Geometry geometry = mapGeometry.getGeometry();
-
-                        SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(Color.YELLOW);
-                        simpleFillSymbol.setAlpha(100);
-                        simpleFillSymbol.setOutline(new SimpleLineSymbol(Color.BLACK, 4));
-                        Graphic graphic = new Graphic(geometry, (simpleFillSymbol));
-
-                        //DrawAreaGraphicLayer = new GraphicsLayer();
-                        DrawAreaGraphicLayer.addGraphic(graphic);
                         mMapView.addLayer(DrawAreaGraphicLayer);
 
+                        String[] geometryStr = {mDrawAreaStr};
+                        new AsyncLoadGraphic().execute(geometryStr);
 
-                        Envelope env = new Envelope();
-                        geometry.queryEnvelope(env);
+//                        JsonFactory factory = new JsonFactory();
+//                        JsonParser jsonParser = factory.createJsonParser(mDrawAreaStr);
+//                        MapGeometry mapGeometry = GeometryEngine.jsonToGeometry(jsonParser);
+//                        Geometry geometry = mapGeometry.getGeometry();
+//
+//                        SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(Color.YELLOW);
+//                        simpleFillSymbol.setAlpha(100);
+//                        simpleFillSymbol.setOutline(new SimpleLineSymbol(Color.BLACK, 4));
+//                        Graphic graphic = new Graphic(geometry, (simpleFillSymbol));
+//
+//
+//                        DrawAreaGraphicLayer.addGraphic(graphic);
 
-                        Envelope newEnv = new Envelope(env.getCenter(),env.getWidth()*2,env.getHeight()*2);
 
-                        Log.d(TAG,env.toString());
-                        Log.d(TAG,newEnv.toString());
 
-                        mMapView.setExtent(newEnv);
-                        Log.d(TAG,"added");
+//                        Envelope env = new Envelope();
+//                        geometry.queryEnvelope(env);
+//
+//                        Envelope newEnv = new Envelope(env.getCenter(),env.getWidth()*2,env.getHeight()*2);
+//
+//                        Log.d(TAG,env.toString());
+//                        Log.d(TAG,newEnv.toString());
+//
+//                        mMapView.setExtent(env);
+//                        Log.d(TAG,"added");
 
 
                     }
-                    catch(IOException ex)
-                    {
-                        ex.printStackTrace();
-                    }
+//                    catch(IOException ex)
+//                    {
+//                        ex.printStackTrace();
+//                    }
                     catch(Exception e)
                     {
                         e.printStackTrace();
@@ -194,6 +201,8 @@ public class SaveDrawArea extends Fragment {
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
 
                 //"/storage/sdcard0/Arsandroid/2017-03-27-14-49-42_test5.png"
                 fieldName = mDrawAreaName.getText().toString();//地块名称
@@ -238,6 +247,68 @@ public class SaveDrawArea extends Fragment {
         return view;
     }
 
+    class AsyncLoadGraphic extends AsyncTask<String,Void,Geometry>{
+        @Override
+        protected Geometry doInBackground(String... geometryStr)
+        {
+
+            if (geometryStr == null || geometryStr.length < 1)
+            {
+                return null;
+            }
+
+
+
+            try{
+
+                //Log.d(TAG,geometryStr[0]);
+                JsonFactory factory = new JsonFactory();
+                JsonParser jsonParser = factory.createJsonParser(geometryStr[0]);
+                MapGeometry mapGeometry = GeometryEngine.jsonToGeometry(jsonParser);
+                Geometry geometry = mapGeometry.getGeometry();
+
+                SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(Color.YELLOW);
+                simpleFillSymbol.setAlpha(100);
+                simpleFillSymbol.setOutline(new SimpleLineSymbol(Color.BLACK, 4));
+                Graphic graphic = new Graphic(geometry, (simpleFillSymbol));
+
+
+                DrawAreaGraphicLayer.addGraphic(graphic);
+
+                //Log.d(TAG,"added");
+
+                return geometry;
+
+
+
+
+
+            }
+            catch(IOException ex)
+            {
+                ex.printStackTrace();
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Geometry geometry)
+        {
+            Envelope env = new Envelope();
+            geometry.queryEnvelope(env);
+
+            //Envelope newEnv = new Envelope(env.getCenter(),env.getWidth()*2,env.getHeight()*2);
+
+//            Log.d(TAG,env.toString());
+//            Log.d(TAG,newEnv.toString());
+
+            mMapView.setExtent(env);
+        }
+
+    }
     class RadioGroupListener implements RadioGroup.OnCheckedChangeListener{
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
