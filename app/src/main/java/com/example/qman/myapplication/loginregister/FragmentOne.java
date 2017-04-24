@@ -21,15 +21,22 @@ import android.widget.TextView;
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
+import com.example.qman.myapplication.utils.MD5Util;
+import com.example.qman.myapplication.utils.RequestUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class FragmentOne extends Fragment implements OnClickListener
 {
@@ -129,10 +136,14 @@ public class FragmentOne extends Fragment implements OnClickListener
                 //拼接json串，传给FragmentTwo，注册的第二步
                 try {
                     jsonObject.put("username",usernameInput);
-                    jsonObject.put("password",passwordInput);
+                    jsonObject.put("password", MD5Util.getMD5String(passwordInput));
                     jsonObject.put("producttype",CheckBoxUtil.createResultStr());
                     jsonObject.put("beginDate",beginDate);
                     jsonObject.put("endDate",endDate);
+                    //jsonObject.put("codeidStr","");
+                    RequestUtil.request(jsonObject.toString(),"AndroidService/registerService",callback);
+                    ActivityUtil.toastShow(getActivity(),"注册成功");
+                    ActivityUtil.switchTo(getActivity(), MainActivity.class);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -140,9 +151,20 @@ public class FragmentOne extends Fragment implements OnClickListener
             }
         }
 
-        ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,jsonObject.toString());
+        //ActivityUtil.switchToFragment(getActivity(),new FragmentTwo(),R.id.id_content,jsonObject.toString());
     }
 
+    //请求后的回调接口
+    private Callback callback = new Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+        }
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            String str = response.body().string();
+
+        }
+    };
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

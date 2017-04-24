@@ -2,6 +2,7 @@ package com.example.qman.myapplication.indextab;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,11 +17,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.areatab.AreaFragment;
 import com.example.qman.myapplication.loginregister.FragmentOne;
 import com.example.qman.myapplication.loginregister.FragmentTwo;
+import com.example.qman.myapplication.loginregister.MainActivity;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
+import com.example.qman.myapplication.utils.ListViewUtil;
+import com.example.qman.myapplication.utils.MD5Util;
 import com.example.qman.myapplication.utils.RequestUtil;
+import com.example.qman.myapplication.utils.Variables;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,8 +34,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -50,6 +58,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
     private String oldPwdInput = null;
     private String newPwdInput = null;
     private String reNewPwdInput = null;
+    private boolean oldPasswordIsRight = false;
     private String id = "";
     private String productType = "";
     JSONObject jsonObject = null;//利用json字符串生成json对象
@@ -134,8 +143,24 @@ public class SettingFragment extends Fragment implements View.OnClickListener
                         return;
                     } else {
                         //一致时通过，加入json中待传给后台
-                        ajsonObject.put("oldPwdInput",oldPwdInput);
-                        ajsonObject.put("paswd",newPwdInput);
+                        ajsonObject.put("username", ActivityUtil.getParam(getActivity(),"username"));
+                        ajsonObject.put("password", MD5Util.getMD5String(oldPwdInput));
+                        new CheckOldPasswordThreadTask().execute();
+
+                        if(!productType.equals(CheckBoxUtil.createResultStr()))
+                            //当有更新时加入json中待传给后台
+                            ajsonObject.put("producttype",CheckBoxUtil.createResultStr());
+                        if(isClickedBegin)
+                            ajsonObject.put("beginDate",beginDate);
+                        if(isClickedEnd)
+                            ajsonObject.put("endDate",endDate);
+                        if(ajsonObject != null) {
+                            //有变化时才进行更新
+                            ajsonObject.put("id", id);
+
+                            new ChangeInfoThreadTask().execute();
+                        }
+
                     }
                 }
                 else{
@@ -144,22 +169,69 @@ public class SettingFragment extends Fragment implements View.OnClickListener
                 }
                 return;
             }
-            if(!productType.equals(CheckBoxUtil.createResultStr()))
-                //当有更新时加入json中待传给后台
-                ajsonObject.put("producttype",CheckBoxUtil.createResultStr());
-            if(isClickedBegin)
-                ajsonObject.put("beginDate",beginDate);
-            if(isClickedEnd)
-                ajsonObject.put("endDate",endDate);
-            if(ajsonObject != null) {
-                //有变化时才进行更新
-                ajsonObject.put("id", id);
-                RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserInfoService",callback);
-            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
+    class CheckOldPasswordThreadTask  extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            //JSONObject ajsonObject = new JSONObject();
+            RequestUtil.request(ajsonObject.toString(),"AndroidService/loginService",callbackLogin);
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            try {
+                if(oldPasswordIsRight)
+                    ajsonObject.put("paswd",MD5Util.getMD5String(newPwdInput));
+
+                else{
+                    ActivityUtil.toastShowFragment(SettingFragment.this,"原密码输入错误");
+                    return;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class ChangeInfoThreadTask  extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            //JSONObject ajsonObject = new JSONObject();
+            RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserInfoService",callback);
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+
+        }
+    }
+    //请求后的回调接口
+    private Callback callbackLogin = new Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+            oldPasswordIsRight = false;
+        }
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            String str = response.body().string();
+            try {
+                jsonObject = new JSONObject(str);
+                String result =  jsonObject.getString("result");//解析json查询结果
+                if(result.equals("success")){
+                    oldPasswordIsRight = true;
+                } else {
+                    oldPasswordIsRight = false;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
     //请求后的回调接口
     private Callback callback = new Callback() {
         @Override

@@ -38,6 +38,7 @@ import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.esri.android.runtime.ArcGISRuntime;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.utils.MD5Util;
 import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.Util;
 import com.example.qman.myapplication.utils.Variables;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject();
                     try {
                         jsonObject.put("username",usernameInput);
-                        jsonObject.put("password",passwordInput);
+                        jsonObject.put("password", MD5Util.getMD5String(passwordInput));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -172,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
                     params.put("beginDate",jsonObject.getString("beginDate"));
                     params.put("endDate",jsonObject.getString("endDate"));
                     params.put("producttype",jsonObject.getString("producttype"));
-                    params.put("locno",jsonObject.getString("locno"));
+                    if(jsonObject.getString("locno") != null)
+                        params.put("locno",jsonObject.getString("locno"));
                     ActivityUtil.switchTo(MainActivity.this, IndexTabMainActivity.class,params);
                 } else {
                     ActivityUtil.toastShow(MainActivity.this,"用户名或密码错误，还剩" + counter + "次机会");
