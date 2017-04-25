@@ -65,7 +65,7 @@ public class MapFragment extends Fragment {
     FloatingActionButton mShowall;
     private ArcGISImageServiceLayer mArcGISImageServiceLayer;
     private SearchView mSearchview;
-    private GraphicsLayer graphicsLayerPosition = new GraphicsLayer();
+    private GraphicsLayer graphicsLayerPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,7 +80,7 @@ public class MapFragment extends Fragment {
 
 
         final MarkerSymbol positionSymbol = new PictureMarkerSymbol(ContextCompat.getDrawable(getActivity(),R.drawable.positionsymbol));
-
+        graphicsLayerPosition = new GraphicsLayer();
 
         ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"地图");
 
@@ -102,16 +102,20 @@ public class MapFragment extends Fragment {
                 double latitude = gps.getLatitude();
                 double longitude = gps.getLongitude();
 
+                Log.d("latitude+longitude",String.valueOf(latitude)+","+String.valueOf(longitude));
+
                 Point position = new Point(longitude,latitude);
                 Point positionProj = (Point)GeometryEngine.project(position, SpatialReference.create(4326),mMapView.getSpatialReference());
                 //图层的创建
                 Graphic graphicPoint = new Graphic(positionProj,positionSymbol);
+
                 graphicsLayerPosition.removeAll();
                 graphicsLayerPosition.addGraphic(graphicPoint);
 
-                mMapView.centerAt(latitude,longitude,true);
+                mMapView.centerAndZoom(latitude,longitude,16);
 
-                getPositionNamebyLatLon(position);
+                GPSTracker.getPositionNamebyLatLon(position,getActivity(),graphicsLayerPosition,mMapView);
+
 
                 //Toast.makeText(getActivity().getApplicationContext(), latitude+","+longitude, Toast.LENGTH_LONG).show();
             }
@@ -139,8 +143,9 @@ public class MapFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                getLatLonbyPositionName(query);
-
+                GPSTracker.getLatLonbyPositionName(query,getActivity(),mMapView);
+                //Log.d("point",String.valueOf(point.getY())+","+String.valueOf(point.getX()));
+                //GPSTracker.MapCenter2LatLon(getActivity(),mMapView,point);
                // Toast.makeText(getActivity().getApplicationContext(), query, Toast.LENGTH_LONG).show();
 
                 return false;
@@ -176,124 +181,5 @@ public class MapFragment extends Fragment {
 
         return view;
     }
-    /*
-    通过经纬度获取地名
-     */
-    public void getPositionNamebyLatLon(final Point point)
-    {
-        //创建okHttpClient对象
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        //创建一个Request
-        String locationStr = String.valueOf(point.getY())+","+String.valueOf(point.getX());
 
-        //Toast.makeText(getActivity(), locationStr, Toast.LENGTH_SHORT).show();
-
-        final Request request = new Request.Builder()
-                .url("http://api.map.baidu.com/geocoder/v2/?location="+locationStr+"&output=json&pois=0&ak="+Variables.BaiduAK+"&mcode="+ Variables.Mcode)
-                .build();
-        //new call
-        Call call = mOkHttpClient.newCall(request);
-        //请求加入调度
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                String str = response.body().string();
-                try
-                {
-                    JSONObject jsonObject = new JSONObject(str);
-                    String address = jsonObject.getJSONObject("result").getString("formatted_address");
-
-                    addAddressSymbol2Map(getActivity(),address,point);
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-
-            }
-        });
-
-    }
-    /*
-    将地名信息添加在地图上
-     */
-
-    public  void addAddressSymbol2Map(final Activity activity, final String message,final Point point){
-        activity.runOnUiThread(new Runnable() {
-            public void run() {
-
-                final TextSymbol positionTextSys = new TextSymbol(10,message, Color.RED);
-                positionTextSys.setFontFamily("DroidSansFallback.ttf");
-                //图层的创建
-                Point positionProj = (Point)GeometryEngine.project(point, SpatialReference.create(4326),mMapView.getSpatialReference());
-                Graphic graphicPoint = new Graphic(positionProj,positionTextSys);
-
-                graphicsLayerPosition.addGraphic(graphicPoint);
-
-                //Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    /*
-    通过地名获取经纬度
-     */
-    public void getLatLonbyPositionName(String address)
-    {
-        //创建okHttpClient对象
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        //创建一个Request
-
-        final Request request = new Request.Builder()
-                .url("http://api.map.baidu.com/geocoder/v2/?address="+address+"&output=json&pois=0&ak="+Variables.BaiduAK+"&mcode="+ Variables.Mcode)
-                .build();
-        //new call
-        Call call = mOkHttpClient.newCall(request);
-        //请求加入调度
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                String str = response.body().string();
-                try
-                {
-                    JSONObject jsonObject = new JSONObject(str);
-
-                    double lon = jsonObject.getJSONObject("result").getJSONObject("location").getDouble("lng");
-                    double lat = jsonObject.getJSONObject("result").getJSONObject("location").getDouble("lat");
-
-                    MapCenter2LatLon(getActivity(),mMapView,lat,lon);
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-
-            }
-        });
-    }
-    /*
-     将map缩放到指定经纬度
-     */
-
-    public  void MapCenter2LatLon(final Activity activity, final MapView mapView,final double lat,final double lon){
-        activity.runOnUiThread(new Runnable() {
-            public void run() {
-
-                mapView.centerAt(lat,lon,true);
-            }
-        });
-    }
 }
