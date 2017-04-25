@@ -145,7 +145,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
                         //一致时通过，加入json中待传给后台
                         ajsonObject.put("username", ActivityUtil.getParam(getActivity(),"username"));
                         ajsonObject.put("password", MD5Util.getMD5String(oldPwdInput));
-                        new CheckOldPasswordThreadTask().execute();
+
 
                         if(!productType.equals(CheckBoxUtil.createResultStr()))
                             //当有更新时加入json中待传给后台
@@ -157,8 +157,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener
                         if(ajsonObject != null) {
                             //有变化时才进行更新
                             ajsonObject.put("id", id);
+                            new CheckOldPasswordThreadTask().execute();
 
-                            new ChangeInfoThreadTask().execute();
                         }
 
                     }
@@ -184,7 +184,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
         }
         @Override
         protected void onPostExecute(String s) {
-            try {
+           /* try {
                 if(oldPasswordIsRight)
                     ajsonObject.put("paswd",MD5Util.getMD5String(newPwdInput));
 
@@ -194,7 +194,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
@@ -223,8 +223,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener
                 jsonObject = new JSONObject(str);
                 String result =  jsonObject.getString("result");//解析json查询结果
                 if(result.equals("success")){
+                    ajsonObject.put("paswd",MD5Util.getMD5String(newPwdInput));
+                    new ChangeInfoThreadTask().execute();
                     oldPasswordIsRight = true;
                 } else {
+                    ActivityUtil.toastShowFragment(SettingFragment.this,"原密码输入错误");
                     oldPasswordIsRight = false;
                 }
             } catch (JSONException e) {

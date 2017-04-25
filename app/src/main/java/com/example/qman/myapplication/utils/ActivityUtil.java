@@ -226,9 +226,13 @@ public class ActivityUtil extends AppCompatActivity {
      */
     public static void setOnlyVisibilitys(TextView title, Button toolbar_search, Button toolbar_add, Button toolbar_draw){
         title.setVisibility(View.VISIBLE);
+        Log.i("title:",title.getText().toString());
         toolbar_search.setVisibility(View.GONE);
+        Log.i("toolbar_search:",toolbar_search.getText().toString());
         toolbar_add.setVisibility(View.GONE);
+        Log.i("toolbar_add:",toolbar_add.getText().toString());
         toolbar_draw.setVisibility(View.GONE);
+        Log.i("toolbar_draw:",toolbar_draw.getText().toString());
     }
 
     /**

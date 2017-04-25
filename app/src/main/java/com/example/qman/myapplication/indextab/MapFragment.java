@@ -83,7 +83,7 @@ public class MapFragment extends Fragment {
         graphicsLayerPosition = new GraphicsLayer();
 
         ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"地图");
-
+        ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
 //        mSearch.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v)

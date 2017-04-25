@@ -374,14 +374,13 @@ public class AreaFragment extends Fragment
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
         protected void onPostExecute(String s) {
-
-            //进行行政区域缩略图生成操作
-            String targetLayer = Variables.targetServerURL.concat("/0");
-
-            String[] queryArray = { targetLayer, "ADCODE99='110100'" };
-            AsyncQueryTask ayncQuery = new AsyncQueryTask();
-            ayncQuery.execute(queryArray);
-
+            if(s!= "") {//该区域没有被添加过
+                //进行行政区域缩略图生成操作
+                String targetLayer = Variables.targetServerURL.concat("/0");
+                String[] queryArray = {targetLayer, "ADCODE99='110100'"};
+                AsyncQueryTask ayncQuery = new AsyncQueryTask();
+                ayncQuery.execute(queryArray);
+            }
         }
     }
 
