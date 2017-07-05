@@ -1,108 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray"
     android:orientation="vertical">
-
-    <EditText
-        android:id="@+id/oldPwdEt"
+    <RelativeLayout
+        android:id="@+id/toolbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/id_ly_top"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="原密码"
-        android:padding="10dp"
-        android:textSize="20sp" />
-
-    <EditText
-        android:id="@+id/newPwdEt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/id_ly_top"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="新密码"
-        android:padding="10dp"
-        android:textSize="20sp" />
-
-    <EditText
-        android:id="@+id/reNewPwdEt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/id_ly_top"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="确认新密码"
-        android:padding="10dp"
-        android:textSize="20sp" />
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="45dp"
+        android:background="@drawable/top_bar">
+        <ImageView
+            android:id="@+id/bt_back"
+            android:layout_width="18dp"
+            android:layout_height="33dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/bt_back"/>
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="修改服务"
+            android:textSize="23sp"
+            android:textColor="#ffffff"
+            />
+    </RelativeLayout>
+    <!--checkBox区域-->
+    <RelativeLayout
         android:id="@+id/checkboxs"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:background="#fffffd"
-        android:orientation="vertical">
+        android:layout_below="@+id/toolbarlayout">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
+            android:id="@+id/title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/user_setting_jiange_large">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/line"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="农业遥感应用"
+                android:textSize="@dimen/word_number"
+                android:textColor="#04bfec"/>
+        </RelativeLayout>
+        <!--第一行chackBox-->
+        <RelativeLayout
+            android:id="@+id/firstline"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/user_setting_jiange_large"
+            android:orientation="horizontal"
+            android:layout_below="@+id/title1"
+            >
             <CheckBox
                 android:id="@+id/NZWJXFL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/margin_left_right"
                 android:text="农作物精细分类"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textSize="@dimen/word_number"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
             <CheckBox
                 android:id="@+id/TRSQ"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginRight="@dimen/margin_left_right"
                 android:layout_alignParentRight="true"
                 android:text="土壤墒情监测"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textSize="@dimen/word_number"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
+            android:id="@+id/secondline"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:layout_below="@+id/firstline"
+            android:layout_marginTop="@dimen/user_setting_jiange_large">
             <CheckBox
                 android:id="@+id/NYBCHJC"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/margin_left_right"
                 android:text="农业病虫害监测"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textSize="@dimen/word_number"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
             <CheckBox
@@ -110,30 +111,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
-                android:text="土壤肥力"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:layout_marginRight ="@dimen/margin_left_right"
+                android:text="土壤肥力监测"
+                android:textSize="@dimen/word_number"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
+            android:id="@+id/thirdline"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:orientation="horizontal">
+            android:layout_below="@+id/secondline"
+            android:layout_marginTop="@dimen/user_setting_jiange_large">
             <CheckBox
                 android:id="@+id/NZWZSJC"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/margin_left_right"
+                android:layout_alignParentLeft="true"
                 android:text="农作物长势监测"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textSize="@dimen/word_number"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
             <CheckBox
@@ -141,54 +142,113 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
-                android:text="农作物估产"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:layout_marginRight="@dimen/margin_left_right"
+                android:text="农作物估产  "
+                android:textSize="@dimen/word_number"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
-        </LinearLayout>
-    </LinearLayout>
+        </RelativeLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="#FFFFFd"
-        android:orientation="horizontal">
-
-        <TextView android:id="@+id/beginDate"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/title2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:text="服务起始时间"
-            android:textColor="#000000"
-            android:textSize="17sp"
-            />
+            android:layout_marginTop="@dimen/user_setting_jiange_large"
+            android:layout_below="@+id/thirdline">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/line"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="其他应用"
+                android:textSize="@dimen/word_number"
+                android:textColor="#04bfec"/>
+        </RelativeLayout>
 
-        <TextView android:id="@+id/endDate"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/others"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:text="服务结束时间"
-            android:textColor="#000000"
-            android:textSize="17sp"
-            />
-    </LinearLayout>
+            android:layout_below="@+id/title2"
+            android:layout_marginTop="@dimen/user_setting_jiange_large"
+            android:layout_marginBottom="@dimen/user_setting_jiange_large">
+            <CheckBox
+                android:id="@+id/other1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_left_right"
+                android:layout_alignParentLeft="true"
+                android:text="服务A"
+                android:textSize="@dimen/word_number"
+                android:textColor="@color/grayword"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+            <CheckBox
+                android:id="@+id/other2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_left_right"
+                android:text="服务B"
+                android:textSize="@dimen/word_number"
+                android:textColor="@color/grayword"
+                style="@style/MyCheckBox"
+                android:clickable="true"/>
+        </RelativeLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/service"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/checkboxs"
+        android:background="@color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/user_setting_jiange_large"
+        android:padding="@dimen/user_setting_jiange_small">
 
-    <Button
-        android:id="@+id/saveBtn"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_gravity="center"
-        android:background="@drawable/button"
-        android:text="保存"
-        android:textColor="@color/button_text" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/beginDate"
+            android:layout_width="120dp"
+            android:layout_height="28dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:text="起始时间"
+            android:textAlignment="center"
+            android:textColor="#04bfec"
+            android:background="@drawable/bt_select_time"/>
+
+        <TextView
+            android:id="@+id/endDate"
+            android:layout_width="120dp"
+            android:layout_height="28dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:text="结束时间"
+            android:textAlignment="center"
+            android:textColor="#04bfec"
+            android:background="@drawable/bt_select_time"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/saveBtnArea"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/service"
+        android:layout_marginTop="@dimen/user_setting_jiange_large">
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="240dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/submit" />
+        </RelativeLayout>
+</RelativeLayout>

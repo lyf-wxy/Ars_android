@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
@@ -38,6 +39,7 @@ import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.areatab.AreaFragment;
 import com.example.qman.myapplication.areatab.AreaItemFragment;
 import com.example.qman.myapplication.loginregister.MainActivity;
 import com.example.qman.myapplication.utils.ActivityUtil;
@@ -60,8 +62,9 @@ public class DrawArea extends Fragment  {
     private SearchView mSearchView;
     private Button mPosition;
     private Button mSave;
-    private LinearLayout mSavebar;
     private Button mUndo;
+
+    private ImageView bt_back;
     private enum EditMode {
         NONE, POINT, POLYLINE, POLYGON, SAVING
     }
@@ -100,43 +103,52 @@ public class DrawArea extends Fragment  {
 
 
         mExit = (Button)view.findViewById(R.id.exitofareaSelectorDraw);
-        mSearchView = (SearchView)view.findViewById(R.id.searchofareaSelectorDraw);
+        mSearchView = (SearchView)view.findViewById(R.id.searchView);
         mPosition = (Button)view.findViewById(R.id.positionofareaSelectorDraw);
         mSave = (Button)view.findViewById(R.id.saveofareaSelectorDraw);
-        mMapView = (MapView) view.findViewById(R.id.mapofselectordraw);
+        //mMapView = (MapView) view.findViewById(R.id.mapofselectordraw);
 
-        mSavebar = (LinearLayout)view.findViewById(R.id.savabarofareaSelectorDraw);
         mUndo = (Button)view.findViewById(R.id.undoofareaSelectorDraw);
-        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"勾画区域");
-        ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
-        // Set listeners on MapView
-        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
-            private static final long serialVersionUID = 1L;
 
+        bt_back = (ImageView) view.findViewById(R.id.bt_back);
+        /*后退按钮*/
+        bt_back.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onStatusChanged(final Object source, final STATUS status) {
-                if (STATUS.INITIALIZED == status) {
-                    if (source instanceof MapView) {
-                        mGraphicsLayerEditing = new GraphicsLayer();
-                        mMapView.addLayer(mGraphicsLayerEditing);
-
-                        graphicsLayerPosition = new GraphicsLayer();
-                        mMapView.addLayer(graphicsLayerPosition);
-                    }
-                }
+            public void onClick(View v) {
+                ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
             }
         });
-        mMapView.setOnTouchListener(new MyTouchListener(getActivity().getApplicationContext(), mMapView));
-
-        // If map state (center and resolution) has been stored, update the MapView with this state
-        if (!TextUtils.isEmpty(mMapState)) {
-            mMapView.restoreState(mMapState);
-        }
+        //ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"勾画区域");
+        //ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
+        // Set listeners on MapView
+//        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
+//            private static final long serialVersionUID = 1L;
+//
+//            @Override
+//            public void onStatusChanged(final Object source, final STATUS status) {
+//                if (STATUS.INITIALIZED == status) {
+//                    if (source instanceof MapView) {
+//                        mGraphicsLayerEditing = new GraphicsLayer();
+//                        mMapView.addLayer(mGraphicsLayerEditing);
+//
+//                        graphicsLayerPosition = new GraphicsLayer();
+//                        mMapView.addLayer(graphicsLayerPosition);
+//                    }
+//                }
+//            }
+//        });
+//        mMapView.setOnTouchListener(new MyTouchListener(getActivity().getApplicationContext(), mMapView));
+//
+//        // If map state (center and resolution) has been stored, update the MapView with this state
+//        if (!TextUtils.isEmpty(mMapState)) {
+//            mMapView.restoreState(mMapState);
+//        }
 
         mPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                mPosition.setBackgroundResource(R.drawable.position_draw_click);
 
                 GPSTracker gps = new GPSTracker(getActivity().getApplicationContext());
                 double latitude = gps.getLatitude();
@@ -151,7 +163,7 @@ public class DrawArea extends Fragment  {
                 graphicsLayerPosition.removeAll();
                 graphicsLayerPosition.addGraphic(graphicPoint);
 
-                mMapView.centerAndZoom(latitude,longitude,16);
+                //mMapView.centerAndZoom(latitude,longitude,16);
 
                 //GPSTracker.getPositionNamebyLatLon(position,getActivity(),graphicsLayerPosition,mMapView);
             }
@@ -166,7 +178,7 @@ public class DrawArea extends Fragment  {
         mEditMode = EditMode.POLYGON;
         clear();
         // Set up use of magnifier on a long press on the map
-        mMapView.setShowMagnifierOnLongPress(true);
+        //mMapView.setShowMagnifierOnLongPress(true);
 
         mExit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,12 +194,14 @@ public class DrawArea extends Fragment  {
         mUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mUndo.setBackgroundResource(R.drawable.undo_click);
                 actionUndo();
             }
         });
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mSave.setBackgroundResource(R.drawable.save_draw_click);
                 actionSave();
             }
         });
@@ -428,11 +442,11 @@ public class DrawArea extends Fragment  {
 //        return mPoints.size() >= minPoints;
         if(mPoints.size() >= minPoints)
         {
-            mSavebar.setVisibility(View.VISIBLE);
+            //mSavebar.setVisibility(View.VISIBLE);
             return true;
         }
         else{
-            mSavebar.setVisibility(View.GONE);
+            //mSavebar.setVisibility(View.GONE);
             return false;
         }
 

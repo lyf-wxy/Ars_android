@@ -5,4 +5,5 @@
         android:angle="45" 
 	android:background="@drawable/background"
         />
-</shape>
+
+</shape>

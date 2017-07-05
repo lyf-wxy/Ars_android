@@ -70,7 +70,7 @@ public class AreaItemFragment extends Fragment implements OnClickListener
 
         imageView = (ImageView) view.findViewById(R.id.backdrop);
 
-        ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
+        //ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
         final List<String> mDataList = new ArrayList<>();
         String[] productTypes = productType.split("/");
         for (int i = 0; i < productTypes.length; i++) {

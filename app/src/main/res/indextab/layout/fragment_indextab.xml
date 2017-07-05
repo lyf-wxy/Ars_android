@@ -5,16 +5,9 @@
     android:id="@+id/fullscreen">
 
     <include
-        android:id="@+id/id_ly_top"
-        android:layout_width="fill_parent"
-        android:layout_height="45dp"
-        layout="@layout/top" />
-
-
-    <include
         android:id="@+id/id_ly_bottombar"
         android:layout_width="fill_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         layout="@layout/bottom" />
 
@@ -22,7 +15,6 @@
         android:id="@+id/id_content"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/id_ly_top"
         android:layout_above="@id/id_ly_bottombar" />
 
 </RelativeLayout>

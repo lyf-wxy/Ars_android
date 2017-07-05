@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="68dp"
-    android:background="@drawable/bottom"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_bar"
     android:orientation="horizontal" >
 
     <LinearLayout
@@ -14,18 +14,19 @@
         android:gravity="center">
         <ImageButton
             android:id="@+id/tab01_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/button_img_len"
+            android:layout_height="@dimen/button_img_len"
             android:layout_marginTop="2dp"
             android:clickable="false"
-            android:src="@drawable/tab03"
+            android:scaleType="fitCenter"
             android:background="#00000000"/>
         <TextView
+            android:id="@+id/tab01_word"
             android:text="区域"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
             android:layout_marginTop="1dp"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textColor="@color/deepgray"/>
     </LinearLayout>
 
@@ -38,18 +39,19 @@
         android:gravity="center">
         <ImageButton
             android:id="@+id/tab02_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/button_img_len"
+            android:layout_height="@dimen/button_img_len"
             android:layout_marginTop="2dp"
             android:clickable="false"
-            android:src="@drawable/tab04"
+            android:scaleType="fitCenter"
             android:background="#00000000"/>
         <TextView
+            android:id="@+id/tab02_word"
             android:text="地图"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
             android:layout_marginTop="1dp"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textColor="@color/deepgray"/>
     </LinearLayout>
 
@@ -62,42 +64,19 @@
         android:gravity="center">
         <ImageButton
             android:id="@+id/tab03_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/button_img_len"
+            android:layout_height="@dimen/button_img_len"
             android:layout_marginTop="2dp"
             android:clickable="false"
-            android:src="@drawable/tab02"
+            android:scaleType="fitCenter"
             android:background="#00000000"/>
         <TextView
+            android:id="@+id/tab03_word"
             android:text="用户设置"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
             android:layout_marginTop="1dp"
-            android:textSize="14sp"
-            android:textColor="@color/deepgray"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/tab04"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
-        <ImageButton
-            android:id="@+id/tab04_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="2dp"
-            android:clickable="false"
-            android:src="@drawable/tab01"
-            android:background="#00000000"/>
-        <TextView
-            android:text="预留"
-            android:layout_width="wrap_content"
-            android:layout_height="15dp"
-            android:layout_marginTop="1dp"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textColor="@color/deepgray"/>
     </LinearLayout>
 </LinearLayout>

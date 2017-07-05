@@ -69,16 +69,26 @@ public class AreaItemInfoFragment extends Fragment
     private String mField;
     private String mSelectedClass;
 
+    private String codeid;
     private ArcGISImageServiceLayer mArcGISImageServiceLayer;
 
+    private ImageView bt_back;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.area_item_info_fragment, container, false);
 
+        bt_back = (ImageView) view.findViewById(R.id.bt_back);
+        /*后退按钮*/
+        bt_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
+            }
+        });
         String geometry = ActivityUtil.getParam(getActivity(),"geometry");
-
+        codeid = ActivityUtil.getParam(getActivity(),"codeid");
         Bundle args = getArguments();
         if(args!=null)
         {
@@ -90,9 +100,9 @@ public class AreaItemInfoFragment extends Fragment
         //Toast.makeText(getActivity(), mField+","+mSelectedClass+","+geometry, Toast.LENGTH_SHORT).show();
 
         legendPic = (ImageView) view.findViewById(R.id.legendPic);
-        mMapView = (MapView)view.findViewById(R.id.mapofAreaItemInfo);
-        mTitle = (TextView)view.findViewById(R.id.TitleOfAreaItemInfo);
-
+        //mMapView = (MapView)view.findViewById(R.id.mapofAreaItemInfo);
+        mTitle = (TextView)view.findViewById(R.id.current_service_title);
+        mTitle.setText(codeid);
         //得到控件
         mRecyclerView = (RecyclerView) view.findViewById(R.id.id_recyclerview_horizontal);
         //设置布局管理器
@@ -103,7 +113,7 @@ public class AreaItemInfoFragment extends Fragment
         initDatesListView();
 
         // load map
-        new LoadMapAsyncTask().execute();
+        //new LoadMapAsyncTask().execute();
 
         return view ;
     }
@@ -188,7 +198,7 @@ public class AreaItemInfoFragment extends Fragment
     private void addLegend2MapView(String productType)
     {
 
-        mTitle.setText(productType);
+        //mTitle.setText(productType);
         //getMapLegend
         legendPic.setImageResource(R.drawable.legend);
 

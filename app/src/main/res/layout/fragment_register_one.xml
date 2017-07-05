@@ -80,7 +80,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="农作物精细分类"
                 android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
             <CheckBox
@@ -91,7 +91,7 @@
                 android:layout_alignParentRight="true"
                 android:text="土壤墒情监测"
                 android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
 
@@ -110,7 +110,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="农业病虫害监测"
                 android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
             <CheckBox
@@ -121,7 +121,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="土壤肥力"
                 android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
 
@@ -141,7 +141,7 @@
                 android:layout_alignParentRight="true"
                 android:text="农作物长势监测"
                 android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
             <CheckBox
@@ -152,7 +152,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="农作物估产"
                 android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
+                android:textColor="@color/grayword"
                 style="@style/MyCheckBox"
                 android:clickable="true"/>
         </LinearLayout>
@@ -199,7 +199,7 @@
         android:layout_marginRight="55dp"
         android:textSize="15dp"
         android:text="我已阅读并同意协议"
-        android:textColor="@drawable/selector_text_color"
+        android:textColor="@color/grayword"
         style="@style/MyCheckBox"
         android:clickable="true"/>
 

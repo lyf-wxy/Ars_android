@@ -2,4 +2,26 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!--bottom设置-->
+    <dimen name="button_img_len">30dp</dimen>
+    <!--用户设置页面-->
+    <dimen name="user_setting_aBar">50dp</dimen>
+    <dimen name="user_setting_word">16dp</dimen>
+    <dimen name="user_setting_jiange_large">12dp</dimen>
+    <dimen name="user_setting_jiange_small">6dp</dimen>
+
+    <!--设置服务页面-->
+    <dimen name="margin_left_right">35dp</dimen>
+    <dimen name="word_number">15dp</dimen>
+
+    <!--注册界面-->
+    <dimen name="word_number_register">15dp</dimen>
+
+
+    <!--选择服务页面-->
+    <dimen name="choose_margin_left_right">20dp</dimen>
+
+    <!--登陆页面-->
+    <dimen name="login_margin_left">50dp</dimen>
 </resources>

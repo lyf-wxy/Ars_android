@@ -3,6 +3,9 @@ package com.example.qman.myapplication.indextab;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +14,8 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import android.widget.Toast;
@@ -31,18 +36,26 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
     private LinearLayout mTabSetting;
     private LinearLayout mTabArea;
     private LinearLayout mTabMap;
-    private LinearLayout mTabOther;
     private SettingFragment mSetting;
+    private SettingUserFragment mSettingUser;
     private AreaFragment mArea;
     private MapFragment mMap;
-
-    private BlankFragment mOther;
 
     private TextView title;
     private Button toolbar_search;
     private Button toolbar_add;
     private Button toolbar_draw;
 
+    private ImageButton tab01_btn;
+    private ImageButton tab02_btn;
+    private ImageButton tab03_btn;
+
+    private TextView tab01_word;
+    private TextView tab02_word;
+    private TextView tab03_word;
+
+    private  ColorStateList csl_unselect;
+    private  ColorStateList csl_select;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -54,33 +67,44 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
         mTabSetting = (LinearLayout) findViewById(R.id.tab03);
         mTabArea = (LinearLayout) findViewById(R.id.tab01);
         mTabMap = (LinearLayout) findViewById(R.id.tab02);
-        mTabOther = (LinearLayout) findViewById(R.id.tab04);
         mTabSetting.setOnClickListener(this);
         mTabArea.setOnClickListener(this);
         mTabMap.setOnClickListener(this);
-        mTabOther.setOnClickListener(this);
         // 设置默认的Fragment
-        mArea = new AreaFragment();
-
+       // mArea = new AreaFragment();
+        mSettingUser = new SettingUserFragment();
 
         toolbar_add = (Button) findViewById(R.id.toolbar_add);
         toolbar_search = (Button) findViewById(R.id.toolbar_search);
         title = (TextView) findViewById(R.id.toolbar_title);
         toolbar_draw = (Button) findViewById(R.id.toolbar_draw);
 
-        ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
-        ActivityUtil.setTitle(IndexTabMainActivity.this,R.id.toolbar_title,"区域");
-        ActivityUtil.setDefaultFragment(IndexTabMainActivity.this, mArea);
-    }
+        tab01_btn = (ImageButton) findViewById(R.id.tab01_btn);
+        tab02_btn = (ImageButton) findViewById(R.id.tab02_btn);
+        tab03_btn = (ImageButton) findViewById(R.id.tab03_btn);
 
-    // 设置默认的Fragment
-    private void setDefaultFragment()
-    {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction();
-        mArea = new AreaFragment();
-        transaction.replace(R.id.id_content, mArea);
-        transaction.commit();
+        tab01_word = (TextView) findViewById(R.id.tab01_word);
+        tab02_word = (TextView) findViewById(R.id.tab02_word);
+        tab03_word = (TextView) findViewById(R.id.tab03_word);
+//        ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
+//        ActivityUtil.setTitle(IndexTabMainActivity.this,R.id.toolbar_title,"区域");
+        ActivityUtil.setDefaultFragment(IndexTabMainActivity.this, mSettingUser);
+        tab01_btn.setBackgroundResource(R.drawable.area);
+        tab02_btn.setBackgroundResource(R.drawable.map);
+        tab03_btn.setBackgroundResource(R.drawable.setting_select);
+
+        Resources resource = (Resources) getBaseContext().getResources();
+        csl_unselect = (ColorStateList) resource.getColorStateList(R.color.deepgray);
+        csl_select = (ColorStateList) resource.getColorStateList(R.color.white);
+        if (csl_unselect != null) {
+            tab01_word.setTextColor(csl_unselect);
+            tab02_word.setTextColor(csl_unselect);
+            tab03_word.setTextColor(csl_select);
+        }
+  /*      TextView tv = (TextView) findViewById(R.id.tab03_word);
+        tv.setTextColor(this.getResources().getColor(R.color.white));
+        ImageView iv = (ImageView)findViewById(R.id.tab03_btn);
+        iv.setBackgroundResource(R.drawable.setting_select);*/
     }
 
 
@@ -98,8 +122,15 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
                     mArea = new AreaFragment();
                 }
 
-                ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
+                //ActivityUtil.setAllVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
                 //需要从AreaItemFragment开始将回退栈清空
+               tab01_btn.setBackgroundResource(R.drawable.area_select);
+               tab02_btn.setBackgroundResource(R.drawable.map);
+               tab03_btn.setBackgroundResource(R.drawable.setting);
+
+                tab01_word.setTextColor(csl_select);
+                tab02_word.setTextColor(csl_unselect);
+                tab03_word.setTextColor(csl_unselect);
                 ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mArea);
                 break;
             case R.id.tab02:
@@ -108,27 +139,32 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
                     mMap = new MapFragment();
                 }
 
-                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
+                //ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
+                tab01_btn.setBackgroundResource(R.drawable.area);
+               tab02_btn.setBackgroundResource(R.drawable.map_select);
+               tab03_btn.setBackgroundResource(R.drawable.setting);
+
+                tab01_word.setTextColor(csl_unselect);
+                tab02_word.setTextColor(csl_select);
+                tab03_word.setTextColor(csl_unselect);
                 ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mMap );
                 break;
             case R.id.tab03:
 
-                if (mSetting == null)
+                if (mSettingUser == null)
                 {
-                    mSetting = new SettingFragment();
+                    mSettingUser = new SettingUserFragment();
                 }
 
-                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
-                ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mSetting);
-                break;
-            case R.id.tab04:
-                if (mOther == null)
-                {
-                    mOther = new BlankFragment();
-                }
+                //ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
+                tab01_btn.setBackgroundResource(R.drawable.area);
+                tab02_btn.setBackgroundResource(R.drawable.map);
+                tab03_btn.setBackgroundResource(R.drawable.setting_select);
 
-                ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
-                //ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mOther);
+                tab01_word.setTextColor(csl_unselect);
+                tab02_word.setTextColor(csl_unselect);
+                tab03_word.setTextColor(csl_select);
+                ActivityUtil.switchContentReplace(IndexTabMainActivity.this, mSettingUser);
                 break;
         }
     }

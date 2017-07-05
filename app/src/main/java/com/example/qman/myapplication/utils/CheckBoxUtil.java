@@ -35,8 +35,8 @@ public class CheckBoxUtil extends AppCompatActivity {
         YMJZSJC("叶面积指数监测"),//叶面积指数监测
         NYBCHJC("农业病虫害监测"),//农业病虫害监测
         NZWZSJC("农作物长势监测"),//农作物长势监测
-        NZWGC("农作物估产"),//农作物估产
-        TRFL("土壤肥力");//土壤肥力
+        NZWGC("农作物估产  "),//农作物估产，空格不能删，和activity_register_service.xml界面元素保持一致
+        TRFL("土壤肥力监测");//土壤肥力
 
         // 定义私有变量
         private   String   name ;
@@ -132,6 +132,7 @@ public class CheckBoxUtil extends AppCompatActivity {
                 for (Type aType : allType) {
                     if(checkbox.getText().toString().equals(aType.getName())){
                         result += aType.toString() + "/";
+                        break;
                     }
                 }
             }

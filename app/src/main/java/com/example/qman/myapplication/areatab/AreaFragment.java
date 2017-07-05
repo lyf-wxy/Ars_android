@@ -1,37 +1,26 @@
 package com.example.qman.myapplication.areatab;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
 
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.PopupWindow;
+import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
@@ -49,19 +38,13 @@ import com.esri.core.renderer.SimpleRenderer;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.tasks.query.QueryParameters;
 import com.example.qman.myapplication.R;
-import com.example.qman.myapplication.indextab.IndexTabMainActivity;
-import com.example.qman.myapplication.loginregister.FragmentTwo;
 import com.example.qman.myapplication.lyf.drawarea.DrawArea;
 
-import com.example.qman.myapplication.lyf.drawarea.SaveDrawArea;
 import com.example.qman.myapplication.utils.ActivityUtil;
-import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.FormFile;
 import com.example.qman.myapplication.utils.ListViewUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.SocketHttpRequester;
-import com.example.qman.myapplication.utils.TitleActivity;
-import com.example.qman.myapplication.utils.TitleInterface;
 import com.example.qman.myapplication.utils.Util;
 import com.example.qman.myapplication.utils.Variables;
 import com.example.qman.myapplication.indextab.AddressBean;
@@ -72,20 +55,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
 import com.esri.core.tasks.query.QueryTask;
 import com.esri.core.map.Feature;
-import com.esri.core.geometry.Point;
-
-import static android.R.id.message;
-import static android.content.ContentValues.TAG;
-import static com.example.qman.myapplication.R.id.map;
-import static com.example.qman.myapplication.utils.Variables.targetServerURL;
 
 public class AreaFragment extends Fragment
 {
@@ -121,6 +97,7 @@ public class AreaFragment extends Fragment
     private String codeIdTemp = "";
     private MapView mMapView;
 
+    private ImageView flowShow;
     ProgressDialog progress;
     GraphicsLayer graphicsLayer;
     File upfile;
@@ -136,15 +113,15 @@ public class AreaFragment extends Fragment
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
         recyclerView = (RecyclerView) view.findViewById(R.id.areaRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
+        flowShow = (ImageView) view.findViewById(R.id.flowshow);
+        //mMapView = (MapView) view.findViewById(R.id.mapofAreaFragment);
 
-        mMapView = (MapView) view.findViewById(R.id.mapofAreaFragment);
-
-        toolbar_search = (Button)getActivity().findViewById(R.id.toolbar_search);
-        toolbar_add = (Button)getActivity().findViewById(R.id.toolbar_add);
-        toolbar_draw = (Button)getActivity().findViewById(R.id.toolbar_draw);
-        ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"区域");
-        ActivityUtil.setAllVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
-        toolbar_search.setOnClickListener(new View.OnClickListener() {
+        //toolbar_search = (Button)view.findViewById(R.id.toolbar_search);
+        toolbar_add = (Button)view.findViewById(R.id.toolbar_add);
+        toolbar_draw = (Button)view.findViewById(R.id.toolbar_draw);
+        //ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"区域");
+        //ActivityUtil.setAllVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
+        /*toolbar_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mSearchview.getVisibility() == View.VISIBLE){
@@ -154,14 +131,16 @@ public class AreaFragment extends Fragment
                     mSearchview.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        });*/
 
-        new ListViewLoadThreadTask().execute();
+        if(!codeidStr.equals(""))
+            new ListViewLoadThreadTask().execute();
 
         // 设置该SearchView默认是否自动缩小为图标
         mSearchview.setIconifiedByDefault(false);
         // 设置该SearchView显示搜索按钮
         mSearchview.setSubmitButtonEnabled(false);
+        mSearchview.setIconifiedByDefault(false);
         // 设置该SearchView内默认显示的提示文本
         mSearchview.setQueryHint("搜索");
         mSearchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -218,7 +197,7 @@ public class AreaFragment extends Fragment
                         //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
                         holder.getTextView(R.id.title).setText(item.get("ordername").toString());
 
-                        holder.getTextView(R.id.desc).setText(item.get("cropkinds").toString());
+                        holder.getTextView(R.id.cropkinds).setText(item.get("cropkinds").toString());
 
 //                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
 //                        holder.getImageView(R.id.image).setImageBitmap(bit);
@@ -239,7 +218,9 @@ public class AreaFragment extends Fragment
                     @Override
                     public void onItemClick(View itemView, int pos) {
                         ActivityUtil.putParam(getActivity(),"codeid",mDataList.get(pos));
-                        ActivityUtil.switchToFragment(getActivity(),new AreaItemFragment(),R.id.id_content);
+                        //原来是跳转到AreaItemFragment，现在改为跳转到AreaItemInfoFragment
+                        ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
+
 
                     }
                 });
@@ -315,6 +296,7 @@ public class AreaFragment extends Fragment
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
 
+                flowShow.setVisibility(View.GONE);
             }
         });
         //点击文本框的时候,显示地址选择框
@@ -322,6 +304,8 @@ public class AreaFragment extends Fragment
             @Override
             public void onClick(View view) {
                 mPvOptions.show();
+
+                flowShow.setVisibility(View.VISIBLE);
 //                selectAreaOrDraw mselectAreaOrDraw =  new selectAreaOrDraw();
 //                ActivityUtil.switchToFragment(getActivity(), mselectAreaOrDraw,R.id.fullscreen);
             }

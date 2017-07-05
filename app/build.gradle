@@ -50,6 +50,7 @@ dependencies {
     })
     //    compile 'com.inthecheesefactory.thecheeselibrary:stated-fragment-support-v4:0.9.1'
     compile 'com.esri.arcgis.android:arcgis-android:10.2.8-1'
+    compile 'com.android.support:percent:25.0.0'
     compile 'com.bigkoo:pickerview:2.0.8'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.okio:okio:1.10.0'

@@ -17,4 +17,8 @@
     </style>
 
 
+    <!--checkbox样式-->
+    <style name="ReadCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_style_read</item>
+    </style>
 </resources>

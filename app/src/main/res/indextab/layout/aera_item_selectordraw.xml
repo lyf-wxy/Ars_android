@@ -1,112 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray">
+    <RelativeLayout
+        android:id="@+id/toolbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/top_bar">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <ImageView
+                android:id="@+id/bt_back"
+                android:layout_width="18dp"
+                android:layout_height="33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/bt_back"/>
 
+            <SearchView
+                android:id="@+id/searchView"
+                android:layout_width="184dp"
+                android:layout_height="33dp"
+                android:layout_marginLeft="40dp"
+                android:background="@drawable/search"
+                >
+            </SearchView>
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="勾画区域"
+                android:textSize="23sp"
+                android:textColor="#ffffff"
+                />
+        </android.support.v7.widget.Toolbar>
+    </RelativeLayout>
 
-    <LinearLayout
+    <android.support.percent.PercentRelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/LinearLayout1ofsavedrawarea"
         android:orientation="horizontal"
+        android:layout_below="@+id/toolbarlayout"
         android:background="@color/gray">
-        <com.esri.android.map.MapView
+        <RelativeLayout
+            android:id="@+id/LinearLayout1ofsavedrawarea"
+            android:layout_width="match_parent"
+            app:layout_heightPercent="80%">
+            <Button
+                android:id="@+id/positionofareaSelectorDraw"
+                android:background="@drawable/position_draw"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="35dp"
+                />
+
+            <Button
+                android:id="@+id/exitofareaSelectorDraw"
+                android:text="Exit"
+                android:textAllCaps="false"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="5dp"
+                />
+            <!--<com.esri.android.map.MapView
             android:id="@+id/mapofselectordraw"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             mapoptions.MapType="SATELLITE"
             mapoptions.ZoomLevel="6"
-            mapoptions.center="39.9, 116.3" />
-    </LinearLayout>
+            mapoptions.center="39.9, 116.3" />-->
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/toolbar_draw_page"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_below="@+id/LinearLayout1ofsavedrawarea">
+            <Button
+                android:id="@+id/undoofareaSelectorDraw"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/undo"
+                android:layout_alignParentLeft="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="70dp"/>
+
+            <Button
+                android:id="@+id/saveofareaSelectorDraw"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/save_draw"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="70dp" />
+        </RelativeLayout>
+
+    </android.support.percent.PercentRelativeLayout>
 
 
 
-    <Button
-        android:text="Exit"
-        android:textAllCaps="false"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
-        android:id="@+id/exitofareaSelectorDraw" />
-
-    <Button
-        android:text="Undo"
-        android:textAllCaps="false"
-        android:visibility="gone"
-        android:id="@+id/undoofareaSelectorDraw"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:backgroundTint="#d3dfe7"
-        android:background="#d3dfe7"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="10dp"/>
-
-    <SearchView
-        android:id="@+id/searchofareaSelectorDraw"
-        android:layout_width="200dp"
-        android:layout_height="40dp"
-        android:backgroundTint="#d3dfe7"
-        android:background="#d3dfe7"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="10dp"/>
-
-    <Button
-        android:id="@+id/positionofareaSelectorDraw"
-        android:backgroundTint="@color/blue"
-        android:background="@drawable/position"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="55dp"
-        />
-
-    <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/savabarofareaSelectorDraw"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:background="#ffffff"
-        >
-
-        <TextView
-            android:text="请点击保存按钮保存区域"
-            android:layout_width="140dp"
-            android:layout_height="40dp"
-            android:id="@+id/textViewofSelectorDraw"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_weight="0.7"/>
-
-        <Button
-            android:id="@+id/saveofareaSelectorDraw"
-            android:backgroundTint="@color/blue"
-            android:gravity="center"
-            android:textAllCaps="false"
-            android:text="Save"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
-
-            />
-
-    </LinearLayout>
 
 
 </RelativeLayout>

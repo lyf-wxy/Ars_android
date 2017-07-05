@@ -1,40 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/logo_earth"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/earth">
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/editArea"
+        android:layout_width="306dp"
+        android:layout_height="190dp"
+        android:background="@drawable/kuang_register"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/logo_earth">
+        <!--请输入用户名-->
+        <EditText
+            android:id="@+id/usernameEt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请输入用户名"
+            android:textSize="@dimen/word_number_register"
+            android:layout_marginLeft="@dimen/margin_left_right"
+            android:layout_marginTop="30dp"
+            android:background="@null"
+            android:textCursorDrawable="@color/gray"
+            android:textColor="@color/gray"/>
+        <!--请输入密码-->
+        <EditText
+            android:id="@+id/passdEt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请输入密码"
+            android:textSize="@dimen/word_number_register"
+            android:layout_marginLeft="@dimen/margin_left_right"
+            android:layout_marginTop="27dp"
+            android:background="@null"
+            android:textCursorDrawable="@color/gray"
+            android:textColor="@color/gray"
+            android:layout_below="@+id/usernameEt"/>
+        <!--请确认密码-->
+        <EditText
+            android:id="@+id/repassdEt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请确认密码"
+            android:textSize="@dimen/word_number_register"
+            android:layout_marginLeft="@dimen/margin_left_right"
+            android:layout_marginTop="27dp"
+            android:background="@null"
+            android:textCursorDrawable="@color/gray"
+            android:textColor="@color/gray"
+            android:layout_below="@+id/passdEt"/>
+        <!--请确认手机号-->
+        <EditText
+            android:id="@+id/phoneEt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请确认手机号"
+            android:textSize="@dimen/word_number_register"
+            android:layout_marginLeft="@dimen/margin_left_right"
+            android:layout_marginTop="27dp"
+            android:background="@null"
+            android:textCursorDrawable="@color/gray"
+            android:textColor="@color/gray"
+            android:layout_below="@+id/repassdEt"/>
+    </RelativeLayout>
 
-    <include
-        android:id="@+id/id_ly_top"
-        android:layout_width="fill_parent"
-        android:layout_height="45dp"
-        layout="@layout/top" />
-
-    <!--<fragment
-        android:id="@+id/left_fragment"
-        android:name="com.example.qman.myapplication.loginregister.LeftFragment"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />-->
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/editArea">
+        <Button
+            android:id="@+id/goserviceBtn"
+            android:layout_width="250dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bt_goservice"
+            />
+    </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/id_content"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-    </FrameLayout>
-</LinearLayout>
-
-<!--
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <FrameLayout
-        android:id="@+id/id_content"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-    </FrameLayout>
-
-</RelativeLayout>-->
+</RelativeLayout>

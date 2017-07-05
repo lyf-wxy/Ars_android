@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.IOException;
@@ -55,7 +56,7 @@ import static com.example.qman.myapplication.utils.Util.CreateFileDir;
 /*
 登录页
 */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     JSONObject jsonObject = null;//利用json字符串生成json对象
     private EditText username = null;
     private EditText password = null;
@@ -72,46 +73,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-//        try
-//        {
-//            String FileDir = CreateFileDir("Arsandroid");
-//            mNotiRingPath = FileDir+ "/" + mNotiRing;
-//
-//            Util.CreateFile(getApplicationContext(),mNotiRingPath);
-//        }
-//        catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-//
-//
-//        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY,Variables.api_key);
-//
-//
-//
-//        CustomPushNotificationBuilder cBuilder = new CustomPushNotificationBuilder(R.layout.notification_custom_builder,R.id.notification_icon,R.id.notification_title,R.id.notification_text);
-//
-//        cBuilder.setNotificationFlags(Notification.FLAG_AUTO_CANCEL);
-//        cBuilder.setNotificationDefaults(Notification.DEFAULT_VIBRATE);
-//        cBuilder.setStatusbarIcon(R.drawable.earth);
-//        cBuilder.setLayoutDrawable(R.drawable.earth);
-//
-//
-//        long[] vibrates = { 0, 1000, 1000, 1000 };
-//        cBuilder.setNotificationVibrate(vibrates);
-//
-//        cBuilder.setNotificationSound(mNotiRingPath);
-//        Log.d("music",mNotiRingPath);
-//
-//        PushManager.setNotificationBuilder(this, 1, cBuilder);
-
         //初始化组件
         initView();
+
+        //点击输入框时将输入框内容清空
+        username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                username.setText(null);
+            }
+        });
+        //点击输入框时将输入框内容清空
+        password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                password.setText(null);
+            }
+        });
+
         //登陆按钮事件
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                login.setBackgroundResource(R.drawable.bt_login_click);
+                /*后台查询用户名、密码是否正确*/
                 usernameInput = username.getText().toString().trim();
                 passwordInput = password.getText().toString().trim();
 
@@ -130,14 +115,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                     RequestUtil.request(jsonObject.toString(),"AndroidService/loginService",callback);
                 }
-
             }
         });
         //去注册点击事件
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                register.setBackgroundResource(R.drawable.bt_register_click);
                 ActivityUtil.switchTo(MainActivity.this,RegisterFragmentActivity.class);
+                //ActivityUtil.switchToFragment(MainActivity.this,new FragmentOne(),R.layout.);
             }
         });
     }

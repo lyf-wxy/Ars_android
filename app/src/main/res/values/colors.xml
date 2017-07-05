@@ -11,5 +11,7 @@
     <color name="green">#41a35a</color>  <!--63b670  66CC99   99CC99  68b12b-->
     <color name="greenbutton">#009d46</color> <!--99CC99-->
     <color name="gray">#eff0f2</color><!--e3e2e2-->
-    <color name="deepgray">#55545a</color><!--e3e2e2-->
+    <color name="deepgray">#006d4d</color><!--e3e2e2-->
+    <color name="grayword">#666666</color><!--e3e2e2-->
+    <color name="grayword1">#999999</color><!--e3e2e2-->
 </resources>
