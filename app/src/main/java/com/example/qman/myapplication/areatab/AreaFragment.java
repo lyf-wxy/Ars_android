@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
+//import com.example.qman.myapplication.OptionsPickerView.OptionsPickerView;
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
 import com.esri.core.geometry.Envelope;
@@ -97,7 +98,7 @@ public class AreaFragment extends Fragment
     private String codeIdTemp = "";
     private MapView mMapView;
 
-    private ImageView flowShow;
+
     ProgressDialog progress;
     GraphicsLayer graphicsLayer;
     File upfile;
@@ -113,7 +114,7 @@ public class AreaFragment extends Fragment
         json = "{'id':'" + id + "'," + "'locno':'" + codeidStr + "'}";
         recyclerView = (RecyclerView) view.findViewById(R.id.areaRecyclerView);
         mSearchview = (SearchView) view.findViewById(R.id.searchView);
-        flowShow = (ImageView) view.findViewById(R.id.flowshow);
+
         //mMapView = (MapView) view.findViewById(R.id.mapofAreaFragment);
 
         //toolbar_search = (Button)view.findViewById(R.id.toolbar_search);
@@ -295,8 +296,8 @@ public class AreaFragment extends Fragment
                 addAreaName = "";//默认该行政区域未被添加过，需要更新RecyclerView
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
-
-                flowShow.setVisibility(View.GONE);
+                ActivityUtil.switchToFragment(getActivity(), new DrawArea(),R.id.id_content,address);
+                //flowShow.setVisibility(View.GONE);
             }
         });
         //点击文本框的时候,显示地址选择框
@@ -305,7 +306,7 @@ public class AreaFragment extends Fragment
             public void onClick(View view) {
                 mPvOptions.show();
 
-                flowShow.setVisibility(View.VISIBLE);
+                //flowShow.setVisibility(View.VISIBLE);
 //                selectAreaOrDraw mselectAreaOrDraw =  new selectAreaOrDraw();
 //                ActivityUtil.switchToFragment(getActivity(), mselectAreaOrDraw,R.id.fullscreen);
             }
