@@ -106,7 +106,7 @@ public class DrawArea extends Fragment  {
         mSearchView = (SearchView)view.findViewById(R.id.searchView);
         mPosition = (Button)view.findViewById(R.id.positionofareaSelectorDraw);
         mSave = (Button)view.findViewById(R.id.saveofareaSelectorDraw);
-        //mMapView = (MapView) view.findViewById(R.id.mapofselectordraw);
+        mMapView = (MapView) view.findViewById(R.id.mapofselectordraw);
 
         mUndo = (Button)view.findViewById(R.id.undoofareaSelectorDraw);
 
@@ -121,28 +121,28 @@ public class DrawArea extends Fragment  {
         //ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"勾画区域");
         //ActivityUtil.setOnlyVisibilitys(getActivity(),R.id.toolbar_title, R.id.toolbar_search, R.id.toolbar_add,R.id.toolbar_draw);
         // Set listeners on MapView
-//        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
-//            private static final long serialVersionUID = 1L;
-//
-//            @Override
-//            public void onStatusChanged(final Object source, final STATUS status) {
-//                if (STATUS.INITIALIZED == status) {
-//                    if (source instanceof MapView) {
-//                        mGraphicsLayerEditing = new GraphicsLayer();
-//                        mMapView.addLayer(mGraphicsLayerEditing);
-//
-//                        graphicsLayerPosition = new GraphicsLayer();
-//                        mMapView.addLayer(graphicsLayerPosition);
-//                    }
-//                }
-//            }
-//        });
-//        mMapView.setOnTouchListener(new MyTouchListener(getActivity().getApplicationContext(), mMapView));
-//
-//        // If map state (center and resolution) has been stored, update the MapView with this state
-//        if (!TextUtils.isEmpty(mMapState)) {
-//            mMapView.restoreState(mMapState);
-//        }
+        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onStatusChanged(final Object source, final STATUS status) {
+                if (STATUS.INITIALIZED == status) {
+                    if (source instanceof MapView) {
+                        mGraphicsLayerEditing = new GraphicsLayer();
+                        mMapView.addLayer(mGraphicsLayerEditing);
+
+                        graphicsLayerPosition = new GraphicsLayer();
+                        mMapView.addLayer(graphicsLayerPosition);
+                    }
+                }
+            }
+        });
+        mMapView.setOnTouchListener(new MyTouchListener(getActivity().getApplicationContext(), mMapView));
+
+        // If map state (center and resolution) has been stored, update the MapView with this state
+        if (!TextUtils.isEmpty(mMapState)) {
+            mMapView.restoreState(mMapState);
+        }
 
         mPosition.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +163,7 @@ public class DrawArea extends Fragment  {
                 graphicsLayerPosition.removeAll();
                 graphicsLayerPosition.addGraphic(graphicPoint);
 
-                //mMapView.centerAndZoom(latitude,longitude,16);
+                mMapView.centerAndZoom(latitude,longitude,16);
 
                 //GPSTracker.getPositionNamebyLatLon(position,getActivity(),graphicsLayerPosition,mMapView);
             }
@@ -178,7 +178,7 @@ public class DrawArea extends Fragment  {
         mEditMode = EditMode.POLYGON;
         clear();
         // Set up use of magnifier on a long press on the map
-        //mMapView.setShowMagnifierOnLongPress(true);
+        mMapView.setShowMagnifierOnLongPress(true);
 
         mExit.setOnClickListener(new View.OnClickListener() {
             @Override

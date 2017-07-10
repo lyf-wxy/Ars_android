@@ -29,14 +29,15 @@
     </RelativeLayout>
 
 
-    <!--<LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="120dp"
         android:layout_centerHorizontal="true"
-        android:background="@color/gray">
+        android:background="@color/gray"
+        android:layout_below="@+id/toolbarlayout">
 
         <com.esri.android.map.MapView
             android:id="@+id/mapofAreaItemInfo"
@@ -46,8 +47,8 @@
             mapoptions.ZoomLevel="6"
             mapoptions.center="39.9, 116.3"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
-    </LinearLayout>-->
+            android:layout_alignParentLeft="true" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/area_item_info_map"

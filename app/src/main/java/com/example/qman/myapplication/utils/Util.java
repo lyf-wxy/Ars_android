@@ -52,34 +52,34 @@ public class Util {
     }
     public static String getMapLayerUrl(String type)
     {
-        String mapType = "http://10.2.3.222:6080/arcgis/rest/services/TRSQ/ImageServer";
+        String mapType = "http://192.168.8.101:6080/arcgis/rest/services/TRSQ/ImageServer";
         if(type!=null)
         {
             switch (type)
             {
                 case "TRSQ":
-                    mapType = "http://10.2.3.222:6080/arcgis/rest/services/TRSQ/ImageServer";
+                    mapType = "http://192.168.8.101:6080/arcgis/rest/services/TRSQ/ImageServer";
                     break;
                 case "NZWJXFL":
-                    mapType = "http://10.2.3.222:6080/arcgis/rest/services/NZWJXFL/ImageServer";
+                    mapType = "http://192.168.8.101:6080/arcgis/rest/services/NZWJXFL/ImageServer";
                     break;
                 case "YMJZSJC":
-                    mapType = "http://10.2.3.222:6080/arcgis/rest/services/YMJZSJC/ImageServer";
+                    mapType = "http://192.168.8.101:6080/arcgis/rest/services/YMJZSJC/ImageServer";
                     break;
                 case "NYBCHJC":
-                    mapType = "http://10.2.3.222:6080/arcgis/rest/services/NYBCHJC/ImageServer";
+                    mapType = "http://192.168.8.101:6080/arcgis/rest/services/NYBCHJC/ImageServer";
                     break;
                 case "NZWZSJC":
                     mapType = "http://10.2.3.222:6080/arcgis/rest/services/NZWZSJC/ImageServer";
                     break;
                 case "NZWGC":
-                    mapType = "http://10.2.3.222:6080/arcgis/rest/services/NZWGC/ImageServer";
+                    mapType = "http://192.168.8.101:6080/arcgis/rest/services/NZWGC/ImageServer";
                     break;
                 case "TRFL":
-                    mapType = "http://10.2.3.222:6080/arcgis/rest/services/TRFL/ImageServer";
+                    mapType = "http://192.168.8.101:6080/arcgis/rest/services/TRFL/ImageServer";
                     break;
                 default:
-                    mapType = "http://10.2.3.222:6080/arcgis/rest/services/TRSQ/ImageServer";
+                    mapType = "http://192.168.8.101:6080/arcgis/rest/services/TRSQ/ImageServer";
                     break;
             }
             return mapType;

@@ -78,13 +78,13 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="5dp"
                 />
-            <!--<com.esri.android.map.MapView
+            <com.esri.android.map.MapView
             android:id="@+id/mapofselectordraw"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             mapoptions.MapType="SATELLITE"
             mapoptions.ZoomLevel="6"
-            mapoptions.center="39.9, 116.3" />-->
+            mapoptions.center="39.9, 116.3" />
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/toolbar_draw_page"

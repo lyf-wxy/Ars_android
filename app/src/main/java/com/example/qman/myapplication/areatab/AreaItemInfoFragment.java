@@ -100,7 +100,7 @@ public class AreaItemInfoFragment extends Fragment
         //Toast.makeText(getActivity(), mField+","+mSelectedClass+","+geometry, Toast.LENGTH_SHORT).show();
 
         legendPic = (ImageView) view.findViewById(R.id.legendPic);
-        //mMapView = (MapView)view.findViewById(R.id.mapofAreaItemInfo);
+        mMapView = (MapView)view.findViewById(R.id.mapofAreaItemInfo);
         mTitle = (TextView)view.findViewById(R.id.current_service_title);
         mTitle.setText(codeid);
         //得到控件
@@ -113,7 +113,7 @@ public class AreaItemInfoFragment extends Fragment
         initDatesListView();
 
         // load map
-        //new LoadMapAsyncTask().execute();
+        new LoadMapAsyncTask().execute();
 
         return view ;
     }
@@ -206,11 +206,11 @@ public class AreaItemInfoFragment extends Fragment
     private void initDatesListView()
     {
         mDatas = new ArrayList<String>(Arrays.asList(
-                "http://10.2.3.222:6080/arcgis/rest/services/TRSQ_20170101/ImageServer",
-                "http://10.2.3.222:6080/arcgis/rest/services/TRSQ_20170108/ImageServer",
-                "http://10.2.3.222:6080/arcgis/rest/services/TRSQ_20170115/ImageServer",
-                "http://10.2.3.222:6080/arcgis/rest/services/TRSQ_20170122/ImageServer",
-                "http://10.2.3.222:6080/arcgis/rest/services/TRSQ_20170129/ImageServer"));
+                "http://192.168.8.101:6080/arcgis/rest/services/TRSQ_20170101/ImageServer",
+                "http://192.168.8.101:6080/arcgis/rest/services/TRSQ_20170108/ImageServer",
+                "http://192.168.8.101:6080/arcgis/rest/services/TRSQ_20170115/ImageServer",
+                "http://192.168.8.101:6080/arcgis/rest/services/TRSQ_20170122/ImageServer",
+                "http://192.168.8.101:6080/arcgis/rest/services/TRSQ_20170129/ImageServer"));
         mdatetime = new ArrayList<String>(Arrays.asList("2017-01-01","2017-01-08","2017-01-15","2017-01-22","2017-01-029"));
 
         //设置适配器
