@@ -41,6 +41,7 @@ import com.esri.core.tasks.query.QueryParameters;
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.lyf.drawarea.DrawArea;
 
+import com.example.qman.myapplication.lyf.drawarea.ProvinceArea;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.FormFile;
 import com.example.qman.myapplication.utils.ListViewUtil;
@@ -63,6 +64,9 @@ import java.util.Map;
 
 import com.esri.core.tasks.query.QueryTask;
 import com.esri.core.map.Feature;
+
+
+
 
 public class AreaFragment extends Fragment
 {
@@ -158,6 +162,8 @@ public class AreaFragment extends Fragment
                 return true;
             }
         });
+
+
         return view ;
     }
 
@@ -293,10 +299,11 @@ public class AreaFragment extends Fragment
 
                 //tv_address.setText(address);
 
+                //Log.d("AreaFragement",provinceSelected + "-" + citiesSelected + "-" + areaSelecteds);
                 addAreaName = "";//默认该行政区域未被添加过，需要更新RecyclerView
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
-                ActivityUtil.switchToFragment(getActivity(), new DrawArea(),R.id.id_content,address);
+                //ActivityUtil.switchToFragment(getActivity(), new DrawArea(),R.id.id_content,address);
                 //flowShow.setVisibility(View.GONE);
             }
         });
@@ -336,17 +343,20 @@ public class AreaFragment extends Fragment
                 JSONObject jsonObjectResult = new JSONObject(str);
                 String result = jsonObjectResult.getString("result");//解析json查询结果
 
+
+
                 if (result.equals("success")) {
                     codeIdTemp = jsonObjectResult.getString("codeid");
+
                     if(codeidStr.indexOf(codeIdTemp)!=-1){
                         addAreaName = "";//已被添加过，不需要更新RecyclerAdapter
                         //该区域已经被添加过
                         ActivityUtil.toastShow(getActivity(),"该区域已经被添加过");
                     }else{
                         addAreaName = provinceSelected + "-" + citiesSelected + "-" + areaSelecteds;
-                        codeidStr += jsonObjectResult.getString("codeid") +"/";
-                        //将缓存中的数据更新
-                        ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
+//                        codeidStr += jsonObjectResult.getString("codeid") +"/";
+//                        //将缓存中的数据更新
+//                        ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
 
                     }
                 } else {
@@ -359,13 +369,22 @@ public class AreaFragment extends Fragment
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
         protected void onPostExecute(String s) {
-            if(s!= "") {//该区域没有被添加过
-                //进行行政区域缩略图生成操作
-                String targetLayer = Variables.targetServerURL.concat("/0");
-                String[] queryArray = {targetLayer, "ADCODE99='110100'"};
-                AsyncQueryTask ayncQuery = new AsyncQueryTask();
-                ayncQuery.execute(queryArray);
-            }
+
+//            if(s!= "") {//该区域没有被添加过
+//
+//                //进行行政区域缩略图生成操作
+//                String targetLayer = Variables.targetServerURL.concat("/0");
+//                String[] queryArray = {targetLayer, "ADCODE99='110100'"};
+//                AsyncQueryTask ayncQuery = new AsyncQueryTask();
+//                ayncQuery.execute(queryArray);
+//            }
+            Map<String,Object> params = new HashMap<String,Object>();
+            params.put("codeIdTemp","410725");
+
+            addAreaName = provinceSelected + "-" + citiesSelected + "-" + areaSelecteds;
+            params.put("addAreaName",addAreaName);
+
+            ActivityUtil.switchToFragment(getActivity(), new ProvinceArea(),R.id.id_content,params);
         }
     }
 

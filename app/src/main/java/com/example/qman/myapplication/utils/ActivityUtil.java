@@ -24,6 +24,8 @@ import com.example.qman.myapplication.indextab.MapFragment;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import static android.R.attr.targetActivity;
+
 /**
  * Created by Qman on 2017/2/15.
  */
@@ -180,6 +182,40 @@ public class ActivityUtil extends AppCompatActivity {
         FragmentTransaction transaction = fm.beginTransaction();
         Bundle args = new Bundle();
         args.putString("param", params);
+        fragment.setArguments(args);
+        transaction.replace(containerViewId,fragment);
+        /*if (!fragment.isAdded()) {    // 先判断是否被add过
+            tx.hide(mContent).add(containerViewId, fragment); // 隐藏当前的fragment，add下一个到Activity中
+        } else {
+            tx.hide(mContent).show(fragment); // 隐藏当前的fragment，显示下一个
+        }*/
+        transaction.addToBackStack(fragment.getClass().getName());
+        transaction.commit();
+        mContent = fragment;
+    }
+    /**
+     * Fragment跳转到Fragment,带参数跳转
+     * @param activity
+     * @param fragment
+     * @param containerViewId
+     */
+    public static void switchToFragment(Activity activity,Fragment fragment,int containerViewId,Map<String,Object> params){
+        FragmentManager fm = activity.getFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+
+        Bundle args = new Bundle();
+
+        if( null != params ){
+
+            for(Map.Entry<String, Object> entry : params.entrySet()){
+
+                args.putString(entry.getKey(), entry.getValue().toString());
+
+            }
+
+        }
+
+
         fragment.setArguments(args);
         transaction.replace(containerViewId,fragment);
         /*if (!fragment.isAdded()) {    // 先判断是否被add过

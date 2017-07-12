@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 
 import com.esri.android.map.GraphicsLayer;
@@ -64,6 +65,8 @@ public class DrawArea extends Fragment  {
     private Button mSave;
     private Button mUndo;
 
+
+
     private ImageView bt_back;
     private enum EditMode {
         NONE, POINT, POLYLINE, POLYGON, SAVING
@@ -102,20 +105,28 @@ public class DrawArea extends Fragment  {
         final MarkerSymbol positionSymbol = new PictureMarkerSymbol(ContextCompat.getDrawable(getActivity(),R.drawable.positionsymbol));
 
 
+
         mExit = (Button)view.findViewById(R.id.exitofareaSelectorDraw);
+        mExit.setVisibility(View.INVISIBLE);
+
         mSearchView = (SearchView)view.findViewById(R.id.searchView);
         mPosition = (Button)view.findViewById(R.id.positionofareaSelectorDraw);
+
         mSave = (Button)view.findViewById(R.id.saveofareaSelectorDraw);
+        mSave.setVisibility(View.INVISIBLE);
+
         mMapView = (MapView) view.findViewById(R.id.mapofselectordraw);
 
         mUndo = (Button)view.findViewById(R.id.undoofareaSelectorDraw);
+        mUndo.setVisibility(View.INVISIBLE);
 
         bt_back = (ImageView) view.findViewById(R.id.bt_back);
         /*后退按钮*/
         bt_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
+                //ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
+                actionExit();
             }
         });
         //ActivityUtil.setTitle(getActivity(),R.id.toolbar_title,"勾画区域");
@@ -325,6 +336,7 @@ public class DrawArea extends Fragment  {
         mEditMode = EditMode.NONE;
         clear();
         mMapView.setShowMagnifierOnLongPress(false);
+        getFragmentManager().popBackStack();
     }
 
     /**
@@ -405,7 +417,7 @@ public class DrawArea extends Fragment  {
         if(mEditingStates.size() == 0)
         {
             mUndo.setVisibility(View.GONE);
-            mSearchView.setVisibility(View.VISIBLE);
+            //mSearchView.setVisibility(View.VISIBLE);
 
 
             return true;
@@ -413,7 +425,7 @@ public class DrawArea extends Fragment  {
         else{
 
             mUndo.setVisibility(View.VISIBLE);
-            mSearchView.setVisibility(View.GONE);
+            //mSearchView.setVisibility(View.GONE);
 
             return false;
         }
@@ -442,11 +454,11 @@ public class DrawArea extends Fragment  {
 //        return mPoints.size() >= minPoints;
         if(mPoints.size() >= minPoints)
         {
-            //mSavebar.setVisibility(View.VISIBLE);
+            mSave.setVisibility(View.VISIBLE);
             return true;
         }
         else{
-            //mSavebar.setVisibility(View.GONE);
+            mSave.setVisibility(View.GONE);
             return false;
         }
 
