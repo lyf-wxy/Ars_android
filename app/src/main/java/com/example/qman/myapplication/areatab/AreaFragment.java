@@ -98,7 +98,7 @@ public class AreaFragment extends Fragment
     private String codeIdTemp = "";
     private MapView mMapView;
 
-
+    private String address;
     ProgressDialog progress;
     GraphicsLayer graphicsLayer;
     File upfile;
@@ -287,7 +287,7 @@ public class AreaFragment extends Fragment
             public void onOptionsSelect(int options1, int option2, int options3) {
                 //返回的分别是三个级别的选中位置
                 String city = provinceList.get(options1).getPickerViewText();
-                String address;
+
                 address = provinceList.get(options1).getPickerViewText()
                             + " " + citiesList.get(options1).get(option2)
                             + " " + areasListsList.get(options1).get(option2).get(options3);
@@ -300,7 +300,7 @@ public class AreaFragment extends Fragment
                 addAreaName = "";//默认该行政区域未被添加过，需要更新RecyclerView
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
-                ActivityUtil.switchToFragment(getActivity(), new DrawArea(),R.id.id_content,address);
+
                 //flowShow.setVisibility(View.GONE);
             }
         });
@@ -370,6 +370,7 @@ public class AreaFragment extends Fragment
                 AsyncQueryTask ayncQuery = new AsyncQueryTask();
                 ayncQuery.execute(queryArray);
             }
+            ActivityUtil.switchToFragment(getActivity(), new DrawArea(),R.id.id_content,address);
         }
     }
 
