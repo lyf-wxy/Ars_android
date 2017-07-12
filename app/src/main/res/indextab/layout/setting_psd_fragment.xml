@@ -68,6 +68,18 @@
             android:textColor="@color/grayword1"
             android:background="@drawable/input"
             android:layout_below="@+id/oldpsdEt"/>
+        <EditText
+            android:id="@+id/renewpsdEt"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="@dimen/margin_left_right"
+            android:layout_marginRight="@dimen/margin_left_right"
+            android:layout_marginTop="@dimen/user_setting_jiange_large"
+            android:layout_marginBottom="@dimen/user_setting_jiange_large"
+            android:text="请再次输新密码"
+            android:textColor="@color/grayword1"
+            android:background="@drawable/input"
+            android:layout_below="@+id/newpsdEt"/>
     </RelativeLayout>
 
     <RelativeLayout

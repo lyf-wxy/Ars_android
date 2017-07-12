@@ -71,8 +71,8 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
         mTabArea.setOnClickListener(this);
         mTabMap.setOnClickListener(this);
         // 设置默认的Fragment
-       // mArea = new AreaFragment();
-        mSettingUser = new SettingUserFragment();
+        mArea = new AreaFragment();
+        //mSettingUser = new SettingUserFragment();
 
         toolbar_add = (Button) findViewById(R.id.toolbar_add);
         toolbar_search = (Button) findViewById(R.id.toolbar_search);
@@ -88,18 +88,18 @@ public class IndexTabMainActivity extends TitleActivity implements OnClickListen
         tab03_word = (TextView) findViewById(R.id.tab03_word);
 //        ActivityUtil.setOnlyVisibilitys(title, toolbar_search, toolbar_add,toolbar_draw);
 //        ActivityUtil.setTitle(IndexTabMainActivity.this,R.id.toolbar_title,"区域");
-        ActivityUtil.setDefaultFragment(IndexTabMainActivity.this, mSettingUser);
-        tab01_btn.setBackgroundResource(R.drawable.area);
+        ActivityUtil.setDefaultFragment(IndexTabMainActivity.this, mArea);
+        tab01_btn.setBackgroundResource(R.drawable.area_select);
         tab02_btn.setBackgroundResource(R.drawable.map);
-        tab03_btn.setBackgroundResource(R.drawable.setting_select);
+        tab03_btn.setBackgroundResource(R.drawable.setting);
 
         Resources resource = (Resources) getBaseContext().getResources();
         csl_unselect = (ColorStateList) resource.getColorStateList(R.color.deepgray);
         csl_select = (ColorStateList) resource.getColorStateList(R.color.white);
         if (csl_unselect != null) {
-            tab01_word.setTextColor(csl_unselect);
+            tab01_word.setTextColor(csl_select);
             tab02_word.setTextColor(csl_unselect);
-            tab03_word.setTextColor(csl_select);
+            tab03_word.setTextColor(csl_unselect);
         }
   /*      TextView tv = (TextView) findViewById(R.id.tab03_word);
         tv.setTextColor(this.getResources().getColor(R.color.white));

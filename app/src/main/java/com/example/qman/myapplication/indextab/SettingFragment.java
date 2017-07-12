@@ -109,9 +109,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.setting_fragment, container, false);
         id = ActivityUtil.getParam(getActivity(),"id");
         productType = ActivityUtil.getParam(getActivity(),"producttype");
-        //RelativeLayout layout = (RelativeLayout)view.findViewById(R.id.checkboxs);
-        //CheckBoxUtil.initView(layout);//遍历R.id.checkboxs的LinerLayout下的所有checkBox
-        //CheckBoxUtil.setChecked(productType);//初始化checkBox状态
+        RelativeLayout layout = (RelativeLayout)view.findViewById(R.id.checkboxs);
+        CheckBoxUtil.initView(layout);//遍历R.id.checkboxs的LinerLayout下的所有checkBox
+        CheckBoxUtil.setChecked(productType);//初始化checkBox状态
         saveBtn = (Button) view.findViewById(R.id.saveBtn);
         bt_back = (ImageView) view.findViewById(R.id.bt_back);
         /*后退按钮*/
@@ -132,15 +132,33 @@ public class SettingFragment extends Fragment implements View.OnClickListener
     public void onClick(View v)
     {
         saveBtn.setBackgroundResource(R.drawable.submit_click);
-        ajsonObject = new JSONObject();
+        new ChangeInfoThreadTask().execute();
+
     }
 
 
     class ChangeInfoThreadTask  extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            //JSONObject ajsonObject = new JSONObject();
-            RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserInfoService",callback);
+            ajsonObject = new JSONObject();
+            try {
+                String temp = CheckBoxUtil.createResultStr();
+                if(!productType.equals(CheckBoxUtil.createResultStr()))
+                    //当有更新时加入json中待传给后台
+                    ajsonObject.put("producttype",CheckBoxUtil.createResultStr());
+                if(isClickedBegin)
+                    ajsonObject.put("beginDate",beginDate);
+                if(isClickedEnd)
+                    ajsonObject.put("endDate",endDate);
+                if(ajsonObject != null) {
+                    //有变化时才进行更新
+                    ajsonObject.put("id", id);
+                    ActivityUtil.toastShow(getActivity(),"修改成功");
+                    RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserInfoService",callback);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
         @Override
@@ -198,6 +216,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
         beginDateLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isClickedBegin = true;
                 //生成一个DatePickerDialog对象，并显示。显示的DatePickerDialog控件可以选择年月日，并设置
                 new DatePickerDialog(getActivity(),
                         beginDateListener,
@@ -209,6 +228,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener
         endDateLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isClickedEnd = true;
                 //生成一个DatePickerDialog对象，并显示。显示的DatePickerDialog控件可以选择年月日，并设置
                 new DatePickerDialog(getActivity(),
                         endDateListener,

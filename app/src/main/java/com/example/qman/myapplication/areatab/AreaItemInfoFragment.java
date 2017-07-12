@@ -29,6 +29,8 @@ import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.GalleryAdapter;
+import com.example.qman.myapplication.utils.ListViewUtil;
+import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.Util;
 
 import org.json.JSONArray;
@@ -41,6 +43,7 @@ import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import okhttp3.Call;
@@ -59,8 +62,8 @@ public class AreaItemInfoFragment extends Fragment
     private ImageView legendPic;
 
     private MapView mMapView;
+    private TextView mTitleArea;
     private TextView mTitle;
-
     private RecyclerView mRecyclerView;
     private GalleryAdapter mAdapter;
     private List<String> mDatas;
@@ -70,9 +73,26 @@ public class AreaItemInfoFragment extends Fragment
     private String mSelectedClass;
 
     private String codeid;
+    private String id;
+    private List<HashMap<String,Object>> list = null;
+
     private ArcGISImageServiceLayer mArcGISImageServiceLayer;
 
     private ImageView bt_back;
+    JSONObject ajsonObject = new JSONObject();
+    private List<String> productTypeList;
+    private String productType;
+
+    private ImageView bt_x;
+
+    private ImageView bt_bch;
+    private ImageView bt_fl;
+    private ImageView bt_gz;
+    private ImageView bt_sq;
+    private ImageView bt_zs;
+    private ImageView bt_zwfl;
+
+    private int ifHide = View.VISIBLE;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -88,7 +108,9 @@ public class AreaItemInfoFragment extends Fragment
             }
         });
         String geometry = ActivityUtil.getParam(getActivity(),"geometry");
+        productType = ActivityUtil.getParam(getActivity(),"producttype");
         codeid = ActivityUtil.getParam(getActivity(),"codeid");
+        id = ActivityUtil.getParam(getActivity(),"id");
         Bundle args = getArguments();
         if(args!=null)
         {
@@ -102,7 +124,10 @@ public class AreaItemInfoFragment extends Fragment
         legendPic = (ImageView) view.findViewById(R.id.legendPic);
         mMapView = (MapView)view.findViewById(R.id.mapofAreaItemInfo);
         mTitle = (TextView)view.findViewById(R.id.current_service_title);
-        mTitle.setText(codeid);
+        mTitleArea = (TextView)view.findViewById(R.id.TitleOfAreaItemInfo);
+        //list = ListViewUtil.initSplitData(id, codeid);
+        //mTitleArea.setText(list.get(0).toString());
+        new GetAreaCodeInfoThreadTask().execute();
         //得到控件
         mRecyclerView = (RecyclerView) view.findViewById(R.id.id_recyclerview_horizontal);
         //设置布局管理器
@@ -111,9 +136,37 @@ public class AreaItemInfoFragment extends Fragment
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         initDatesListView();
+        productTypeList = new ArrayList<String>();
+
+        bt_x = (ImageView) view.findViewById(R.id.bt_hide);
+        bt_bch = (ImageView) view.findViewById(R.id.bch);
+        bt_fl = (ImageView) view.findViewById(R.id.fl);
+        bt_gz = (ImageView) view.findViewById(R.id.gz);
+        bt_sq = (ImageView) view.findViewById(R.id.sq);
+        bt_zs = (ImageView) view.findViewById(R.id.zs);
+        bt_zwfl = (ImageView) view.findViewById(R.id.zwfl);
+        new LoadCropkindsAsyncTask().execute();
+
+        bt_x.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (bt_x.getDrawable().getCurrent().getConstantState().equals(getResources().getDrawable(R.drawable.x).getConstantState())){
+                    //当image1的src为R.drawable.A时，设置image1的src为R.drawable.B
+                    if(ifHide == View.VISIBLE)
+                        ifHide = View.GONE;
+                    bt_x.setImageResource(R.drawable.x_add);
+                }else{
+                    if(ifHide == View.GONE)
+                        ifHide = View.VISIBLE;
+                    bt_x.setImageResource(R.drawable.x);
+                }
+                new LoadCropkindsAsyncTask().execute();
+            }
+        });
 
         // load map
-        new LoadMapAsyncTask().execute();
+        //new LoadMapAsyncTask().execute();
 
         return view ;
     }
@@ -188,7 +241,7 @@ public class AreaItemInfoFragment extends Fragment
         {
             mArcGISImageServiceLayer = new ArcGISImageServiceLayer(MapLayer,null);
 
-            mMapView.addLayer(mArcGISImageServiceLayer);
+            //mMapView.addLayer(mArcGISImageServiceLayer);
         }
 
 
@@ -236,6 +289,41 @@ public class AreaItemInfoFragment extends Fragment
             }
         });
     }
+    class GetAreaCodeInfoThreadTask extends AsyncTask<String, Integer, String>{
+        @Override
+        protected String doInBackground(String... params) {
+            //查询订购区域代码codeid
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("userid",id);
+                jsonObject.put("codeid",codeid);
+                String str = RequestUtil.request(jsonObject.toString(),"AndroidService/cityInfoService");
+                JSONObject jsonObjectResult = new JSONObject(str);
+                String result = jsonObjectResult.getString("result");//解析json查询结果
+
+                if (result.equals("success")) {
+                    String dataStr = jsonObjectResult.getString("data");
+                    JSONArray areaLists = new JSONArray(dataStr);
+                    if (areaLists.length()>0) {
+                        for (int i=0;i<areaLists.length();i++) {
+                            JSONArray aArea = new JSONArray(areaLists.get(i).toString());
+                            return aArea.get(0).toString();
+                        }
+                    }
+                } else {
+                    return  "error";
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return  "error";
+        }
+        //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
+        @Override
+        protected void onPostExecute(String s) {
+            mTitleArea.setText(s);
+        }
+    }
     public class LoadMapAsyncTask extends AsyncTask<String,Integer,byte[]>
     {
         @Override
@@ -266,4 +354,89 @@ public class AreaItemInfoFragment extends Fragment
         }
     }
 
+    public class LoadCropkindsAsyncTask extends AsyncTask<String, Integer, String[]>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+
+        }
+        @Override
+        protected String[] doInBackground(String... params) {
+            String[] strs = productType.split("/");
+            return  strs;
+        }
+        @Override
+        protected void onPostExecute(String[] strs)
+        {
+            for(String str : strs){
+                if(str.equals("TRSQ")) {//土壤墒情监测
+                    bt_sq.setVisibility(ifHide);
+                    bt_sq.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mTitle.setText("土壤墒情监测");
+                        }
+                    });
+                }
+                if(str.equals("NZWJXFL")) {//农作物精细分类
+                    bt_zwfl.setVisibility(ifHide);
+                    bt_zwfl.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mTitle.setText("农作物精细分类");
+                        }
+                    });
+                }
+                if(str.equals("YMJZSJC")) {//叶面积指数监测,去掉了？
+                    bt_zs.setVisibility(ifHide);
+                    bt_zs.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mTitle.setText("叶面积指数监测");
+                        }
+                    });
+                }
+                if(str.equals("NYBCHJC")) {//农业病虫害监测
+                    bt_bch.setVisibility(ifHide);
+                    bt_bch.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mTitle.setText("农业病虫害监测");
+                        }
+                    });
+                }
+                if(str.equals("NZWZSJC")) {//农作物长势监测
+                    bt_zs.setVisibility(ifHide);
+                    bt_zs.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mTitle.setText("农作物长势监测");
+                        }
+                    });
+                }
+                if(str.equals("NZWGC")){//农作物估产
+                    bt_gz.setVisibility(ifHide);
+                    bt_gz.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mTitle.setText("农作物估产");
+                        }
+                    });
+                }
+                if(str.equals("TRFL")){//土壤肥力
+                    bt_fl.setVisibility(ifHide);
+                    bt_fl.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mTitle.setText("土壤肥力");
+                        }
+                    });
+                }
+            }
+
+
+        }
+    }
 }

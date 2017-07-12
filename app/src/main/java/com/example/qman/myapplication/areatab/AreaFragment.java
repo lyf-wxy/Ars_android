@@ -102,7 +102,7 @@ public class AreaFragment extends Fragment
     private String codeIdTemp = "";
     private MapView mMapView;
 
-
+    private String address;
     ProgressDialog progress;
     GraphicsLayer graphicsLayer;
     File upfile;
@@ -202,10 +202,14 @@ public class AreaFragment extends Fragment
                     @Override
                     public void bindData(RecyclerViewHolder holder, int position, HashMap<String,Object> item) {
                         //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
+                        holder.getTextView(R.id.locationword).setText(item.get("ordername").toString());
+
                         holder.getTextView(R.id.title).setText(item.get("ordername").toString());
-
-                        holder.getTextView(R.id.cropkinds).setText(item.get("cropkinds").toString());
-
+                        holder.getTextView(R.id.mianjivalue).setText("100");//面积
+                        holder.getTextView(R.id.cropkinds).setText(item.get("cropkinds").toString());//作物
+                        holder.getTextView(R.id.yujichanzhivalue).setText("1000");//产值
+                        holder.getTextView(R.id.addtime).setText("2017-07-13");//添加时间
+                        //面积和产值没有这个字段
 //                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
 //                        holder.getImageView(R.id.image).setImageBitmap(bit);
 
@@ -289,7 +293,7 @@ public class AreaFragment extends Fragment
             public void onOptionsSelect(int options1, int option2, int options3) {
                 //返回的分别是三个级别的选中位置
                 String city = provinceList.get(options1).getPickerViewText();
-                String address;
+
                 address = provinceList.get(options1).getPickerViewText()
                             + " " + citiesList.get(options1).get(option2)
                             + " " + areasListsList.get(options1).get(option2).get(options3);
@@ -303,7 +307,7 @@ public class AreaFragment extends Fragment
                 addAreaName = "";//默认该行政区域未被添加过，需要更新RecyclerView
                 //查询订购区域代码codeid
                 new QueryCityCodeIdThreadTask().execute();
-                //ActivityUtil.switchToFragment(getActivity(), new DrawArea(),R.id.id_content,address);
+
                 //flowShow.setVisibility(View.GONE);
             }
         });
@@ -370,21 +374,24 @@ public class AreaFragment extends Fragment
         @Override
         protected void onPostExecute(String s) {
 
-//            if(s!= "") {//该区域没有被添加过
-//
-//                //进行行政区域缩略图生成操作
+
+            if(s!= "") {//该区域没有被添加过
+
+                //进行行政区域缩略图生成操作
+                Map<String,Object> params = new HashMap<String,Object>();
+                params.put("codeIdTemp",codeIdTemp);
+
+                //addAreaName = provinceSelected + "-" + citiesSelected + "-" + areaSelecteds;
+                params.put("addAreaName",addAreaName);
+
+                ActivityUtil.switchToFragment(getActivity(), new ProvinceArea(),R.id.id_content,params);
+
 //                String targetLayer = Variables.targetServerURL.concat("/0");
 //                String[] queryArray = {targetLayer, "ADCODE99='110100'"};
 //                AsyncQueryTask ayncQuery = new AsyncQueryTask();
 //                ayncQuery.execute(queryArray);
-//            }
-            Map<String,Object> params = new HashMap<String,Object>();
-            params.put("codeIdTemp","410725");
+            }
 
-            addAreaName = provinceSelected + "-" + citiesSelected + "-" + areaSelecteds;
-            params.put("addAreaName",addAreaName);
-
-            ActivityUtil.switchToFragment(getActivity(), new ProvinceArea(),R.id.id_content,params);
         }
     }
 
