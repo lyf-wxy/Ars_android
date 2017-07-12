@@ -196,10 +196,14 @@ public class AreaFragment extends Fragment
                     @Override
                     public void bindData(RecyclerViewHolder holder, int position, HashMap<String,Object> item) {
                         //调用holder.getView(),getXXX()方法根据id得到控件实例，进行数据绑定即可
+                        holder.getTextView(R.id.locationword).setText(item.get("ordername").toString());
+
                         holder.getTextView(R.id.title).setText(item.get("ordername").toString());
-
-                        holder.getTextView(R.id.cropkinds).setText(item.get("cropkinds").toString());
-
+                        holder.getTextView(R.id.mianjivalue).setText("100");//面积
+                        holder.getTextView(R.id.cropkinds).setText(item.get("cropkinds").toString());//作物
+                        holder.getTextView(R.id.yujichanzhivalue).setText("1000");//产值
+                        holder.getTextView(R.id.addtime).setText("2017-07-13");//添加时间
+                        //面积和产值没有这个字段
 //                        Bitmap bit = BitmapFactory.decodeFile(item.get("sdpath").toString()); //自定义//路径
 //                        holder.getImageView(R.id.image).setImageBitmap(bit);
 

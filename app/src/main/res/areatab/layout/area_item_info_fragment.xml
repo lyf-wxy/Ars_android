@@ -39,15 +39,15 @@
         android:background="@color/gray"
         android:layout_below="@+id/toolbarlayout">
 
-        <com.esri.android.map.MapView
-            android:id="@+id/mapofAreaItemInfo"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            mapoptions.MapType="SATELLITE"
-            mapoptions.ZoomLevel="6"
-            mapoptions.center="39.9, 116.3"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true" />
+        <!--<com.esri.android.map.MapView-->
+            <!--android:id="@+id/mapofAreaItemInfo"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--mapoptions.MapType="SATELLITE"-->
+            <!--mapoptions.ZoomLevel="6"-->
+            <!--mapoptions.center="39.9, 116.3"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentLeft="true" />-->
     </RelativeLayout>
 
     <RelativeLayout
@@ -64,10 +64,11 @@
                 android:id="@+id/current_service_title"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
-                android:text="农作物分类与面积统计"
-                android:textSize="15sp"
+                android:text="农作物/面积统计"
+                android:textSize="20sp"
                 android:textColor="@color/white"
-                android:textAlignment="center"
+
+                android:gravity="center"
                 android:background="@drawable/current_service"
                 app:layout_widthPercent="45%"
                 android:layout_centerHorizontal="true"
@@ -80,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
-                android:id="@+id/delete"
+                android:id="@+id/bt_hide"
                 app:layout_widthPercent="13%"
                 app:layout_heightPercent="13%"
                 android:layout_alignParentRight="true"
@@ -96,7 +97,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/bt_type_bch_a"
-                android:layout_below="@+id/delete"></ImageView>
+                android:visibility="gone"
+                android:layout_below="@+id/bt_hide"></ImageView>
 
             <ImageView
                 android:id="@+id/fl"
@@ -105,6 +107,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/bt_type_fl_a"
+                android:visibility="gone"
                 android:layout_below="@+id/bch"></ImageView>
 
             <ImageView
@@ -114,6 +117,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/bt_type_gz_a"
+                android:visibility="gone"
                 android:layout_below="@+id/fl"></ImageView>
 
             <ImageView
@@ -123,6 +127,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/bt_type_sq_a"
+                android:visibility="gone"
                 android:layout_below="@+id/gz"></ImageView>
 
             <ImageView
@@ -132,6 +137,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/bt_type_zs_a"
+                android:visibility="gone"
                 android:layout_below="@+id/sq"></ImageView>
 
             <ImageView
@@ -141,6 +147,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/bt_type_zwfl_a"
+                android:visibility="gone"
                 android:layout_below="@+id/zs"></ImageView>
         </android.support.percent.PercentRelativeLayout>
     </RelativeLayout>

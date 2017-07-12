@@ -28,7 +28,7 @@
     </RelativeLayout>
     <!--checkBox区域-->
     <RelativeLayout
-        android:id="@+id/checkboxs"
+        android:id="@+id/checkboxsarea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#fffffd"
@@ -55,107 +55,114 @@
                 android:textSize="@dimen/word_number"
                 android:textColor="#04bfec"/>
         </RelativeLayout>
-        <!--第一行chackBox-->
         <RelativeLayout
-            android:id="@+id/firstline"
-            android:layout_width="fill_parent"
+            android:id="@+id/checkboxs"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/user_setting_jiange_large"
-            android:orientation="horizontal"
-            android:layout_below="@+id/title1"
-            >
-            <CheckBox
-                android:id="@+id/NZWJXFL"
-                android:layout_width="wrap_content"
+            android:background="#fffffd"
+            android:layout_below="@+id/title1">
+            <!--第一行chackBox-->
+            <RelativeLayout
+                android:id="@+id/firstline"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="@dimen/margin_left_right"
-                android:text="农作物精细分类"
-                android:textSize="@dimen/word_number"
-                android:textColor="@color/grayword"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
-            <CheckBox
-                android:id="@+id/TRSQ"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/margin_left_right"
-                android:layout_alignParentRight="true"
-                android:text="土壤墒情监测"
-                android:textSize="@dimen/word_number"
-                android:textColor="@color/grayword"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
+                android:layout_marginTop="@dimen/user_setting_jiange_large"
+                android:orientation="horizontal"
+                >
+                <CheckBox
+                    android:id="@+id/NZWJXFL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="@dimen/margin_left_right"
+                    android:text="农作物精细分类"
+                    android:textSize="@dimen/word_number"
+                    android:textColor="@color/grayword"
+                    style="@style/MyCheckBox"
+                    android:clickable="true"/>
+                <CheckBox
+                    android:id="@+id/TRSQ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin_left_right"
+                    android:layout_alignParentRight="true"
+                    android:text="土壤墒情监测"
+                    android:textSize="@dimen/word_number"
+                    android:textColor="@color/grayword"
+                    style="@style/MyCheckBox"
+                    android:clickable="true"/>
 
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/secondline"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/firstline"
+                android:layout_marginTop="@dimen/user_setting_jiange_large">
+                <CheckBox
+                    android:id="@+id/NYBCHJC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="@dimen/margin_left_right"
+                    android:text="农业病虫害监测"
+                    android:textSize="@dimen/word_number"
+                    android:textColor="@color/grayword"
+                    style="@style/MyCheckBox"
+                    android:clickable="true"/>
+                <CheckBox
+                    android:id="@+id/TRFL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight ="@dimen/margin_left_right"
+                    android:text="土壤肥力监测"
+                    android:textSize="@dimen/word_number"
+                    android:textColor="@color/grayword"
+                    style="@style/MyCheckBox"
+                    android:clickable="true"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/thirdline"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/secondline"
+                android:layout_marginTop="@dimen/user_setting_jiange_large">
+                <CheckBox
+                    android:id="@+id/NZWZSJC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_left_right"
+                    android:layout_alignParentLeft="true"
+                    android:text="农作物长势监测"
+                    android:textSize="@dimen/word_number"
+                    android:textColor="@color/grayword"
+                    style="@style/MyCheckBox"
+                    android:clickable="true"/>
+                <CheckBox
+                    android:id="@+id/NZWGC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/margin_left_right"
+                    android:text="农作物估产  "
+                    android:textSize="@dimen/word_number"
+                    android:textColor="@color/grayword"
+                    style="@style/MyCheckBox"
+                    android:clickable="true"/>
+            </RelativeLayout>
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/secondline"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/firstline"
-            android:layout_marginTop="@dimen/user_setting_jiange_large">
-            <CheckBox
-                android:id="@+id/NYBCHJC"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="@dimen/margin_left_right"
-                android:text="农业病虫害监测"
-                android:textSize="@dimen/word_number"
-                android:textColor="@color/grayword"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
-            <CheckBox
-                android:id="@+id/TRFL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight ="@dimen/margin_left_right"
-                android:text="土壤肥力监测"
-                android:textSize="@dimen/word_number"
-                android:textColor="@color/grayword"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/thirdline"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/secondline"
-            android:layout_marginTop="@dimen/user_setting_jiange_large">
-            <CheckBox
-                android:id="@+id/NZWZSJC"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_left_right"
-                android:layout_alignParentLeft="true"
-                android:text="农作物长势监测"
-                android:textSize="@dimen/word_number"
-                android:textColor="@color/grayword"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
-            <CheckBox
-                android:id="@+id/NZWGC"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/margin_left_right"
-                android:text="农作物估产  "
-                android:textSize="@dimen/word_number"
-                android:textColor="@color/grayword"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
-        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/title2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/user_setting_jiange_large"
-            android:layout_below="@+id/thirdline">
+            android:layout_below="@+id/checkboxs">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -208,7 +215,7 @@
         android:id="@+id/service"
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:layout_below="@+id/checkboxs"
+        android:layout_below="@+id/checkboxsarea"
         android:background="@color/white"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/user_setting_jiange_large"

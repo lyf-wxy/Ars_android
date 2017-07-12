@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:gravity="center"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -16,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-
             <TextView
                 android:id="@+id/toolbar_title"
                 android:layout_height="wrap_content"
@@ -36,19 +34,18 @@
             </SearchView>
             <Button
                 android:id="@+id/toolbar_add"
-                android:layout_height="28dp"
-                android:layout_width="28dp"
+                android:layout_height="25dp"
+                android:layout_width="25dp"
                 android:layout_toLeftOf="@+id/toolbar_draw"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/add"
                 />
             <Button
                 android:id="@+id/toolbar_draw"
-                android:layout_height="28dp"
-                android:layout_width="28dp"
-                android:layout_alignParentRight = "true"
+                android:layout_height="25dp"
+                android:layout_width="25dp"
                 android:background="@drawable/draw"
-                />
+                android:layout_alignParentRight="true" />
         </android.support.v7.widget.Toolbar>
     </RelativeLayout>
 
