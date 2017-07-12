@@ -23,20 +23,13 @@
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/bt_back"/>
 
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="184dp"
-                android:layout_height="33dp"
-                android:layout_marginLeft="40dp"
-                android:background="@drawable/search"
-                >
-            </SearchView>
             <TextView
                 android:id="@+id/toolbar_title"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="勾画区域"
+
+                android:layout_gravity="center"
+                android:text="选择区域"
                 android:textSize="23sp"
                 android:textColor="#ffffff"
                 />
@@ -57,7 +50,7 @@
             android:layout_width="match_parent"
             app:layout_heightPercent="100%">
             <Button
-                android:id="@+id/positionofareaSelectorDraw"
+                android:id="@+id/positionofprovince"
                 android:background="@drawable/position_draw"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
@@ -68,18 +61,7 @@
                 />
 
             <Button
-                android:id="@+id/exitofareaSelectorDraw"
-                android:text="Exit"
-                android:textAllCaps="false"
-                android:layout_width="60dp"
-                android:layout_height="40dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="5dp"
-                />
-            <Button
-                android:id="@+id/undoofareaSelectorDraw"
+                android:id="@+id/undoofprovince"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:background="@drawable/undo"
@@ -89,20 +71,22 @@
                 android:layout_marginLeft="70dp"/>
 
             <Button
-                android:id="@+id/saveofareaSelectorDraw"
+                android:id="@+id/saveofprovince"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:background="@drawable/save_draw"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="70dp" />
+
+
             <com.esri.android.map.MapView
-            android:id="@+id/mapofselectordraw"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            mapoptions.MapType="SATELLITE"
-            mapoptions.ZoomLevel="6"
-            mapoptions.center="39.9, 116.3" />
+                android:id="@+id/mapofprovince"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                mapoptions.MapType="SATELLITE"
+                mapoptions.ZoomLevel="6"
+                mapoptions.center="39.9, 116.3" />
         </RelativeLayout>
         <!--RelativeLayout
             android:id="@+id/toolbar_draw_page"
@@ -110,7 +94,7 @@
             android:background="@color/white"
             android:layout_below="@+id/LinearLayout1ofsavedrawarea">
             <Button
-                android:id="@+id/undoofareaSelectorDraw"
+                android:id="@+id/undoofprovince"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:background="@drawable/undo"
@@ -119,7 +103,7 @@
                 android:layout_marginLeft="70dp"/>
 
             <Button
-                android:id="@+id/saveofareaSelectorDraw"
+                android:id="@+id/saveofprovince"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:background="@drawable/save_draw"

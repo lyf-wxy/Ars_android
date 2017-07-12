@@ -122,7 +122,7 @@ public class AreaItemInfoFragment extends Fragment
         //Toast.makeText(getActivity(), mField+","+mSelectedClass+","+geometry, Toast.LENGTH_SHORT).show();
 
         legendPic = (ImageView) view.findViewById(R.id.legendPic);
-        //mMapView = (MapView)view.findViewById(R.id.mapofAreaItemInfo);
+        mMapView = (MapView)view.findViewById(R.id.mapofAreaItemInfo);
         mTitle = (TextView)view.findViewById(R.id.current_service_title);
         mTitleArea = (TextView)view.findViewById(R.id.TitleOfAreaItemInfo);
         //list = ListViewUtil.initSplitData(id, codeid);

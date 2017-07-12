@@ -39,15 +39,15 @@
         android:background="@color/gray"
         android:layout_below="@+id/toolbarlayout">
 
-        <!--<com.esri.android.map.MapView-->
-            <!--android:id="@+id/mapofAreaItemInfo"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="fill_parent"-->
-            <!--mapoptions.MapType="SATELLITE"-->
-            <!--mapoptions.ZoomLevel="6"-->
-            <!--mapoptions.center="39.9, 116.3"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_alignParentLeft="true" />-->
+        <com.esri.android.map.MapView
+            android:id="@+id/mapofAreaItemInfo"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            mapoptions.MapType="SATELLITE"
+            mapoptions.ZoomLevel="6"
+            mapoptions.center="39.9, 116.3"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true" />
     </RelativeLayout>
 
     <RelativeLayout
