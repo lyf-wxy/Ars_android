@@ -42,6 +42,11 @@ public class ListViewUtil extends AppCompatActivity {
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     private static OkHttpClient okHttpClient = new OkHttpClient();
+
+    public static List<HashMap<String, Object>> getData()
+    {
+        return data;
+    }
     /**
      * 将控件选择的行政区域加到listView中
      * @param ordername
@@ -49,6 +54,7 @@ public class ListViewUtil extends AppCompatActivity {
      * @param geometry
      * @return
      */
+
     public static HashMap<String,Object> addData(String ordername,String sdpath,String geometry,String codeidStr,String cropkinds){
         HashMap<String,Object> map = new HashMap<String,Object>();
 
