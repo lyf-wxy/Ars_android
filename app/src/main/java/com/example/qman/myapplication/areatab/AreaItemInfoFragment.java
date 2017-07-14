@@ -3,7 +3,9 @@ package com.example.qman.myapplication.areatab;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,18 +23,38 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISImageServiceLayer;
+import com.esri.android.map.event.OnStatusChangedListener;
+import com.esri.core.geometry.Envelope;
+import com.esri.core.geometry.Geometry;
+import com.esri.core.geometry.GeometryEngine;
+import com.esri.core.geometry.MapGeometry;
+import com.esri.core.geometry.SpatialReference;
+import com.esri.core.map.Feature;
+import com.esri.core.map.FeatureResult;
+import com.esri.core.map.Graphic;
 import com.esri.core.map.MosaicRule;
 import com.esri.core.map.RasterFunction;
+import com.esri.core.renderer.SimpleRenderer;
+import com.esri.core.symbol.SimpleFillSymbol;
+import com.esri.core.symbol.SimpleLineSymbol;
+import com.esri.core.tasks.query.QueryParameters;
+import com.esri.core.tasks.query.QueryTask;
 import com.example.qman.myapplication.R;
+import com.example.qman.myapplication.lyf.drawarea.ProvinceArea;
+import com.example.qman.myapplication.lyf.drawarea.SaveDrawArea;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.CheckBoxUtil;
 import com.example.qman.myapplication.utils.GalleryAdapter;
 import com.example.qman.myapplication.utils.ListViewUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.Util;
+import com.example.qman.myapplication.utils.Variables;
 
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +75,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static com.example.qman.myapplication.areatab.AreaFragment.TAG;
+import static com.example.qman.myapplication.lyf.drawarea.generatePicFromMapviewAndUpLoadInfo.codeIdTemp;
 
 public class AreaItemInfoFragment extends Fragment
 {
@@ -71,7 +95,7 @@ public class AreaItemInfoFragment extends Fragment
 
     private String mField;
     private String mSelectedClass;
-
+    String m_geometryStr;
     private String codeid;
     private String id;
     private List<HashMap<String,Object>> list = null;
@@ -93,6 +117,10 @@ public class AreaItemInfoFragment extends Fragment
     private ImageView bt_zwfl;
 
     private int ifHide = View.VISIBLE;
+
+    GraphicsLayer AreaGraphicLayer = new GraphicsLayer();
+    ProgressDialog progress;
+    public static String TAG = "AreaItemInfoFragment";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -107,17 +135,18 @@ public class AreaItemInfoFragment extends Fragment
                 ActivityUtil.switchToFragment(getActivity(),new AreaFragment(),R.id.id_content);
             }
         });
-        String geometry = ActivityUtil.getParam(getActivity(),"geometry");
+        m_geometryStr = ActivityUtil.getParam(getActivity(),"geometry");
         productType = ActivityUtil.getParam(getActivity(),"producttype");
         codeid = ActivityUtil.getParam(getActivity(),"codeid");
         id = ActivityUtil.getParam(getActivity(),"id");
-        Bundle args = getArguments();
-        if(args!=null)
-        {
-            mField = args.getString("field");
-            mSelectedClass = args.getString("selectedClass");
 
-        }
+//        Bundle args = getArguments();
+//        if(args!=null)
+//        {
+//            mField = args.getString("field");
+//            mSelectedClass = args.getString("selectedClass");
+//
+//        }
 
         //Toast.makeText(getActivity(), mField+","+mSelectedClass+","+geometry, Toast.LENGTH_SHORT).show();
 
@@ -166,12 +195,231 @@ public class AreaItemInfoFragment extends Fragment
         });
 
         // load map
-        //new LoadMapAsyncTask().execute();
+        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onStatusChanged(Object source, STATUS status) {
+                if (source == mMapView && status == STATUS.INITIALIZED) {
+                    try{
+
+                        //new LoadMapAsyncTask().execute();
+//                        mArcGISImageServiceLayer = new ArcGISImageServiceLayer("http://192.168.8.101:6080/arcgis/rest/services/NYBCHJC/ImageServer",null);
+//
+//                        mMapView.addLayer(mArcGISImageServiceLayer);
+
+//                        mSelectedClass="农业病虫害监测";
+//
+//                        addLayer2MapView(mSelectedClass);
+//                        addLegend2MapView(mSelectedClass);
+                        mMapView.addLayer(AreaGraphicLayer);
+
+                        String[] geometryStr = {m_geometryStr};
+                        if(m_geometryStr.length()==6)//行政区划选择产生
+                        {
+                            //进行行政区域
+                            String targetLayer = Variables.targetServerURL.concat("/0");
+                            String[] queryArray = {targetLayer, "CODE="+m_geometryStr};
+                            AsyncQueryTask ayncQuery = new AsyncQueryTask();
+                            ayncQuery.execute(queryArray);
+                        }
+                        else{//手动绘制产生
+                            new AsyncLoadGraphic().execute(geometryStr);
+                        }
+
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
 
         return view ;
     }
 
+    /**
+     *
+     * Query Task executes asynchronously.
+     *
+     */
+    private class AsyncQueryTask extends AsyncTask<String, Void, FeatureResult> {
 
+        @Override
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(getActivity(), "", "Please wait....query task is executing");
+
+        }
+
+        /**
+         * First member in string array is the query URL; second member is the where
+         * clause.
+         */
+        @Override
+        protected FeatureResult doInBackground(String... queryArray) {
+            if (queryArray == null || queryArray.length <= 1)
+                return null;
+
+            String url = queryArray[0];
+            QueryParameters qParameters = new QueryParameters();
+            String whereClause = queryArray[1];
+            SpatialReference sr = SpatialReference.create(102100);
+            //qParameters.setGeometry(new Envelope(-20147112.9593773, 557305.257274575, -6569564.7196889, 11753184.6153385));
+            qParameters.setOutSpatialReference(sr);
+            qParameters.setReturnGeometry(true);
+            qParameters.setWhere(whereClause);
+
+            QueryTask qTask = new QueryTask(url);
+
+            try {
+                FeatureResult results = qTask.execute(qParameters);
+                return results;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(FeatureResult results) {
+
+//            mMapView.removeAll();
+//
+
+            SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(Color.RED);
+            simpleFillSymbol.setAlpha(100);
+            SimpleRenderer sr = new SimpleRenderer(simpleFillSymbol);
+            AreaGraphicLayer.setRenderer(sr);
+            mMapView.addLayer(AreaGraphicLayer);
+
+
+
+            String message = "No result comes back";
+            if (results != null) {
+                int i = 0;
+                Geometry[] GeosforExtent = new Geometry[(int)results.featureCount()];
+
+                for (Object element : results) {
+                    if (element instanceof Feature) {
+                        Feature feature = (Feature) element;
+                        // turn feature into graphic
+                        Graphic graphic = new Graphic(feature.getGeometry(), feature.getSymbol(), feature.getAttributes());
+
+                        GeosforExtent[i] = feature.getGeometry();
+
+                        // add graphic to layer
+                        AreaGraphicLayer.addGraphic(graphic);
+                        i++;
+                    }
+                }
+                // update message with results
+                message = String.valueOf(results.featureCount()) + " results have returned from query.";
+
+                Geometry geometryUnion = GeometryEngine.union(GeosforExtent,mMapView.getSpatialReference());
+
+                Envelope env = new Envelope();
+                geometryUnion.queryEnvelope(env);
+
+                Log.d(TAG,env.toString());
+                mMapView.setExtent(env);
+            }
+
+
+            //mMapView.setExtent(newExtent);
+
+            /**
+             * upload image file
+
+             */
+//            Bitmap bitmap= Util.getViewBitmap(mMapView);
+//
+//            String FileDirectory = Util.saveMyBitmap(codeIdTemp,bitmap);//保存缩略图，并返回文件路径
+//
+//            Log.d(TAG,FileDirectory);
+//
+//            bitmap.recycle();
+//            // 开启一个子线程，进行网络操作，等待有返回结果，使用handler通知UI
+//            upfile = new File(FileDirectory);
+//            new Thread(runnable).start();
+
+
+            progress.dismiss();
+
+//            Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_LONG);
+//            toast.show();
+
+
+
+        }
+
+    }
+    class AsyncLoadGraphic extends AsyncTask<String,Void,Geometry>{
+        @Override
+        protected Geometry doInBackground(String... geometryStr)
+        {
+
+            if (geometryStr == null || geometryStr.length < 1)
+            {
+                return null;
+            }
+
+
+
+            try{
+
+                //Log.d(TAG,geometryStr[0]);
+                JsonFactory factory = new JsonFactory();
+                JsonParser jsonParser = factory.createJsonParser(geometryStr[0]);
+                MapGeometry mapGeometry = GeometryEngine.jsonToGeometry(jsonParser);
+                Geometry geometry = mapGeometry.getGeometry();
+
+                SimpleFillSymbol simpleFillSymbol = new SimpleFillSymbol(Color.YELLOW);
+                simpleFillSymbol.setAlpha(100);
+                simpleFillSymbol.setOutline(new SimpleLineSymbol(Color.BLACK, 4));
+                Graphic graphic = new Graphic(geometry, (simpleFillSymbol));
+
+
+                AreaGraphicLayer.addGraphic(graphic);
+
+                //Log.d(TAG,"added");
+
+                return geometry;
+
+
+
+
+
+            }
+            catch(IOException ex)
+            {
+                ex.printStackTrace();
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Geometry geometry)
+        {
+            Envelope env = new Envelope();
+            geometry.queryEnvelope(env);
+
+            //Envelope newEnv = new Envelope(env.getCenter(),env.getWidth()*2,env.getHeight()*2);
+
+//            Log.d(TAG,env.toString());
+//            Log.d(TAG,newEnv.toString());
+
+            mMapView.setExtent(env);
+        }
+
+    }
 //    @Override
 //    public void onActivityCreated(Bundle savedInstanceState) {
 //        super.onActivityCreated(savedInstanceState);
@@ -241,7 +489,7 @@ public class AreaItemInfoFragment extends Fragment
         {
             mArcGISImageServiceLayer = new ArcGISImageServiceLayer(MapLayer,null);
 
-            //mMapView.addLayer(mArcGISImageServiceLayer);
+            mMapView.addLayer(mArcGISImageServiceLayer);
         }
 
 
@@ -335,6 +583,8 @@ public class AreaItemInfoFragment extends Fragment
         @Override
         protected byte[] doInBackground(String... params)
         {
+            mSelectedClass="农业病虫害监测";
+
             addLayer2MapView(mSelectedClass);
             addLegend2MapView(mSelectedClass);
 

@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
+import com.esri.android.map.ags.ArcGISImageServiceLayer;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
@@ -42,6 +43,7 @@ import com.example.qman.myapplication.areatab.AreaFragment;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.FormFile;
 import com.example.qman.myapplication.utils.GPSTracker;
+import com.example.qman.myapplication.utils.GalleryAdapter;
 import com.example.qman.myapplication.utils.ListViewUtil;
 import com.example.qman.myapplication.utils.RequestUtil;
 import com.example.qman.myapplication.utils.SocketHttpRequester;
@@ -52,15 +54,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import static android.R.id.list;
+import static com.example.qman.myapplication.R.string.username;
 
 
 /**
  * Created by lyf on 11/07/2017.
  */
 
-public class ProvinceArea extends Fragment {
+public class ProvinceArea extends Fragment{
     public static String TAG = "ProvinceArea";
     private MapView mMapView;
     GraphicsLayer ProvinceAreaGraphicLayer = new GraphicsLayer();
@@ -75,6 +82,10 @@ public class ProvinceArea extends Fragment {
 
     ProgressDialog progress;
     File upfile;
+
+    SaveArea SaveAreaDialog;
+    String m_CropkindsStr="";//作物种类
+    String m_fieldName="";//地块名称
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -141,8 +152,11 @@ public class ProvinceArea extends Fragment {
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            //实例化进度条对话框（ProgressDialog）
-            final ProgressDialog pd = ProgressDialog.show(getActivity(), "", "Please wait....save task is executing");
+
+
+                SaveAreaDialog.show(getFragmentManager(), "SaveAreaDialog");
+                //实例化进度条对话框（ProgressDialog）
+            //final ProgressDialog pd = ProgressDialog.show(getActivity(), "", "Please wait....save task is executing");
 //            pd.setTitle("请稍等");
 //            //设置对话进度条样式为水平
 //            pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -153,18 +167,18 @@ public class ProvinceArea extends Fragment {
 //            pd.setMax(100);
 //            pd.show();//调用show方法显示进度条对话框
 
-            Bitmap bitmap= Util.getViewBitmap(mMapView);
+//            Bitmap bitmap= Util.getViewBitmap(mMapView);
+//
+//            String FileDirectory = Util.saveMyBitmap(codeIdTemp,bitmap);//保存缩略图，并返回文件路径
+//
+//            Log.d(TAG,FileDirectory);
+//
+//            bitmap.recycle();
+//            // 开启一个子线程，进行网络操作，等待有返回结果，使用handler通知UI
+//            upfile = new File(FileDirectory);
+//            new Thread(runnable).start();
 
-            String FileDirectory = Util.saveMyBitmap(codeIdTemp,bitmap);//保存缩略图，并返回文件路径
-
-            Log.d(TAG,FileDirectory);
-
-            bitmap.recycle();
-            // 开启一个子线程，进行网络操作，等待有返回结果，使用handler通知UI
-            upfile = new File(FileDirectory);
-            new Thread(runnable).start();
-
-            pd.dismiss();
+            //pd.dismiss();
 
 
 
@@ -172,10 +186,51 @@ public class ProvinceArea extends Fragment {
 
             }
         });
+        SaveAreaDialog=new SaveArea();
+        SaveAreaDialog.setOnButtonClickListener(new SaveArea.savearea_Listener(){
+            @Override
+            //点击 保存按钮
+            public void savearea_sureClick(String fieldname,ArrayList<String> Cropkinds)
+            {
 
+                for(int i = 0;i < Cropkinds.size(); i ++){
+                    m_CropkindsStr+=(Cropkinds.get(i))+"/";
+                }
+                m_fieldName=fieldname;
+
+                Bitmap bitmap= Util.getViewBitmap(mMapView);
+
+                String FileDirectory = Util.saveMyBitmap(codeIdTemp,bitmap);//保存缩略图，并返回文件路径
+
+                Log.d(TAG,FileDirectory);
+
+                bitmap.recycle();
+                // 开启一个子线程，进行网络操作，等待有返回结果，使用handler通知UI
+                upfile = new File(FileDirectory);
+                generatePicFromMapviewAndUpLoadInfo m_generatePic=new generatePicFromMapviewAndUpLoadInfo(
+                        getActivity(),
+                        upfile,
+                        codeIdTemp,
+                        codeIdTemp,
+                        m_fieldName,
+                        m_CropkindsStr
+                );
+                new Thread(m_generatePic.runnable).start();
+
+                SaveAreaDialog.dismiss();
+            }
+            @Override
+            //点击取消按钮
+            public void savearea_cancleClick()
+            {
+                SaveAreaDialog.dismiss();
+            }
+
+        });
 
         return view;
     }
+
     /**
      *
      * Query Task executes asynchronously.
@@ -293,122 +348,7 @@ public class ProvinceArea extends Fragment {
 
     }
 
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String val = data.getString("value");
-            Log.i("mylog", "请求结果为-->" + val);
-            //progress.dismiss();
-            // TODO
-            // UI界面的更新等相关操作
-        }
-    };
-
-    Runnable runnable=new Runnable() {
-
-        @Override
-        public void run() {
-
-            //progress = ProgressDialog.show(getActivity(), "", "Please wait....save task is executing");
-
-            Log.i(TAG, "runnable run");
-            uploadFile(upfile);
-            //handler.postDelayed(runnable, 5000);
-            Message msg = new Message();
-            Bundle data = new Bundle();
-            data.putString("value", "请求结果");
-            msg.setData(data);
-            handler.sendMessage(msg);
-
-        }
-
-    };
-    /**
-     * 上传图片到服务器
-     *
-     * @param imageFile 包含路径
-     */
-    public void uploadFile(File imageFile) {
-        Log.i(TAG, "upload start");
-        try {
-            String requestUrl = Variables.serviceIP+"upload/UploadAction.do";
-            //请求普通信息
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("userid", ActivityUtil.getParam(getActivity(),"id"));
-            params.put("username", ActivityUtil.getParam(getActivity(),"username"));
-//            params.put("age", "21");
-            params.put("fileName", imageFile.getName());
-
-            Log.i(TAG, imageFile.getName());
-
-            //上传文件
-            FormFile formfile = new FormFile(imageFile.getName(), imageFile, "image", "application/octet-stream");
-
-            SocketHttpRequester.post(requestUrl, params, formfile);
-            Log.i(TAG, "upload success");
-        } catch (Exception e) {
-            Log.i(TAG, "upload error");
-            e.printStackTrace();
-        }
-        finally {
-            //            更新数据库表
-            //确定添加，更新数据库的codeid字段
-            new UpdateCityCodeIdThreadTask().execute();
-
-        }
-        Log.i(TAG, "upload end");
-    }
-
-    class UpdateCityCodeIdThreadTask extends AsyncTask<String, Integer, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            JSONObject ajsonObject = new JSONObject();
-            try {
-
-                String fileURL = Variables.serviceIP+"upload/image/"+ActivityUtil.getParam(getActivity(),"id")+"/"+upfile.getName();
-
-                String id = ActivityUtil.getParam(getActivity(),"id");//用户id
-                ajsonObject.put("id",id);
-
-                String codeidStr = ActivityUtil.getParam(getActivity(),"locno");//intent.getStringExtra("locno");
-                codeidStr += codeIdTemp+"/";
 
 
-
-                ajsonObject.put("codeidStr",codeidStr);
-                ajsonObject.put("ordername",addAreaName);
-                ajsonObject.put("cropkinds","000");
-                //ajsonObject.put("sdpath","pathTemp");
-                //http://10.2.3.222:8080/upload/image/55/2017-03-28-16-47-00_test11.png
-                ajsonObject.put("sdpath",fileURL);
-                ajsonObject.put("userid",ActivityUtil.getParam(getActivity(),"id"));
-                ajsonObject.put("codeid",codeIdTemp);
-
-                ajsonObject.put("geometry",codeIdTemp);
-                RequestUtil.request(ajsonObject.toString(),"AndroidService/areaCodeInfoService");//新增订购区域信息
-                RequestUtil.request(ajsonObject.toString(),"AndroidService/updateUserCodeIdService");
-
-                //将缓存中的数据更新
-                ActivityUtil.changeParam(getActivity(),"locno",codeidStr);
-//                ListViewUtil.addData(addAreaName,fileURL,"000",codeIdTemp,"000");//第二个参数为缩略图显示地址
-//                mDataList.add(codeIdTemp);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String s) {
-            if (upfile.delete())
-            {
-                ActivityUtil.switchToFragment(getActivity(), new AreaFragment(),R.id.id_content);
-                Log.i(TAG, upfile.getName()+" local delete");
-            }
-            //mAdapter.notifyItemInserted(mAdapter.getItemCount());
-            //mAdapter.notifyDataSetChanged();
-        }
-    }
 
 }

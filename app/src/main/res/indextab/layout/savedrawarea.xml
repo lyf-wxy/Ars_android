@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,62 +56,7 @@
         android:background="#fffffd"
         android:orientation="vertical"
         android:layout_marginTop="320dp">
-        <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
-            <CheckBox
-                android:id="@+id/CropKind1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
-                android:text="小麦"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
 
-        </LinearLayout>
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
-            <CheckBox
-                android:id="@+id/CropKind2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
-                android:text="玉米"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
-
-
-        </LinearLayout>
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
-            <CheckBox
-                android:id="@+id/CropKind3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
-                android:text="水稻"
-                android:textSize="17sp"
-                android:textColor="@drawable/selector_text_color"
-                style="@style/MyCheckBox"
-                android:clickable="true"/>
-
-
-        </LinearLayout-->
 
         <RadioGroup
             android:id="@+id/CropKindsRadioGroup"
@@ -162,4 +109,6 @@
         />
 
 
+
 </android.support.design.widget.CoordinatorLayout>
+

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -39,19 +40,26 @@ import com.esri.core.symbol.PictureMarkerSymbol;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.esri.core.symbol.SimpleMarkerSymbol;
+import com.esri.core.symbol.Symbol;
 import com.example.qman.myapplication.R;
 import com.example.qman.myapplication.areatab.AreaFragment;
 import com.example.qman.myapplication.areatab.AreaItemFragment;
 import com.example.qman.myapplication.loginregister.MainActivity;
 import com.example.qman.myapplication.utils.ActivityUtil;
 import com.example.qman.myapplication.utils.GPSTracker;
+import com.example.qman.myapplication.utils.Util;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
+import static com.example.qman.myapplication.lyf.drawarea.generatePicFromMapviewAndUpLoadInfo.codeIdTemp;
+import static com.example.qman.myapplication.lyf.drawarea.generatePicFromMapviewAndUpLoadInfo.runnable;
 
 import android.app.AlertDialog;
 import android.widget.Toast;
+
+import org.json.JSONObject;
 
 /**
  * Created by lyf on 01/03/2017.
@@ -97,6 +105,12 @@ public class DrawArea extends Fragment  {
 
     private GraphicsLayer graphicsLayerPosition;
 
+    SaveArea SaveAreaDialog;
+    String m_CropkindsStr="";//作物种类
+    String m_fieldName="";//地块名称
+    String mCodeIdOfArea;//地块代号
+    File upfile;
+    static String m_geometryStr;//地块几何形状字符串
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,6 +119,7 @@ public class DrawArea extends Fragment  {
         final MarkerSymbol positionSymbol = new PictureMarkerSymbol(ContextCompat.getDrawable(getActivity(),R.drawable.positionsymbol));
 
 
+        SaveAreaDialog=new SaveArea();//初始化保存弹出窗口
 
         mExit = (Button)view.findViewById(R.id.exitofareaSelectorDraw);
         mExit.setVisibility(View.INVISIBLE);
@@ -180,6 +195,50 @@ public class DrawArea extends Fragment  {
             }
         });
 
+        SaveAreaDialog.setOnButtonClickListener(new SaveArea.savearea_Listener(){
+            @Override
+            //点击 保存按钮
+            public void savearea_sureClick(String fieldname,ArrayList<String> Cropkinds)
+            {
+
+                for(int i = 0;i < Cropkinds.size(); i ++){
+                    m_CropkindsStr+=(Cropkinds.get(i))+"/";
+                }
+                m_fieldName=fieldname;
+                mCodeIdOfArea = "10"+ (int)((Math.random()*9+1)*1000);
+                Bitmap bitmap= Util.getViewBitmap(mMapView);
+
+                String FileDirectory = Util.saveMyBitmap(mCodeIdOfArea,bitmap);//保存缩略图，并返回文件路径
+
+                Log.d(TAG,FileDirectory);
+
+                bitmap.recycle();
+                // 开启一个子线程，进行网络操作，等待有返回结果，使用handler通知UI
+                upfile = new File(FileDirectory);
+
+
+                generatePicFromMapviewAndUpLoadInfo m_generatePic=new generatePicFromMapviewAndUpLoadInfo(
+                        getActivity(),
+                        upfile,
+                        mCodeIdOfArea,
+                        m_geometryStr,
+                        m_fieldName,
+                        m_CropkindsStr
+                );
+
+                new Thread(m_generatePic.runnable).start();
+
+                SaveAreaDialog.dismiss();
+            }
+            @Override
+            //点击取消按钮
+            public void savearea_cancleClick()
+            {
+                SaveAreaDialog.dismiss();
+            }
+
+        });
+
         return view;
     }
     @Override
@@ -213,6 +272,9 @@ public class DrawArea extends Fragment  {
             @Override
             public void onClick(View v) {
                 mSave.setBackgroundResource(R.drawable.save_draw_click);
+
+                SaveAreaDialog.show(getFragmentManager(), "SaveAreaDialog");
+
                 actionSave();
             }
         });
@@ -376,13 +438,17 @@ public class DrawArea extends Fragment  {
                 try
                 {
 
-                    String str = GeometryEngine.geometryToJson(mMapView.getSpatialReference(),mPolygLineOrPolygonGraphic.getGeometry());
+                    String geometrystr = GeometryEngine.geometryToJson(mMapView.getSpatialReference(),mPolygLineOrPolygonGraphic.getGeometry());
+                    //String symbolstr=mPolygLineOrPolygonGraphic.getSymbol().toJson();
+                    //SaveDrawArea mSaveDrawArea = new SaveDrawArea();
 
-                    SaveDrawArea mSaveDrawArea = new SaveDrawArea();
-
-                    ActivityUtil.putParam(getActivity(),"DrawAreaString",str);
-                    ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.id_content);
-
+                    //ActivityUtil.putParam(getActivity(),"DrawAreaString",str);
+                    //ActivityUtil.switchToFragment(getActivity(),mSaveDrawArea,R.id.id_content);
+                    //m_geometryStr=Graphic.toJson(mPolygLineOrPolygonGraphic).toString();
+//                    JSONObject ajsonObject = new JSONObject();
+//                    ajsonObject.put("geometry",geometrystr);
+//                    ajsonObject.put("symbol",symbolstr);
+                    m_geometryStr=geometrystr;
 
                 }
                 catch (Exception e)

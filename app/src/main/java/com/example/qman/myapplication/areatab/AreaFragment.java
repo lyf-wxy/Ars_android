@@ -228,6 +228,9 @@ public class AreaFragment extends Fragment
                 ((BaseRecyclerAdapter)mAdapter).setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View itemView, int pos) {
+                        HashMap<String,Object> item=list.get(pos);
+                        String geometryStr=item.get("geometry").toString();
+                        ActivityUtil.putParam(getActivity(),"geometry",geometryStr);
                         ActivityUtil.putParam(getActivity(),"codeid",mDataList.get(pos));
                         //原来是跳转到AreaItemFragment，现在改为跳转到AreaItemInfoFragment
                         ActivityUtil.switchToFragment(getActivity(),new AreaItemInfoFragment(),R.id.id_content);
